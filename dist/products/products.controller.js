@@ -28,9 +28,6 @@ let ProductsController = class ProductsController {
     findAll() {
         return this.productsService.findAll();
     }
-    seed() {
-        return this.productsService.seedData();
-    }
     findOne(id) {
         return this.productsService.findOne(+id);
     }
@@ -55,12 +52,6 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)('seed'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ProductsController.prototype, "seed", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

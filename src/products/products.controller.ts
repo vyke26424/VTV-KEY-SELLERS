@@ -17,13 +17,6 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  // --- THÊM ĐOẠN NÀY (Phải đặt trước @Get(':id')) ---
-  @Get('seed')
-  seed() {
-    return this.productsService.seedData();
-  }
-  // --------------------------------------------------
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);

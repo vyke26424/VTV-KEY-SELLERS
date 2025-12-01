@@ -5,28 +5,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const product_entity_1 = require("./entities/product.entity");
 let ProductsService = class ProductsService {
-    productRepository;
-    constructor(productRepository) {
-        this.productRepository = productRepository;
-    }
     create(createProductDto) {
-        return 'This action adds a new product';
+        return 'This action adds a new product (Cho Prisma Logic)';
     }
     findAll() {
-        return this.productRepository.find();
+        return 'This action returns all products (Cho Prisma Logic)';
     }
     findOne(id) {
         return `This action returns a #${id} product`;
@@ -37,29 +24,9 @@ let ProductsService = class ProductsService {
     remove(id) {
         return `This action removes a #${id} product`;
     }
-    async seedData() {
-        const count = await this.productRepository.count();
-        if (count > 0) {
-            return { message: 'Dữ liệu đã có sẵn, không cần tạo thêm!' };
-        }
-        const mockData = [
-            { name: 'Spotify Premium 1 Năm', price: 290000, oldPrice: 590000, category: 'ent', image: '🎵', description: 'Nghe nhạc bản quyền' },
-            { name: 'ChatGPT Plus', price: 450000, oldPrice: 550000, category: 'ai', image: '🤖', description: 'AI thông minh nhất' },
-            { name: 'Elden Ring', price: 890000, oldPrice: 1200000, category: 'steam', image: '⚔️', description: 'Game hay nhất năm' },
-            { name: 'Windows 11 Pro', price: 150000, oldPrice: 3500000, category: 'hot', image: '🪟', description: 'Bản quyền vĩnh viễn' },
-            { name: 'Netflix 4K', price: 65000, oldPrice: 260000, category: 'ent', image: '🎬', description: 'Xem phim 4K' },
-        ];
-        for (const item of mockData) {
-            const product = this.productRepository.create(item);
-            await this.productRepository.save(product);
-        }
-        return { message: 'Đã tạo dữ liệu mẫu thành công!' };
-    }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    (0, common_1.Injectable)()
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map
