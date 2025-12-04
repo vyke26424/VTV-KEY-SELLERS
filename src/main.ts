@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.enableCors({
-    origin : 'http://localhost:5000', // true
+    origin : 'http://localhost:5173', // true
     credentials : true
     
   })
@@ -18,6 +18,8 @@ async function bootstrap() {
       transform : true, // tự động convert kiểu dữ liệu
     })
   )
+
+  
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
