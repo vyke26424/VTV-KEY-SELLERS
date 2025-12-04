@@ -30,7 +30,7 @@ const Header = () => {
 
         {/* USER ACTIONS */}
         <div className="flex items-center gap-6 text-sm font-bold">
-           <button className="flex items-center gap-2 hover:text-vtv-green transition relative group">
+           <Link to="/cart" className="flex items-center gap-2 hover:text-vtv-green transition relative group">
             <div className="relative">
               <ShoppingCart size={22} />
               {/* Hiển thị số lượng thật */}
@@ -41,7 +41,7 @@ const Header = () => {
               )}
             </div>
             <span className="hidden sm:block">Giỏ hàng</span>
-          </button>
+          </Link>
 
           <button className="flex items-center gap-2 hover:text-vtv-green transition border-l border-slate-700 pl-6">
             <div className="bg-slate-800 p-1.5 rounded-full">
