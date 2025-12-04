@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowLeft, ShieldCheck } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
 
+
 // Format tiền tệ
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
@@ -129,9 +130,9 @@ const CartPage = () => {
                <span className="text-3xl font-bold text-vtv-green">{formatCurrency(totalAmount)}</span>
             </div>
 
-            <button className="w-full bg-vtv-green text-black font-bold py-3.5 rounded-xl hover:bg-green-400 transition shadow-lg shadow-green-500/20 mb-4">
-              THANH TOÁN NGAY
-            </button>
+            <Link to="/checkout" className="block w-full bg-vtv-green text-black font-bold py-3.5 rounded-xl hover:bg-green-400 transition shadow-lg shadow-green-500/20 mb-4 text-center">
+                THANH TOÁN NGAY
+            </Link>
 
             <div className="flex items-start gap-3 text-xs text-gray-500 bg-slate-800 p-3 rounded-lg">
                <ShieldCheck size={20} className="text-green-500 flex-shrink-0"/>
