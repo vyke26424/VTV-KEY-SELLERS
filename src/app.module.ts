@@ -1,6 +1,5 @@
 
 import { Module } from '@nestjs/common';
-
 import { AuthService } from './auth/auth/auth.service';
 import { AuthController } from './auth/auth/auth.controller';
 import { AuthModule } from './auth/auth/auth.module';
