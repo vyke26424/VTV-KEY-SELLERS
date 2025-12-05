@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, LogOut } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, ChevronDown } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
 import useAuthStore from '../store/useAuthStore';
 
 const Header = () => {
-  const user = useAuthStore((state) => state.user);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const logout = useAuthStore((state) => state.logout);
+  // --- SỬA LẠI ĐÚNG: Không truyền hàm gì vào trong () cả ---
+  const { user, isAuthenticated, logout } = useAuthStore(); 
+  // --------------------------------------------------------
+
   const navigate = useNavigate();
+  
+  // State quản lý đóng mở menu
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const cart = useCartStore((state) => state.cart);
-  // Tính tổng số lượng item (VD: Mua 2 cái Netflix + 1 cái Spotify = 3)
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-vtv-dark/90 backdrop-blur-md border-b border-slate-800 shadow-sm">
@@ -35,10 +44,11 @@ const Header = () => {
 
         {/* USER ACTIONS */}
         <div className="flex items-center gap-6 text-sm font-bold">
+           
+           {/* GIỎ HÀNG */}
            <Link to="/cart" className="flex items-center gap-2 hover:text-vtv-green transition relative group">
             <div className="relative">
               <ShoppingCart size={22} />
-              {/* Hiển thị số lượng thật */}
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-vtv-red text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full animate-bounce">
                   {totalItems}
@@ -49,31 +59,50 @@ const Header = () => {
           </Link>
 
           {isAuthenticated ? (
-               // TRẠNG THÁI ĐÃ ĐĂNG NHẬP
-               <div className="flex items-center gap-3 border-l border-slate-700 pl-6 relative group cursor-pointer">
-                  <div className="bg-vtv-green text-black p-1.5 rounded-full">
-                     <User size={18} />
-                  </div>
-                  <span className="hidden sm:block text-white hover:text-vtv-green">
-                     {user?.fullName || user?.email || 'Thành viên'}
-                  </span>
+               // --- ĐÃ ĐĂNG NHẬP (Hiển thị Tên & Menu Dropdown) ---
+               <div className="relative">
+                  <button 
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className={`flex items-center gap-3 border-l border-slate-700 pl-6 transition ${isUserMenuOpen ? 'text-vtv-green' : 'text-white hover:text-vtv-green'}`}
+                  >
+                     <div className="bg-vtv-green text-black p-1.5 rounded-full">
+                        <User size={18} />
+                     </div>
+                     <div className="hidden sm:flex flex-col items-start leading-none">
+                        <span className="text-sm font-bold">
+                           {user?.fullName || 'Thành viên'}
+                        </span>
+                     </div>
+                     <ChevronDown size={14} className={`transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`}/>
+                  </button>
                   
-                  {/* Dropdown Menu Đăng xuất */}
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-vtv-card border border-slate-700 rounded-xl shadow-xl overflow-hidden hidden group-hover:block">
-                      <div className="p-3 border-b border-slate-700">
-                          <p className="text-xs text-gray-400">Xin chào,</p>
-                          <p className="text-white truncate">{user?.email}</p>
+                  {/* Dropdown Menu */}
+                  {isUserMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setIsUserMenuOpen(false)}></div>
+                      <div className="absolute top-full right-0 mt-3 w-64 bg-vtv-card border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-20">
+                          <div className="p-4 border-b border-slate-700 bg-slate-800/50">
+                              <p className="text-xs text-gray-400 uppercase font-bold mb-1">Tài khoản</p>
+                              <p className="text-white font-bold truncate">{user?.fullName || 'Chưa đặt tên'}</p>
+                              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                          </div>
+                          <div className="p-2">
+                            <button className="w-full text-left p-3 text-gray-300 hover:bg-slate-700 rounded-lg flex items-center gap-3 transition">
+                                <User size={16} /> Hồ sơ cá nhân
+                            </button>
+                            <button 
+                              onClick={handleLogout}
+                              className="w-full text-left p-3 text-red-500 hover:bg-red-500/10 rounded-lg flex items-center gap-3 transition mt-1"
+                            >
+                               <LogOut size={16}/> Đăng xuất
+                            </button>
+                          </div>
                       </div>
-                      <button 
-                        onClick={() => { logout(); navigate('/'); }}
-                        className="w-full text-left p-3 text-red-500 hover:bg-slate-800 flex items-center gap-2"
-                      >
-                         <LogOut size={16}/> Đăng xuất
-                      </button>
-                  </div>
+                    </>
+                  )}
                </div>
              ) : (
-               // TRẠNG THÁI CHƯA ĐĂNG NHẬP
+               // --- CHƯA ĐĂNG NHẬP ---
                <Link to="/login" className="flex items-center gap-2 hover:text-vtv-green transition border-l border-slate-700 pl-6">
                  <div className="bg-slate-800 p-1.5 rounded-full">
                     <User size={18} />

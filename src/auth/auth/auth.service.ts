@@ -50,7 +50,9 @@ export class AuthService {
             select : {
                 id : true,
                 password : true,
-                role : true
+                role : true,
+                fullName: true, 
+                email: true
             }
         });
         if(!user) {
