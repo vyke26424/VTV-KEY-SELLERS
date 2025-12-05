@@ -33,7 +33,7 @@ export class AuthService {
 
                 }
             });
-            return this.issueTokens(user.id, user.role);
+            return this.issueTokens(user.id, user.role, user.fullName, user.email);
        } catch (error) {
             if(error instanceof PrismaClientKnownRequestError 
                 && error.code === 'P2002'){
@@ -62,7 +62,7 @@ export class AuthService {
         if(!isValid) {
             throw new UnauthorizedException('Sai thông tin đăng nhập');
         }
-        return this.issueTokens(user.id, user.role) ;
+        return this.issueTokens(user.id, user.role, user.fullName, user.email) ;
     }
 
     async logout(refreshToken : string) {
@@ -94,8 +94,8 @@ export class AuthService {
     }
 
     // cấp token
-    async issueTokens (userId : string, role : string) {
-        const payload = {sub : userId, role}
+    async issueTokens (userId : string, role : string, fullName: string | null, email: string) {
+        const payload = {sub : userId, role, fullName, email}
         const jti = uuidv4();
         const secretAccess = this.configService.getOrThrow('JWT_ACCESS_SECRET');
         const expireAccess = this.configService.getOrThrow('JWT_ACCESS_EXPIRE');
