@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ProductsModule } from './products/products.module';
 
 
 @Module({
@@ -16,7 +17,9 @@ import { JwtModule } from '@nestjs/jwt';
   }),
   ScheduleModule.forRoot(),
     AuthModule,
-  PrismaModule, JwtModule],
+  PrismaModule,
+  ProductsModule,
+  JwtModule],
   controllers: [AuthController],
   providers: [AuthService],
 })

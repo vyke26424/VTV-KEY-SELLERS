@@ -1,8 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, User } from 'lucide-react';
+import useCartStore from '../store/useCartStore';
 
 const Header = () => {
+
+  const cart = useCartStore((state) => state.cart);
+  // Tính tổng số lượng item (VD: Mua 2 cái Netflix + 1 cái Spotify = 3)
+  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <header className="sticky top-0 z-50 bg-vtv-dark/90 backdrop-blur-md border-b border-slate-800 shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
@@ -24,13 +30,18 @@ const Header = () => {
 
         {/* USER ACTIONS */}
         <div className="flex items-center gap-6 text-sm font-bold">
-           <button className="flex items-center gap-2 hover:text-vtv-green transition relative group">
+           <Link to="/cart" className="flex items-center gap-2 hover:text-vtv-green transition relative group">
             <div className="relative">
               <ShoppingCart size={22} />
-              <span className="absolute -top-2 -right-2 bg-vtv-red text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">0</span>
+              {/* Hiển thị số lượng thật */}
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-vtv-red text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full animate-bounce">
+                  {totalItems}
+                </span>
+              )}
             </div>
             <span className="hidden sm:block">Giỏ hàng</span>
-          </button>
+          </Link>
 
           <button className="flex items-center gap-2 hover:text-vtv-green transition border-l border-slate-700 pl-6">
             <div className="bg-slate-800 p-1.5 rounded-full">

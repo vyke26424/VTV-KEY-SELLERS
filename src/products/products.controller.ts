@@ -7,6 +7,16 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @Get('seed-categories')
+  seedCategories() {
+    return this.productsService.seedCategories();
+  }
+
+  @Get('seed-products')
+  seedProducts() {
+    return this.productsService.seedProducts();
+  }
+
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
