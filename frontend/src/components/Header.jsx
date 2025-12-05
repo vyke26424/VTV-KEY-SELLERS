@@ -1,9 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, ShoppingCart, User, LogOut } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
+import useAuthStore from '../store/useAuthStore';
 
 const Header = () => {
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
 
   const cart = useCartStore((state) => state.cart);
   // Tính tổng số lượng item (VD: Mua 2 cái Netflix + 1 cái Spotify = 3)
@@ -43,12 +48,39 @@ const Header = () => {
             <span className="hidden sm:block">Giỏ hàng</span>
           </Link>
 
-          <button className="flex items-center gap-2 hover:text-vtv-green transition border-l border-slate-700 pl-6">
-            <div className="bg-slate-800 p-1.5 rounded-full">
-               <User size={18} />
-            </div>
-            <span className="hidden sm:block">Đăng nhập / Đăng ký</span>
-          </button>
+          {isAuthenticated ? (
+               // TRẠNG THÁI ĐÃ ĐĂNG NHẬP
+               <div className="flex items-center gap-3 border-l border-slate-700 pl-6 relative group cursor-pointer">
+                  <div className="bg-vtv-green text-black p-1.5 rounded-full">
+                     <User size={18} />
+                  </div>
+                  <span className="hidden sm:block text-white hover:text-vtv-green">
+                     {user?.fullName || user?.email || 'Thành viên'}
+                  </span>
+                  
+                  {/* Dropdown Menu Đăng xuất */}
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-vtv-card border border-slate-700 rounded-xl shadow-xl overflow-hidden hidden group-hover:block">
+                      <div className="p-3 border-b border-slate-700">
+                          <p className="text-xs text-gray-400">Xin chào,</p>
+                          <p className="text-white truncate">{user?.email}</p>
+                      </div>
+                      <button 
+                        onClick={() => { logout(); navigate('/'); }}
+                        className="w-full text-left p-3 text-red-500 hover:bg-slate-800 flex items-center gap-2"
+                      >
+                         <LogOut size={16}/> Đăng xuất
+                      </button>
+                  </div>
+               </div>
+             ) : (
+               // TRẠNG THÁI CHƯA ĐĂNG NHẬP
+               <Link to="/login" className="flex items-center gap-2 hover:text-vtv-green transition border-l border-slate-700 pl-6">
+                 <div className="bg-slate-800 p-1.5 rounded-full">
+                    <User size={18} />
+                 </div>
+                 <span className="hidden sm:block">Đăng nhập / Đăng ký</span>
+               </Link>
+             )}
         </div>
 
       </div>

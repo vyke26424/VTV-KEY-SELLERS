@@ -10,8 +10,9 @@ import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import CategoryPage from './pages/CategoryPage';
 import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage'; // <--- IMPORT MỚI
+import CheckoutPage from './pages/CheckoutPage';
 import SuccessPage from './pages/SuccessPage';
+import LoginPage from './pages/LoginPage'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/success" element={<SuccessPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </main>
 
