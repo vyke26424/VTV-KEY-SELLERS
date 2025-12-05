@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from "express";
 import { PassportStrategy } from "@nestjs/passport";
-import { Injectable,  } from '@nestjs/common';
+import { Injectable, UnauthorizedException,  } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth/auth.service';
 
@@ -11,9 +11,10 @@ type JwtPayload = {
     sub : string,
     email : string,
     role : string,
+    jti : string
 }
 @Injectable()
-export class RefreshTokeStrategy extends PassportStrategy (Strategy, 'jwt-refresh') {
+export class RefreshTokenStrategy extends PassportStrategy (Strategy, 'jwt-refresh') {
    
     constructor(private readonly configService : ConfigService,
         private readonly authService : AuthService
@@ -38,12 +39,13 @@ export class RefreshTokeStrategy extends PassportStrategy (Strategy, 'jwt-refres
         const userid = payload.sub; 
         const isValid = await this.authService.checkRefreshTokeisValid(userid, refresToken);
         if(!isValid) {
-            return false;
+            return new UnauthorizedException('RefreshToken không hợp lệ');
         }
         return {
             userId : payload.sub,
             email : payload.email,
             role : payload.role,
+            jti : payload.jti,
             refresToken
         }
     }

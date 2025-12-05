@@ -1,9 +1,14 @@
 
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import * as express from "express";
 import { SignupDto } from '../dto/signup.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from '../dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+
+import type { RequestWithUser } from '../interfaces/request_user.interface';
+
 
 @Controller('auth')
 export class AuthController {
@@ -37,7 +42,7 @@ export class AuthController {
         res.cookie('refreshToken', refreshToken, {
             httpOnly : true, 
             sameSite : 'lax', 
-            maxAge : 30 * 24 * 60 * 1000,
+            maxAge : 30 * 24 * 60 * 60 * 1000,
         });
         return {
             accessToken
@@ -45,7 +50,7 @@ export class AuthController {
     }
     
     @Post('logout')
-    @HttpCode(HttpStatus.OK) //204
+    @HttpCode(HttpStatus.OK) //200
     async logout(
         @Req() req : express.Request,
         @Res({passthrough : true}) res : express.Response
@@ -62,6 +67,27 @@ export class AuthController {
         return {
             message : 'Đăng xuất thành công'
         }
+    }
+
+    @Post('refresh')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(AuthGuard('jwt-refresh'))
+    async refresh(@Req() req : RequestWithUser, @Res({passthrough : true}) res : express.Response) {
+        const userId = req.user?.userId;
+        const role = req.user?.role ;
+        const oldJti = req.user?.jti;
+        if(!oldJti ) {
+            throw new UnauthorizedException('Access Denied (Missing JTI)');
+        }
+        const {accessToken, refreshToken} = await this.authService.refreshToken(userId, role, oldJti);
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly : true,
+                sameSite : 'lax',
+                //secure : true,
+                maxAge : 30 * 24 * 60 * 60 * 1000
+            });
+            return {accessToken} ;
+      
     }
 
 }

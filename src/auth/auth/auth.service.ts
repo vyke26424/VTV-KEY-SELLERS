@@ -91,6 +91,25 @@ export class AuthService {
         })
     }
 
+    async refreshToken (userId : string, role : string, oldJti : string) {
+        try {
+            await this.prisma.refreshToken.updateMany ({
+                where : {
+                    tokenId : oldJti
+                },
+                data : {
+                    revoked : true
+                }
+            });
+        } catch (error) {
+            throw  new UnauthorizedException('Access denied'); 
+        }
+
+        return await this.issueTokens(userId, role);
+    }
+
+ 
+
     // cấp token
     async issueTokens (userId : string, role : string) {
         const payload = {sub : userId, role}
@@ -149,7 +168,7 @@ export class AuthService {
         for (const t of storedToken) {
             const isValid = await argon2.verify(t.token, rawToken);
             if(isValid) {
-                if(new Date().getDate() > t.expiresAt.getDate()) {
+                if(new Date() > t.expiresAt) {
                     console.log(`${new Date().getDate()} và ${t.expiresAt.getDate()}`);
                     return false;
                 }

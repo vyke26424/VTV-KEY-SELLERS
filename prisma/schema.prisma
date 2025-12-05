@@ -44,6 +44,14 @@ model Category {
   name String
   slug String @unique
   products Product[]
+
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isDeleted])
+  //@@index([slug])
 }
 
 model Product {
@@ -69,8 +77,14 @@ model Product {
   interactions UserInteraction[] // để biết user nào đã xem/click
 
   isActive Boolean @default(true)
+
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  @@index([isDeleted])
 }
 
 // Core Logic 
@@ -84,6 +98,14 @@ model ProductVariant {
   product Product @relation(fields: [productId], references: [id])
   stockItems StockItem[] // kho key/account
   orderItems OrderItem[] 
+
+  isDeleted Boolean @default(false)
+  deltetedAt DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isDeleted])
 }
 
 model StockItem {
@@ -198,7 +220,13 @@ model Review {
   productId Int
   product Product @relation(fields: [productId], references: [id])
   
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+
   createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([isDeleted])
 }
 
 model RefreshToken {

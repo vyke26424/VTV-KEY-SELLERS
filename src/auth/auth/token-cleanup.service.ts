@@ -14,7 +14,7 @@ export class TokenCleanupService {
     async handleCron() {
         this.logger.log('Đang tiến hành dọn dẹp các token quá hạn');
         const thirtyDayago = new Date();
-        thirtyDayago.setDate(thirtyDayago.getDate() -30);
+        thirtyDayago.setDate(thirtyDayago.getDate() -3); // giữ 3 ngày để có thể phân tích lượng người dùng
         try {
             const result = await this.prisma.refreshToken.deleteMany({
                 where : {
