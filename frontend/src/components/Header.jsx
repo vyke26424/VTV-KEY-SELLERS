@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+// 1. Thêm useRef và useEffect vào import
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, LogOut, ChevronDown } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
 import useAuthStore from '../store/useAuthStore';
 
 const Header = () => {
-  // --- SỬA LẠI ĐÚNG: Không truyền hàm gì vào trong () cả ---
   const { user, isAuthenticated, logout } = useAuthStore(); 
-  // --------------------------------------------------------
-
   const navigate = useNavigate();
   
-  // State quản lý đóng mở menu
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
+  // 2. Tạo một cái "neo" (ref) để đánh dấu khu vực Menu
+  const menuRef = useRef(null);
 
   const cart = useCartStore((state) => state.cart);
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
@@ -22,6 +22,24 @@ const Header = () => {
     setIsUserMenuOpen(false);
     navigate('/');
   };
+
+  // 3. Logic: Lắng nghe sự kiện click chuột
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Nếu menu đang mở VÀ người dùng click vào cái gì đó KHÔNG nằm trong menuRef
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    // Gắn sự kiện vào toàn bộ trang web
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    // Dọn dẹp khi component bị hủy
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
 
   return (
     <header className="sticky top-0 z-50 bg-vtv-dark/90 backdrop-blur-md border-b border-slate-800 shadow-sm">
@@ -59,8 +77,9 @@ const Header = () => {
           </Link>
 
           {isAuthenticated ? (
-               // --- ĐÃ ĐĂNG NHẬP (Hiển thị Tên & Menu Dropdown) ---
-               <div className="relative">
+               // --- TRẠNG THÁI ĐÃ ĐĂNG NHẬP ---
+               // 4. Gắn ref={menuRef} vào thẻ cha bao quanh nút bấm và menu
+               <div className="relative" ref={menuRef}>
                   <button 
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={`flex items-center gap-3 border-l border-slate-700 pl-6 transition ${isUserMenuOpen ? 'text-vtv-green' : 'text-white hover:text-vtv-green'}`}
@@ -76,29 +95,26 @@ const Header = () => {
                      <ChevronDown size={14} className={`transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`}/>
                   </button>
                   
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu - Không cần lớp màng vô hình nữa */}
                   {isUserMenuOpen && (
-                    <>
-                      <div className="fixed inset-0 z-10" onClick={() => setIsUserMenuOpen(false)}></div>
-                      <div className="absolute top-full right-0 mt-3 w-64 bg-vtv-card border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-20">
-                          <div className="p-4 border-b border-slate-700 bg-slate-800/50">
-                              <p className="text-xs text-gray-400 uppercase font-bold mb-1">Tài khoản</p>
-                              <p className="text-white font-bold truncate">{user?.fullName || 'Chưa đặt tên'}</p>
-                              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-                          </div>
-                          <div className="p-2">
-                            <button className="w-full text-left p-3 text-gray-300 hover:bg-slate-700 rounded-lg flex items-center gap-3 transition">
-                                <User size={16} /> Hồ sơ cá nhân
-                            </button>
-                            <button 
-                              onClick={handleLogout}
-                              className="w-full text-left p-3 text-red-500 hover:bg-red-500/10 rounded-lg flex items-center gap-3 transition mt-1"
-                            >
-                               <LogOut size={16}/> Đăng xuất
-                            </button>
-                          </div>
-                      </div>
-                    </>
+                    <div className="absolute top-full right-0 mt-3 w-64 bg-vtv-card border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="p-4 border-b border-slate-700 bg-slate-800/50">
+                            <p className="text-xs text-gray-400 uppercase font-bold mb-1">Tài khoản</p>
+                            <p className="text-white font-bold truncate">{user?.fullName || 'Chưa đặt tên'}</p>
+                            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                        </div>
+                        <div className="p-2">
+                          <button className="w-full text-left p-3 text-gray-300 hover:bg-slate-700 rounded-lg flex items-center gap-3 transition">
+                              <User size={16} /> Hồ sơ cá nhân
+                          </button>
+                          <button 
+                            onClick={handleLogout}
+                            className="w-full text-left p-3 text-red-500 hover:bg-red-500/10 rounded-lg flex items-center gap-3 transition mt-1"
+                          >
+                             <LogOut size={16}/> Đăng xuất
+                          </button>
+                        </div>
+                    </div>
                   )}
                </div>
              ) : (

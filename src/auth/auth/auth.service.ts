@@ -62,7 +62,9 @@ export class AuthService {
         if(!isValid) {
             throw new UnauthorizedException('Sai thông tin đăng nhập');
         }
-        return this.issueTokens(user.id, user.role, user.fullName, user.email) ;
+        const tokens = await this.issueTokens(user.id, user.role, user.fullName, user.email);
+        const { password, ...rest } = user;
+        return { ...tokens, user: rest };
     }
 
     async logout(refreshToken : string) {

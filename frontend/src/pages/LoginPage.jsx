@@ -54,7 +54,7 @@ const LoginPage = () => {
       // Xử lý thành công
       if (isLogin) {
         // Giả sử Backend trả về { user: {...}, access_token: "..." }
-        loginSuccess(data.user || { email: formData.email }, data.access_token);
+        loginSuccess(data.user, data.accessToken);
         navigate('/'); // Về trang chủ
       } else {
         alert('Đăng ký thành công! Vui lòng đăng nhập.');

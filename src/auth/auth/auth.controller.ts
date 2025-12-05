@@ -33,7 +33,7 @@ export class AuthController {
         @Body() dto : LoginDto,
         @Res({passthrough : true}) res : express.Response
     ) {
-        const {accessToken, refreshToken} = await this.authService.login(dto);
+        const {accessToken, refreshToken, user} = await this.authService.login(dto);
         res.cookie('refreshToken', refreshToken, {
             httpOnly : true, 
             sameSite : 'lax', 
