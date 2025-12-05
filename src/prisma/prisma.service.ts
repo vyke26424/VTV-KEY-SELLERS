@@ -12,7 +12,13 @@ import { PrismaClient } from "@prisma/client";
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
     
     constructor(private readonly config : ConfigService){
-        super()
+        super({
+            datasources : {
+                db : {
+                    url : config.get("DATABASE_URL")
+                }
+            }
+        })
     }
     async onModuleDestroy() {
         await this.$disconnect();
