@@ -22,14 +22,19 @@ export class AuthController {
     @HttpCode(HttpStatus.CREATED) // 201
     async signup (@Body() dto : SignupDto, 
     @Res({passthrough : true}) res : express.Response) {
+        const data = await this.authService.signup(dto);
         const {accessToken, refreshToken} = await this.authService.signup(dto);
+        
         res.cookie('refreshToken', refreshToken,{
             httpOnly : true, // cấm Js đọc, tránh hacker trộm token bằng mã độc (XSS)
             sameSite : 'lax', // hạn chế gửi chén tránh web lạ gửi lệnh mạo danh
             //secure : true, // chỉ dùng https, tránh mimd
             maxAge : 30 * 24 * 60 * 1000, // tự hủy token
         }) ;
-        return {accessToken}
+        return { 
+            accessToken: data.accessToken,
+            user: data['user'] // Trick để lấy user nếu có
+        }
     }
 
     @Post('login')
@@ -38,14 +43,16 @@ export class AuthController {
         @Body() dto : LoginDto,
         @Res({passthrough : true}) res : express.Response
     ) {
-        const {accessToken, refreshToken} = await this.authService.login(dto);
+
+        const {accessToken, refreshToken, user} = await this.authService.login(dto);
         res.cookie('refreshToken', refreshToken, {
             httpOnly : true, 
             sameSite : 'lax', 
             maxAge : 30 * 24 * 60 * 60 * 1000,
         });
         return {
-            accessToken
+            accessToken,
+            user
         }
     }
     
