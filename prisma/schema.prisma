@@ -76,6 +76,7 @@ model Product {
   reviews Review[]
   interactions UserInteraction[] // để biết user nào đã xem/click
 
+  isHot Boolean @default(false) // sản phẩm nổi bật
   isActive Boolean @default(true)
 
   isDeleted Boolean @default(false)
