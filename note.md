@@ -103,3 +103,42 @@ hoặc chạy f5
         }
     ]
 }
+
+
+//// ngày 7 tháng 12 năm 2025 //// 
+Con ghệ thử gọi mấy cái api của dashboard category của admin để thêm category, với có thêm create product. Trong lúc con ghệ tạo sản phẩm thì có thể thêm các sản phẩm con của nó luôn, gửi api sẽ có dạng như này : 
+**
+{
+  "name": "OpenAI Plus ",
+  "categoryId": 1,
+  "description": "Gói AI giúp bạn 10 giải tích, 10 xác suất thống kê.",
+  "thumbnail": "https://example.com/images/netflix-thumb.jpg",
+  
+  // Slug là tùy chọn. Nếu không gửi, server sẽ tự tạo từ name
+  // "slug": "tai-khoan-netflix-custom", 
+
+  "variants": [
+    {
+      "name": "Gói 1 Tháng",
+      "price": 69000,
+      "orginalPrice": 90000
+    },
+    {
+      "name": "Gói 1 Năm (Tiết kiệm)",
+      "price": 600000,
+      "orginalPrice": 1080000
+    },
+    {
+        "name": "Gói gia đình",
+        "price": 70000,
+        "orginalPrice": 110000
+    }
+  ],
+
+  // Các trường JSON tùy chọn (nếu có)
+  "keywords": ["robot", "trí tuệ nhân tạo", "chatchit"],
+  "meta": {
+    "generatedBy": "GPT-4", // cái meta này để tượng trưng thôi, nữa viết meta gì ok xíu cho thằng python nó nhờ 
+    "seoScore": 95
+  }
+}**

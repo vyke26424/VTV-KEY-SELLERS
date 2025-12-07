@@ -95,7 +95,7 @@ export class AuthService {
         await this.prisma.refreshToken.update({
             where: {
                 tokenId: jti,
-                //revoked: false
+                revoked: false
             },
             data : {
                 revoked : true
