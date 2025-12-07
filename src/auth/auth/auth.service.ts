@@ -32,7 +32,11 @@ export class AuthService {
 
                 }
             });
-            return this.issueTokens(user.id, user.role);
+            const tokens = await this.issueTokens(user.id, user.role);
+            return {
+                ...tokens,
+                user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role }
+            }; // Sửa lại chỗ này :v
        } catch (error) {
             if(error instanceof Prisma.PrismaClientKnownRequestError ){
                 if(error.code === 'P2002') {
@@ -51,7 +55,10 @@ export class AuthService {
             select : {
                 id : true,
                 password : true,
-                role : true
+                role : true,
+                //Thêm lại 2 thằng này để trả dữ liệu về frontend
+                fullName: true,
+                email: true
             }
         });
         if(!user) {
@@ -61,7 +68,11 @@ export class AuthService {
         if(!isValid) {
             throw new UnauthorizedException('Sai thông tin đăng nhập');
         }
-        return this.issueTokens(user.id, user.role) ;
+        const tokens = await this.issueTokens(user.id, user.role);
+        
+        // --- KHÔI PHỤC: Trả về thông tin user (đã loại bỏ password) ---
+        const { password, ...rest } = user;
+        return { ...tokens, user: rest };
     }
 
     async logout(refreshToken : string) {
@@ -108,8 +119,6 @@ export class AuthService {
 
         return await this.issueTokens(userId, role);
     }
-
- 
 
     // cấp token
     async issueTokens (userId : string, role : string) {
