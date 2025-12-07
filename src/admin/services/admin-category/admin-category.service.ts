@@ -2,10 +2,10 @@ import { ConflictException, Injectable, InternalServerErrorException, NotFoundEx
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateCategory } from '../../dto/create_category.dto';
 import slugify from 'slugify';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { constants } from 'buffer';
 import { UpdateCategoryDto } from '../../dto/update_category.dto';
 import e from 'express';
+import { Prisma } from '@prisma/client';
 
 
 @Injectable()
@@ -32,12 +32,13 @@ export class AdminCategoryService {
                 }
             });
         } catch (error) {
-            if(error instanceof PrismaClientKnownRequestError) {
-                if(error.name === 'P2002') {
-                    throw new ConflictException('Loại category này đã tồn tại');
+            if(error instanceof Prisma.PrismaClientKnownRequestError) {
+                if(error.code === 'P2002') {
+                    throw new ConflictException('Loại category hoặc slug này đã tồn tại');
                 }
                 
             }else {
+                console.log(error)
                 throw new InternalServerErrorException();
             }
         }
@@ -195,7 +196,7 @@ export class AdminCategoryService {
     }
 
     private handleError (error : any) : never {
-        if(error instanceof PrismaClientKnownRequestError) {
+        if(error instanceof Prisma.PrismaClientKnownRequestError) {
             if(error.code === 'P2002') {
                 throw new ConflictException('Slug của category này đã tồn tại')
             }

@@ -8,9 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from "uuid";
 import  ms from "ms";
 import { SignupDto } from '../dto/signup.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { LoginDto } from '../dto/login.dto';
-import { use } from 'passport';
+import { Prisma } from '@prisma/client';
 
 
 @Injectable()
@@ -35,10 +34,12 @@ export class AuthService {
             });
             return this.issueTokens(user.id, user.role);
        } catch (error) {
-            if(error instanceof PrismaClientKnownRequestError 
-                && error.code === 'P2002'){
-                    throw new ConflictException('Email đã được sử dụng');
+            if(error instanceof Prisma.PrismaClientKnownRequestError ){
+                if(error.code === 'P2002') {
+                    throw new ConflictException(`Email ${dto.email} đã tồn tại`);
                 }
+            }
+               
                 throw error ; // 500 (lỗi mạng , db chết)
        }
         

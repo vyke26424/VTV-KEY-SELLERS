@@ -14,6 +14,7 @@ import { AdminModule } from './admin/admin/admin.module';
 import { AdminProductService } from './admin/services/admin-product/admin-product.service';
 import { AdminCategoryService } from './admin/services/admin-category/admin-category.service';
 import { AdminCategoryController } from './admin/controller/admin-category/admin-category.controller';
+import { AdminProductController } from './admin/controller/admin-product/admin-product.controller';
 
 
 @Module({
@@ -23,7 +24,7 @@ import { AdminCategoryController } from './admin/controller/admin-category/admin
   ScheduleModule.forRoot(),
     AuthModule,
   PrismaModule, JwtModule, UserModule, AdminModule],
-  controllers: [AuthController, AdminCategoryController],
+  controllers: [AuthController, AdminCategoryController, AdminProductController],
   providers: [AuthService, UserService, AdminProductService, AdminCategoryService],
 })
 export class AppModule {}
