@@ -1,4 +1,3 @@
-// 1. Thêm useRef và useEffect vào import
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, LogOut, ChevronDown } from 'lucide-react';
@@ -6,12 +5,12 @@ import useCartStore from '../store/useCartStore';
 import useAuthStore from '../store/useAuthStore';
 
 const Header = () => {
+  // --- SỬA LẠI ĐÚNG Ở ĐÂY ---
   const { user, isAuthenticated, logout } = useAuthStore(); 
+  // -------------------------
+
   const navigate = useNavigate();
-  
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  
-  // 2. Tạo một cái "neo" (ref) để đánh dấu khu vực Menu
   const menuRef = useRef(null);
 
   const cart = useCartStore((state) => state.cart);
@@ -23,19 +22,14 @@ const Header = () => {
     navigate('/');
   };
 
-  // 3. Logic: Lắng nghe sự kiện click chuột
+  // Logic click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Nếu menu đang mở VÀ người dùng click vào cái gì đó KHÔNG nằm trong menuRef
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
     };
-
-    // Gắn sự kiện vào toàn bộ trang web
     document.addEventListener("mousedown", handleClickOutside);
-    
-    // Dọn dẹp khi component bị hủy
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -62,8 +56,6 @@ const Header = () => {
 
         {/* USER ACTIONS */}
         <div className="flex items-center gap-6 text-sm font-bold">
-           
-           {/* GIỎ HÀNG */}
            <Link to="/cart" className="flex items-center gap-2 hover:text-vtv-green transition relative group">
             <div className="relative">
               <ShoppingCart size={22} />
@@ -77,8 +69,6 @@ const Header = () => {
           </Link>
 
           {isAuthenticated ? (
-               // --- TRẠNG THÁI ĐÃ ĐĂNG NHẬP ---
-               // 4. Gắn ref={menuRef} vào thẻ cha bao quanh nút bấm và menu
                <div className="relative" ref={menuRef}>
                   <button 
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -95,7 +85,6 @@ const Header = () => {
                      <ChevronDown size={14} className={`transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`}/>
                   </button>
                   
-                  {/* Dropdown Menu - Không cần lớp màng vô hình nữa */}
                   {isUserMenuOpen && (
                     <div className="absolute top-full right-0 mt-3 w-64 bg-vtv-card border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="p-4 border-b border-slate-700 bg-slate-800/50">
@@ -118,7 +107,6 @@ const Header = () => {
                   )}
                </div>
              ) : (
-               // --- CHƯA ĐĂNG NHẬP ---
                <Link to="/login" className="flex items-center gap-2 hover:text-vtv-green transition border-l border-slate-700 pl-6">
                  <div className="bg-slate-800 p-1.5 rounded-full">
                     <User size={18} />
@@ -127,7 +115,6 @@ const Header = () => {
                </Link>
              )}
         </div>
-
       </div>
     </header>
   );
