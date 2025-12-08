@@ -16,21 +16,31 @@ const CATEGORIES = [
 ];
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // Khởi tạo mảng rỗng
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // --- GỌI API THẬT TỪ BACKEND ---
     fetch('http://localhost:3000/products')
-      .then((res) => res.json())
+      .then((res) => {
+        // Kiểm tra nếu Server trả về lỗi (404, 500...)
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
-        // Backend trả về dữ liệu, ta cần map lại một chút nếu cần thiết
-        // Nhưng do mình đã code Backend khớp cấu trúc rồi nên cứ set thẳng
-        setProducts(data);
+        // QUAN TRỌNG: Chỉ setProducts nếu data thực sự là một mảng
+        if (Array.isArray(data)) {
+            setProducts(data);
+        } else {
+            console.error("Dữ liệu nhận được không phải là mảng:", data);
+            setProducts([]); // Fallback về mảng rỗng để không lỗi .filter
+        }
         setLoading(false);
       })
       .catch((err) => {
         console.error("Lỗi kết nối Backend:", err);
+        setProducts([]); // Gặp lỗi thì set rỗng để web không chết
         setLoading(false);
       });
   }, []);
