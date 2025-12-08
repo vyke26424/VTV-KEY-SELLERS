@@ -1,45 +1,62 @@
 import axios from 'axios';
-import useAuthStore from '../store/useAuthStore'; // Import cái store bạn vừa đưa tôi
+import useAuthStore from '../store/useAuthStore';
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:3000', // Đổi port nếu backend chạy port khác
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // QUAN TRỌNG: Để gửi kèm Cookie (RefreshToken)
+  baseURL: 'http://localhost:3000',
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true, // Để gửi Cookie RefreshToken đi
 });
 
-// --- 1. REQUEST INTERCEPTOR (Gửi đi) ---
-// Tự động gắn Token vào Header trước khi request bay đi
+// Request Interceptor: Gắn AccessToken
 axiosClient.interceptors.request.use(
   (config) => {
-    // Lấy token từ Store của bạn (lưu ý: bạn đặt tên biến là 'token')
-    const token = useAuthStore.getState().token;
-
+    const token = useAuthStore.getState().token; // Lấy AccessToken hiện tại
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// --- 2. RESPONSE INTERCEPTOR (Nhận về) ---
-// Giúp bạn lấy data gọn hơn (bỏ qua bước .data của axios)
+// Response Interceptor: Xử lý xoay vòng Token khi lỗi 401
 axiosClient.interceptors.response.use(
-  (response) => {
-    // Trả về dữ liệu luôn, không cần gõ response.data ở nơi gọi
-    return response.data;
-  },
+  (response) => response.data, // Trả data gọn gàng
   async (error) => {
-    // Xử lý lỗi chung (VD: Token hết hạn -> Logout)
-    if (error.response && error.response.status === 401) {
-        // Tùy chọn: Tự động logout nếu token hết hạn mà không refresh được
-        // useAuthStore.getState().logout();
+    const originalRequest = error.config;
+
+    // Nếu lỗi 401 (Unauthorized) VÀ chưa từng thử retry request này
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Đánh dấu để không lặp vô tận
+
+      try {
+        // 1. Gọi API Refresh để lấy AccessToken mới + Cookie RefreshToken mới
+        // Lưu ý: Không cần truyền body, vì RefreshToken nằm trong HttpOnly Cookie rồi
+        const res = await axiosClient.post('/auth/refresh');
+
+        const newAccessToken = res.accessToken;
+
+        // 2. Lưu AccessToken mới vào Store (Zustand)
+        // Lưu ý: user giữ nguyên, chỉ update token
+        const currentUser = useAuthStore.getState().user;
+        useAuthStore.getState().loginSuccess(currentUser, newAccessToken);
+
+        // 3. Gắn Token mới vào Header của request bị lỗi lúc nãy
+        axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        // 4. Gọi lại request cũ (Retry)
+        return axiosClient(originalRequest);
+
+      } catch (refreshError) {
+        // Nếu Refresh cũng lỗi (Token hết hạn hẳn hoặc bị Revoked) -> Logout luôn
+        console.error("Phiên đăng nhập hết hạn:", refreshError);
+        useAuthStore.getState().logout();
+        window.location.href = '/login'; // Đá về trang login
+        return Promise.reject(refreshError);
+      }
     }
+
     return Promise.reject(error);
   }
 );

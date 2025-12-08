@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, LogOut, ChevronDown, Package } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
 import useAuthStore from '../store/useAuthStore';
+import axiosClient from '../store/axiosClient';
 
 const Header = () => {
   // --- SỬA LẠI ĐÚNG Ở ĐÂY ---
@@ -16,10 +17,24 @@ const Header = () => {
   const cart = useCartStore((state) => state.cart);
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
-  const handleLogout = () => {
-    logout();
-    setIsUserMenuOpen(false);
-    navigate('/');
+  const handleLogout = async () => {
+    // Debug: In ra để biết hàm này có chạy không
+    console.log("Bắt đầu đăng xuất..."); 
+
+    try {
+        // Bước 1: Gọi lên Server trước để hủy token trong DB
+        console.log("Đang gọi API logout...");
+        await axiosClient.post('/auth/logout'); 
+        console.log("Gọi API thành công!");
+    } catch (error) {
+        console.error("Lỗi đăng xuất server:", error);
+    } finally {
+        // Bước 2: Dù server thành công hay lỗi, vẫn xóa state ở Client để user thoát ra
+        logout();
+        setIsUserMenuOpen(false);
+        navigate('/');
+        console.log("Đã xóa state và chuyển trang.");
+    }
   };
 
   // Logic click outside
