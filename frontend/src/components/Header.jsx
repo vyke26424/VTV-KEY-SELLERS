@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, LogOut, ChevronDown } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, ChevronDown, Package } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
 import useAuthStore from '../store/useAuthStore';
 
@@ -85,22 +85,46 @@ const Header = () => {
                      <ChevronDown size={14} className={`transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`}/>
                   </button>
                   
+                  {/* Menu Dropdown */}
                   {isUserMenuOpen && (
                     <div className="absolute top-full right-0 mt-3 w-64 bg-vtv-card border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        
+                        {/* Header của menu: Tên & Email */}
                         <div className="p-4 border-b border-slate-700 bg-slate-800/50">
                             <p className="text-xs text-gray-400 uppercase font-bold mb-1">Tài khoản</p>
                             <p className="text-white font-bold truncate">{user?.fullName || 'Chưa đặt tên'}</p>
                             <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                         </div>
-                        <div className="p-2">
-                          <button className="w-full text-left p-3 text-gray-300 hover:bg-slate-700 rounded-lg flex items-center gap-3 transition">
+                        
+                        {/* Danh sách các nút chức năng */}
+                        <div className="p-2 space-y-1"> {/* space-y-1 để tạo khoảng cách nhỏ giữa các nút */}
+                          
+                          {/* 1. NÚT HỒ SƠ CÁ NHÂN (Link tạm tới /profile) */}
+                          <Link 
+                              to="/profile" 
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="w-full text-left p-3 text-gray-300 hover:bg-slate-700 rounded-lg flex items-center gap-3 transition"
+                          >
                               <User size={16} /> Hồ sơ cá nhân
-                          </button>
+                          </Link>
+
+                          {/* 2. NÚT QUẢN LÝ ĐƠN HÀNG (Mới thêm) */}
+                          <Link 
+                              to="/orders" 
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="w-full text-left p-3 text-gray-300 hover:bg-slate-700 rounded-lg flex items-center gap-3 transition"
+                          >
+                              <Package size={16} /> Quản lý đơn hàng
+                          </Link>
+
+                          {/* 3. NÚT ĐĂNG XUẤT (Có viền mờ ngăn cách) */}
+                          <div className="border-t border-slate-700/50 my-1"></div>
+                          
                           <button 
                             onClick={handleLogout}
-                            className="w-full text-left p-3 text-red-500 hover:bg-red-500/10 rounded-lg flex items-center gap-3 transition mt-1"
+                            className="w-full text-left p-3 text-red-500 hover:bg-red-500/10 rounded-lg flex items-center gap-3 transition"
                           >
-                             <LogOut size={16}/> Đăng xuất
+                            <LogOut size={16}/> Đăng xuất
                           </button>
                         </div>
                     </div>

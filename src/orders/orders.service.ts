@@ -45,7 +45,17 @@ export class OrdersService {
   async findByUser(userId: string) {
     return this.prisma.order.findMany({
       where: { userId },
-      include: { items: { include: { variant: true } } }, // Kèm tên gói hàng
+      include: {
+        items: {
+          include: {
+            variant: {
+              include: {
+                product: true // <--- QUAN TRỌNG: Lấy thông tin Product gốc (để lấy ảnh, tên)
+              }
+            }
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
   }

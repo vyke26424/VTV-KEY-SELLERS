@@ -13,6 +13,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import SuccessPage from './pages/SuccessPage';
 import LoginPage from './pages/LoginPage'
+import OrderHistoryPage from './pages/OrderHistoryPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/orders" element={<OrderHistoryPage />} />
           </Routes>
         </main>
 
