@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Package, Calendar, Clock, X, Copy, Check } from 'lucide-react'; // Thêm icon
-import useAuthStore from '../store/useAuthStore';
+import { Package, Calendar, X, Copy, Clock } from 'lucide-react'; 
+// import useAuthStore from '../store/useAuthStore'; 
+import axiosClient from '../store/axiosClient';
 
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
@@ -13,27 +13,29 @@ const formatDate = (dateString) => {
 };
 
 const OrderHistoryPage = () => {
-    const { user } = useAuthStore();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // State cho Modal xem key
-    const [selectedOrder, setSelectedOrder] = useState(null); // Lưu đơn hàng đang xem
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     useEffect(() => {
-        if (user?.id) {
-            fetch(`http://localhost:3000/orders/user/${user.id}`)
-                .then(res => res.json())
-                .then(data => {
-                    setOrders(data);
-                    setLoading(false);
-                })
-                .catch(err => {
-                    console.error(err);
-                    setLoading(false);
-                });
-        }
-    }, [user]);
+        const fetchOrders = async () => {
+            try {
+                // --- SỬA Ở ĐÂY ---
+                // Gọi API mới, axiosClient tự gắn Token vào Header
+                // Backend sẽ đọc Token để biết đây là ai và trả về đúng đơn của người đó
+                const data = await axiosClient.get('/orders/my-orders');
+                
+                setOrders(data);
+            } catch (err) {
+                console.error("Lỗi tải đơn hàng:", err);
+                // Nếu lỗi 401 (Hết phiên đăng nhập) axiosClient có thể đã xử lý hoặc bạn redirect ở đây
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, []);
 
     // Hàm copy key
     const handleCopy = (text) => {
@@ -41,7 +43,7 @@ const OrderHistoryPage = () => {
         alert('Đã copy key!');
     };
 
-    if (!user) return <div className="text-center text-white py-20">Vui lòng đăng nhập.</div>;
+    if (loading) return <div className="text-center text-white py-20">Đang tải dữ liệu...</div>;
     
     return (
         <div className="container mx-auto px-4 py-8 min-h-screen">
@@ -49,9 +51,7 @@ const OrderHistoryPage = () => {
                 <Package className="text-vtv-green" /> Lịch sử đơn hàng
             </h1>
 
-            {loading ? (
-                <div className="text-center text-gray-500">Đang tải...</div>
-            ) : orders.length === 0 ? (
+            {orders.length === 0 ? (
                 <div className="text-center text-gray-400 bg-slate-800/50 p-10 rounded-xl border border-dashed border-slate-700">
                     Bạn chưa có đơn hàng nào.
                 </div>
@@ -63,7 +63,7 @@ const OrderHistoryPage = () => {
                             {/* Header Đơn Hàng */}
                             <div className="bg-slate-800/50 p-4 flex justify-between items-center border-b border-slate-700">
                                 <div>
-                                    <div className="text-white font-bold text-sm">#{order.code}</div>
+                                    <div className="text-white font-bold text-sm">{order.code}</div>
                                     <div className="text-gray-500 text-xs mt-1 flex items-center gap-1">
                                         <Calendar size={12}/> {formatDate(order.createdAt)}
                                     </div>
@@ -80,11 +80,13 @@ const OrderHistoryPage = () => {
                             <div className="p-4 space-y-2">
                                 {order.items.map((item) => (
                                     <div key={item.id} className="flex gap-3 items-center">
-                                        <img 
-                                            src={item.variant?.product?.thumbnail} 
-                                            className="w-10 h-10 rounded object-cover bg-slate-700" 
-                                            alt=""
-                                        />
+                                        <div className="w-10 h-10 rounded bg-slate-700 flex items-center justify-center overflow-hidden">
+                                            {item.variant?.product?.thumbnail ? (
+                                                <img src={item.variant.product.thumbnail} className="w-full h-full object-cover" alt=""/>
+                                            ) : (
+                                                <Package size={20} className="text-gray-500"/>
+                                            )}
+                                        </div>
                                         <div className="flex-1">
                                             <div className="text-white text-sm font-medium">{item.variant?.product?.name}</div>
                                             <div className="text-gray-400 text-xs">{item.variant?.name} x{item.quantity}</div>
@@ -96,7 +98,7 @@ const OrderHistoryPage = () => {
                             {/* Nút Xem Key */}
                             <div className="bg-slate-900/30 p-3 text-right">
                                 <button 
-                                    onClick={() => setSelectedOrder(order)} // Bấm vào thì set đơn hàng cần xem
+                                    onClick={() => setSelectedOrder(order)} 
                                     className="text-sm bg-vtv-green text-black px-4 py-2 rounded font-bold hover:bg-green-400 transition flex items-center gap-2 ml-auto"
                                 >
                                     <Package size={16}/> Xem Key / Tài khoản
@@ -114,7 +116,7 @@ const OrderHistoryPage = () => {
                         
                         {/* Header Modal */}
                         <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800">
-                            <h3 className="text-white font-bold text-lg">Chi tiết đơn hàng #{selectedOrder.code}</h3>
+                            <h3 className="text-white font-bold text-lg">Chi tiết đơn hàng {selectedOrder.code}</h3>
                             <button onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-white">
                                 <X size={24}/>
                             </button>
@@ -125,7 +127,13 @@ const OrderHistoryPage = () => {
                             {selectedOrder.items.map((item, index) => (
                                 <div key={index} className="bg-slate-950 rounded-xl p-4 border border-slate-800">
                                     <div className="flex gap-3 mb-3 border-b border-slate-800 pb-3">
-                                        <img src={item.variant?.product?.thumbnail} className="w-12 h-12 rounded bg-slate-800 object-cover" alt=""/>
+                                        <div className="w-12 h-12 rounded bg-slate-800 flex items-center justify-center overflow-hidden">
+                                            {item.variant?.product?.thumbnail ? (
+                                                <img src={item.variant.product.thumbnail} className="w-full h-full object-cover" alt=""/>
+                                            ) : (
+                                                <Package size={24} className="text-gray-500"/>
+                                            )}
+                                        </div>
                                         <div>
                                             <h4 className="text-vtv-green font-bold text-sm">{item.variant?.product?.name}</h4>
                                             <p className="text-gray-400 text-xs">{item.variant?.name}</p>
@@ -135,7 +143,6 @@ const OrderHistoryPage = () => {
                                     <div className="space-y-2">
                                         <p className="text-xs text-gray-400 uppercase font-bold">Mã kích hoạt / Tài khoản:</p>
                                         
-                                        {/* Hiển thị Key */}
                                         {item.codes ? (
                                             item.codes.split('\n').map((code, idx) => (
                                                 <div key={idx} className="flex items-center gap-2 bg-slate-800 p-2 rounded border border-slate-700 group">
@@ -174,7 +181,6 @@ const OrderHistoryPage = () => {
                     </div>
                 </div>
             )}
-
         </div>
     );
 };

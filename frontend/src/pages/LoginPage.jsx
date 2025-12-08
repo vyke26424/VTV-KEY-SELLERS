@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useAuthStore from '../store/useAuthStore';
+import axiosClient from '../store/axiosClient'; // <--- IMPORT QUAN TRỌNG
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true); // true = Đăng nhập, false = Đăng ký
@@ -21,7 +22,7 @@ const LoginPage = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(''); // Xóa lỗi khi người dùng gõ lại
+    setError(''); 
   };
 
   const handleSubmit = async (e) => {
@@ -29,41 +30,41 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
 
-    // Xác định endpoint (Dựa trên DTO bạn cung cấp)
+    // Xác định endpoint
     const endpoint = isLogin ? 'login' : 'signup';
     
-    // Chuẩn bị dữ liệu gửi đi (Khớp với DTO)
+    // Chuẩn bị dữ liệu gửi đi
     const payload = isLogin 
-      ? { email: formData.email, password: formData.password } // LoginDto
-      : { email: formData.email, password: formData.password, fullName: formData.fullName }; // SignupDto
+      ? { email: formData.email, password: formData.password } 
+      : { email: formData.email, password: formData.password, fullName: formData.fullName };
 
     try {
-      const res = await fetch(`http://localhost:3000/auth/${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // --- THAY ĐỔI LỚN Ở ĐÂY ---
+      // 1. Dùng axiosClient thay vì fetch
+      // 2. Không cần ghi full URL (vì đã có baseURL)
+      // 3. Không cần header Content-Type (axios tự lo)
+      const data = await axiosClient.post(`/auth/${endpoint}`, payload);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        // Hiển thị lỗi từ Backend (VD: Email không đúng định dạng, Password yếu...)
-        throw new Error(data.message || 'Có lỗi xảy ra, vui lòng thử lại.');
-      }
-
-      // Xử lý thành công
+      // --- XỬ LÝ THÀNH CÔNG ---
+      // axiosClient.js đã xử lý response.data, nên biến 'data' ở đây chính là JSON trả về từ backend
+      
       if (isLogin) {
-        // Giả sử Backend trả về { user: {...}, access_token: "..." }
+        // Backend trả về cấu trúc: { accessToken: "...", user: {...} }
+        // Store cần: loginSuccess(userData, token)
         loginSuccess(data.user, data.accessToken);
-        navigate('/'); // Về trang chủ
+        
+        navigate('/'); // Chuyển hướng về trang chủ
       } else {
         alert('Đăng ký thành công! Vui lòng đăng nhập.');
-        setIsLogin(true); // Chuyển sang tab đăng nhập
+        setIsLogin(true); 
         setFormData({ ...formData, password: '' });
       }
 
     } catch (err) {
-      setError(err.message);
+      // --- XỬ LÝ LỖI ---
+      // Với Axios, lỗi từ Backend trả về (400, 401, 500) sẽ nằm trong err.response
+      const message = err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -91,7 +92,7 @@ const LoginPage = () => {
 
         {/* FORM CONTAINER */}
         <motion.div 
-          key={isLogin ? 'login' : 'signup'} // Để framer motion biết khi nào đổi form
+          key={isLogin ? 'login' : 'signup'} 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-vtv-card border border-slate-700 p-8 rounded-2xl shadow-2xl"
@@ -111,7 +112,7 @@ const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             
-            {/* FULL NAME (Chỉ hiện khi Đăng ký) - Khớp SignupDto */}
+            {/* FULL NAME (Chỉ hiện khi Đăng ký) */}
             {!isLogin && (
               <div>
                 <label className="block text-gray-400 text-xs font-bold mb-1.5 uppercase">Họ và tên</label>
