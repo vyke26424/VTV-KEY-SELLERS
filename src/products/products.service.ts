@@ -1,51 +1,107 @@
 import { Injectable } from '@nestjs/common';
-// LƯU Ý: Hãy kiểm tra lại đường dẫn import PrismaService cho đúng với cấu trúc thư mục của bạn
-// Nếu file prisma.service.ts nằm ở thư mục src gốc thì dùng: '../prisma.service'
 import { PrismaService } from '../prisma/prisma.service'; 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { StockStatus } from '@prisma/client'; // Import thêm để lọc trạng thái
 
 @Injectable()
 export class ProductsService {
-  // 1. Inject PrismaService vào để dùng
   constructor(private prisma: PrismaService) {}
 
   // --- TẠO SẢN PHẨM MỚI ---
   async create(createProductDto: CreateProductDto) {
-    // Lưu ý: Đây là ví dụ cơ bản. Thực tế cần validate categoryId có tồn tại không
     return this.prisma.product.create({
       data: {
         name: createProductDto.name,
         slug: createProductDto.slug, 
-        // Trong thực tế bạn nên nhận categoryId từ DTO
-        categoryId: 1, 
+        categoryId: 1, // Thực tế nên lấy từ DTO
       }
     });
   }
 
-  // --- LẤY TẤT CẢ SẢN PHẨM (Cho Trang Chủ) ---
+  // --- [ĐÃ SỬA] LẤY TẤT CẢ SẢN PHẨM (Kèm trạng thái kho) ---
   async findAll() {
-    return this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       include: {
-        variants: true, // <--- QUAN TRỌNG: Lấy kèm bảng giá (variants)
-        category: true, // Lấy kèm tên danh mục để lọc ở Frontend
+        category: true, 
+        variants: {
+          include: {
+            // Đếm số lượng StockItem có trạng thái AVAILABLE
+            _count: {
+              select: { 
+                stockItems: { 
+                  where: { status: StockStatus.AVAILABLE } 
+                } 
+              }
+            }
+          }
+        },
       },
       orderBy: {
-        createdAt: 'desc', // Sản phẩm mới nhất lên đầu
+        createdAt: 'desc', 
       }
+    });
+
+    // Xử lý dữ liệu để Frontend dễ dùng hơn
+    return products.map(product => {
+      // Tính tổng tồn kho của tất cả các gói (variant) cộng lại
+      const totalStock = product.variants.reduce((sum, variant) => {
+        return sum + variant._count.stockItems;
+      }, 0);
+
+      return {
+        ...product,
+        totalStock: totalStock, // Số lượng key còn lại
+        isOutOfStock: totalStock === 0, // Cờ báo hết hàng
+        // Làm sạch dữ liệu variants
+        variants: product.variants.map(v => ({
+          ...v,
+          stock: v._count.stockItems, // Gán số lượng vào biến stock cho từng gói
+        }))
+      };
     });
   }
 
-  // --- LẤY CHI TIẾT 1 SẢN PHẨM (Cho trang Detail) ---
-  async findOne(id: number) {
-    return this.prisma.product.findUnique({
-      where: { id },
+  // --- [ĐÃ SỬA] LẤY CHI TIẾT 1 SẢN PHẨM (Kèm trạng thái kho) ---
+  async findOne(idOrSlug: number | string) {
+    // Logic để hỗ trợ tìm bằng ID hoặc Slug (nếu bạn cần)
+    const whereCondition = typeof idOrSlug === 'number' 
+        ? { id: idOrSlug } 
+        : { slug: idOrSlug as string };
+
+    const product = await this.prisma.product.findFirst({
+      where: whereCondition,
       include: {
-        variants: true, // Lấy các gói (1 tháng, 1 năm...)
-        reviews: true,  // Lấy đánh giá
+        reviews: true,
         category: true,
+        variants: {
+          include: {
+            _count: {
+              select: { 
+                stockItems: { 
+                    where: { status: StockStatus.AVAILABLE } 
+                } 
+              }
+            }
+          }
+        },
       },
     });
+
+    if (!product) return null;
+
+    // Xử lý dữ liệu tương tự như findAll
+    const totalStock = product.variants.reduce((sum, variant) => sum + variant._count.stockItems, 0);
+
+    return {
+      ...product,
+      totalStock,
+      isOutOfStock: totalStock === 0,
+      variants: product.variants.map(v => ({
+        ...v,
+        stock: v._count.stockItems
+      }))
+    };
   }
 
   // --- CẬP NHẬT ---
@@ -86,9 +142,8 @@ export class ProductsService {
     return { message: 'Đã tạo xong 4 danh mục mẫu thành công!' };
   }
 
-  // --- HÀM 2: TẠO SẢN PHẨM MẪU (BẠN ĐANG THIẾU CÁI NÀY) ---
+  // --- HÀM 2: TẠO SẢN PHẨM MẪU ---
   async seedProducts() {
-    // Dữ liệu mẫu khớp với giao diện Frontend
     const products = [
       {
         name: 'Spotify Premium 1 Năm',
@@ -121,7 +176,7 @@ export class ProductsService {
         name: 'Windows 11 Pro Key',
         slug: 'windows-11-pro',
         thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Windows_11_logo.svg',
-        categorySlug: 'hot', // Giả sử bạn xếp nó vào Hot hoặc tạo thêm category Software
+        categorySlug: 'hot', 
         variants: [
           { name: 'Vĩnh viễn', price: 150000, orginalPrice: 3000000 }
         ]
@@ -149,21 +204,19 @@ export class ProductsService {
     let count = 0;
 
     for (const p of products) {
-      // 1. Tìm category id dựa trên slug (Vì trong bảng Product lưu categoryId chứ không lưu slug)
       const category = await this.prisma.category.findUnique({ where: { slug: p.categorySlug } });
       
-      // Chỉ tạo sản phẩm nếu tìm thấy danh mục
       if (category) {
         await this.prisma.product.upsert({
-          where: { slug: p.slug }, // Nếu slug sản phẩm đã có thì thôi
+          where: { slug: p.slug },
           update: {},
           create: {
             name: p.name,
             slug: p.slug,
             thumbnail: p.thumbnail,
-            categoryId: category.id, // Liên kết khóa ngoại
+            categoryId: category.id,
             variants: {
-              create: p.variants // Tạo luôn bảng giá con (Nested write)
+              create: p.variants
             }
           }
         });
