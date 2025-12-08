@@ -1,0 +1,44 @@
+Đối tác lập trình
+MÔ HÌNH "CỬA HÀNG - KHO HÀNG" (Chuẩn Digital)
+Hãy hình dung database của bạn chia làm 3 tầng:
+Tầng 1: Kệ Trưng Bày (Product)
+Đây là cái Vỏ. Nó chỉ chứa Tên, Ảnh, Mô tả.
+Ví dụ: Bạn chỉ tạo Duy nhất 1 dòng trong bảng Product:
+id: 1
+name: "Microsoft Office 365 Bản Quyền"
+thumbnail: "office.jpg"
+
+Tầng 2: Bảng Giá (ProductVariant)
+Đây là các Gói.
+Ví dụ: Bạn tạo 1 dòng trong bảng Variant liên kết với Product trên:
+id: 100
+productId: 1
+name: "Gói 1 Năm - Tài khoản riêng"
+price: 300.000đ
+
+Tầng 3: Kho Chứa Key (StockItem)
+Đây là Hàng thật. Đây mới là nơi chứa 4 cái key bạn nói.
+Bảng này sẽ chứa 4 dòng, tất cả đều trỏ về cái variantId: 100 ở trên.
+ID,	Key (Credential),	Trạng Thái (Status),	Thuộc Gói (VariantId)
+1,	AAAA-BBBB-CCCC,		AVAILABLE (Sẵn sàng),	100
+2,	DDDD-EEEE-FFFF,		AVAILABLE (Sẵn sàng),	100
+3,	XXXX-YYYY-ZZZZ,		AVAILABLE (Sẵn sàng),	100
+4,	1111-2222-3333,		AVAILABLE (Sẵn sàng),	100
+
+
+Cách hệ thống hoạt động:
+1. Hiển thị:
+Frontend chỉ gọi bảng Product. Nó thấy có 1 sản phẩm "Office 365".
+Nó hiện 1 thẻ sản phẩm duy nhất.
+
+2. Đếm số lượng tồn kho (Inventory):
+Khi khách hỏi: "Gói này còn hàng không?"
+Backend sẽ chạy lệnh đếm: "Ê Database, đếm xem trong bảng StockItem có bao nhiêu dòng có variantId = 100 và trạng thái là AVAILABLE?"
+Database trả lời: "Còn 4 dòng".
+Frontend hiện: "Kho: 4".
+
+3. Khi khách mua 1 cái:
+Backend tìm 1 dòng bất kỳ trong bảng StockItem đang AVAILABLE (Ví dụ lấy dòng ID 1).
+Backend lấy key AAAA-BBBB-CCCC đưa cho khách.
+Backend đổi trạng thái dòng ID 1 thành SOLD (Đã bán).
+Lúc này, nếu đếm lại, kho chỉ còn 3 dòng AVAILABLE
