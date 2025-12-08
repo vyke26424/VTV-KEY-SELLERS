@@ -22,10 +22,10 @@ export class AuthController {
     @HttpCode(HttpStatus.CREATED) // 201
     async signup (@Body() dto : SignupDto, 
     @Res({passthrough : true}) res : express.Response) {
-        const data = await this.authService.signup(dto);
-        const {accessToken, refreshToken} = await this.authService.signup(dto);
         
-        res.cookie('refreshToken', refreshToken,{
+        const data = await this.authService.signup(dto);
+        
+        res.cookie('refreshToken', data.refreshToken,{
             httpOnly : true, // cấm Js đọc, tránh hacker trộm token bằng mã độc (XSS)
             sameSite : 'lax', // hạn chế gửi chén tránh web lạ gửi lệnh mạo danh
             //secure : true, // chỉ dùng https, tránh mimd
