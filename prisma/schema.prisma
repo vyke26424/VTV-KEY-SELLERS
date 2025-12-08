@@ -101,7 +101,7 @@ model ProductVariant {
   orderItems OrderItem[] 
 
   isDeleted Boolean @default(false)
-  deltetedAt DateTime?
+  deletedAt DateTime?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -160,6 +160,8 @@ model OrderItem {
   id Int @id @default(autoincrement())
   price Decimal @db.Decimal(10,2)
   quantity Int
+
+  codes     String? @db.Text // lưu key/tài khoản đã bán dưới dạng text
 
   orderId Int
   order Order @relation(fields: [orderId], references: [id])
@@ -232,7 +234,7 @@ model Review {
 
 model RefreshToken {
   id Int @id @default(autoincrement())
-  token String 
+  token String @db.Text //Thêm thằng @db.Text để tránh lỗi token quá dài
   userId String
   tokenId String @unique
   user User @relation(fields: [userId], references: [id])
