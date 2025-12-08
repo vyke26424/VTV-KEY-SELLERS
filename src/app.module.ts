@@ -15,6 +15,8 @@ import { AdminProductService } from './admin/services/admin-product/admin-produc
 import { AdminCategoryService } from './admin/services/admin-category/admin-category.service';
 import { AdminCategoryController } from './admin/controller/admin-category/admin-category.controller';
 import { AdminProductController } from './admin/controller/admin-product/admin-product.controller';
+import { OrdersModule } from './orders/orders.module';
+import { ProductsModule } from './products/products.module';
 
 
 @Module({
@@ -23,7 +25,7 @@ import { AdminProductController } from './admin/controller/admin-product/admin-p
   }),
   ScheduleModule.forRoot(),
     AuthModule,
-  PrismaModule, JwtModule, UserModule, AdminModule],
+  PrismaModule, JwtModule, UserModule, AdminModule, OrdersModule, ProductsModule],
   controllers: [AuthController, AdminCategoryController, AdminProductController],
   providers: [AuthService, UserService, AdminProductService, AdminCategoryService],
 })

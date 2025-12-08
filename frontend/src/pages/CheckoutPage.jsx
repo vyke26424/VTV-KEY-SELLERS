@@ -1,31 +1,72 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Gom import lại cho gọn
 import { ShieldCheck, CreditCard, QrCode, ArrowLeft } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
-import { Link } from 'react-router-dom';
+import useAuthStore from '../store/useAuthStore'; // <--- 1. QUAN TRỌNG: Import Auth Store
 
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cart, clearCart } = useCartStore();
+  
+  // 2. QUAN TRỌNG: Lấy thông tin user đang đăng nhập
+  const { user } = useAuthStore(); 
+
   const [loading, setLoading] = useState(false);
 
   // Tính tổng tiền
   const totalAmount = cart.reduce((total, item) => total + (parseFloat(item.selectedVariant?.price || item.price) * item.quantity), 0);
 
   // Xử lý khi bấm nút "Xác nhận thanh toán"
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
+    
+    // Kiểm tra đăng nhập (Logic này giờ đã có biến user để check)
+    if (!user) {
+        alert("Vui lòng đăng nhập để thanh toán!");
+        navigate('/login'); // Chuyển hướng người dùng đi đăng nhập luôn cho tiện
+        return;
+    }
+
     setLoading(true);
 
-    // Giả lập gọi API thanh toán mất 2 giây
-    setTimeout(() => {
-      clearCart(); // Xóa giỏ hàng
-      setLoading(false);
-      navigate('/success'); // Chuyển sang trang thành công
-    }, 2000);
-  };
+    // 1. Chuẩn bị dữ liệu đúng chuẩn DTO
+    const orderData = {
+        userId: user.id,
+        totalAmount: totalAmount,
+        items: cart.map(item => ({
+            variantId: item.selectedVariant?.id || 0,
+            quantity: item.quantity,
+            price: parseFloat(item.selectedVariant?.price || item.price)
+        }))
+    };
+
+    try {
+        // 2. Gọi API Backend
+        const res = await fetch('http://localhost:3000/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            // 3. Thành công -> Xóa giỏ -> Chuyển trang
+            clearCart(); 
+            navigate('/success'); 
+        } else {
+            alert('Lỗi đặt hàng: ' + (data.message || 'Thử lại sau'));
+        }
+
+    } catch (error) {
+        console.error("Lỗi:", error);
+        alert("Không thể kết nối đến Server");
+    } finally {
+        setLoading(false);
+    }
+   };
 
   if (cart.length === 0) return <div className="text-center py-20 text-white">Giỏ hàng trống! <Link to="/" className="text-vtv-green underline">Về trang chủ</Link></div>;
 
@@ -52,7 +93,13 @@ const CheckoutPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                <div>
                   <label className="block text-gray-400 text-sm mb-2">Email nhận hàng (Bắt buộc)</label>
-                  <input type="email" placeholder="vidu@gmail.com" className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white focus:border-vtv-green outline-none"/>
+                  {/* Tự động điền email của user vào đây cho xịn */}
+                  <input 
+                    type="email" 
+                    defaultValue={user?.email || ''} 
+                    readOnly 
+                    className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-gray-400 focus:border-vtv-green outline-none cursor-not-allowed"
+                  />
                   <p className="text-xs text-gray-500 mt-1">Key bản quyền sẽ được gửi tự động qua email này.</p>
                </div>
                <div>
@@ -96,10 +143,10 @@ const CheckoutPage = () => {
             <div className="mt-6 bg-white p-4 rounded-xl max-w-sm mx-auto text-center">
                <p className="text-black font-bold mb-2">Quét mã để thanh toán</p>
                <div className="aspect-square bg-gray-200 flex items-center justify-center mb-2 rounded border-2 border-black">
-                  {/* Thay ảnh QR thật vào đây */}
                   <QrCode size={150} className="text-black"/> 
                </div>
-               <p className="text-sm text-gray-600">Nội dung: <strong className="text-blue-600">VTVKEY {Math.floor(Math.random() * 90000) + 10000}</strong></p>
+               {/* Sửa lại nội dung chuyển khoản cho chuyên nghiệp: VTVKEY + Mã User */}
+               <p className="text-sm text-gray-600">Nội dung: <strong className="text-blue-600">VTVKEY {user?.id?.slice(-5).toUpperCase() || 'CODE'}</strong></p>
             </div>
           </div>
         </div>
