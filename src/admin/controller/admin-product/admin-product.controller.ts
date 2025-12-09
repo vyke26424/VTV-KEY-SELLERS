@@ -1,11 +1,12 @@
 
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, ParseIntPipe, DefaultValuePipe, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, ParseIntPipe, DefaultValuePipe, Query, Patch, Delete } from '@nestjs/common';
 import { Roles } from '../../decorator/role.decorator';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../../guard/role.guard';
 import { AdminProductService } from '../../services/admin-product/admin-product.service';
 import { CreateProuct } from '../../dto/create-product.dto';
+import { UpdateProduct } from '../../dto/update-product.dto';
 
 @Controller('admin/product')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -30,5 +31,21 @@ export class AdminProductController {
     @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id : number) {
         return await this.productService.findOne(id);
+    }
+
+    @Patch(':id')
+    async update( @Param('id', ParseIntPipe) id : number,
+        @Body() data : UpdateProduct) {
+        return await this.productService.update(id, data);
+    }
+    
+    @Delete(':id')
+    async remove(@Param('id', ParseIntPipe) id : number) {
+        return await this.productService.remove(id);
+    }
+    
+    @Patch("id/restore")
+    async restore(@Param('id', ParseIntPipe) id : number) {
+        return await this.productService.restore(id);
     }
 }

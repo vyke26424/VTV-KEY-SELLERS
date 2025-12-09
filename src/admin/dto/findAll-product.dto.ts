@@ -2,5 +2,6 @@ export class FindAllProductDto {
     page? : number ;
     limit? : number;
     search? : string ;
-    categoryId? : number
+    categoryId? : number ;
+    viewDeleted? : boolean
 }
