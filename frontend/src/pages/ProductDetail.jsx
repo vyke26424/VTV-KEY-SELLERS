@@ -1,24 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Note: Thêm useNavigate để chuyển trang
 import { CheckCircle, ShieldCheck, ShoppingCart, AlertCircle, Loader } from 'lucide-react';
+
+// --- IMPORT STORE ---
+import useCartStore from '../store/useCartStore'; // Note: Lấy hàm thêm giỏ hàng
+import useAuthStore from '../store/useAuthStore'; // Note: Lấy trạng thái đăng nhập
 
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
 const ProductDetail = () => {
-  const { id } = useParams(); // id ở đây có thể là số (1) hoặc slug (netflix-premium)
+  const { id } = useParams();
+  const navigate = useNavigate(); // Hook dùng để chuyển hướng trang (redirect)
+
+  // --- KẾT NỐI VỚI ZUSTAND STORE ---
+  const addToCart = useCartStore((state) => state.addToCart); // Lấy hàm addToCart từ store
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Kiểm tra xem user đã login chưa
+
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cấu hình URL API (Sửa port nếu backend bạn chạy khác port 3000)
   const API_URL = 'http://localhost:3000'; 
 
+  // --- HÀM 1: XỬ LÝ THÊM VÀO GIỎ HÀNG ---
+  const handleAddToCart = () => {
+    if (!product || !selectedVariant) return;
+
+    // Gọi hàm từ Store để lưu vào LocalStorage/State
+    addToCart(product, selectedVariant);
+    
+    // Thông báo cho người dùng biết
+    alert(`Đã thêm "${product.name} - ${selectedVariant.name}" vào giỏ hàng!`);
+  };
+
+  // --- HÀM 2: XỬ LÝ MUA NGAY ---
+  const handleBuyNow = () => {
+    if (!product || !selectedVariant) return;
+
+    // Bước 1: Kiểm tra đăng nhập
+    if (!isAuthenticated) {
+        // Note: Nếu chưa đăng nhập -> Hỏi user và chuyển qua trang Login
+        if (window.confirm("Bạn cần đăng nhập để mua hàng. Chuyển đến trang đăng nhập ngay?")) {
+            navigate('/login');
+        }
+        return; // Dừng lại, không làm gì tiếp
+    }
+
+    // Bước 2: Nếu đã đăng nhập
+    // -> Thêm sản phẩm vào giỏ hàng trước (để trang Checkout có dữ liệu mà hiển thị)
+    addToCart(product, selectedVariant);
+
+    // -> Chuyển hướng thẳng sang trang Thanh toán
+    navigate('/checkout');
+  };
+
+  // --- GỌI API LẤY CHI TIẾT SẢN PHẨM ---
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        // Gọi API Backend
+        // Note: Gọi API public, không cần Token
         const response = await fetch(`${API_URL}/products/${id}`);
         
         if (!response.ok) {
@@ -27,22 +69,20 @@ const ProductDetail = () => {
 
         const data = await response.json();
 
-        // Xử lý dữ liệu trả về để khớp với giao diện
-        // Backend trả về variants, nhưng ta cần đảm bảo price là số để formatCurrency chạy đúng
+        // Note: Xử lý dữ liệu trả về (ép kiểu số cho giá tiền)
         const processedProduct = {
             ...data,
             variants: data.variants.map(v => ({
                 ...v,
-                price: Number(v.price), // Chuyển Decimal string sang Number
+                price: Number(v.price), // Chuyển string 'Decimal' sang Number
                 orginalPrice: Number(v.orginalPrice),
-                // Backend trả về trường 'stock' (do ta đã custom trong service)
-                stock: v.stock 
+                stock: v.stock // Số lượng tồn kho
             }))
         };
 
         setProduct(processedProduct);
 
-        // Logic chọn gói mặc định: Chọn gói đầu tiên CÒN HÀNG
+        // Note: Tự động chọn gói đầu tiên mà CÒN HÀNG (stock > 0)
         if (processedProduct.variants && processedProduct.variants.length > 0) {
             const availableVariant = processedProduct.variants.find(v => v.stock > 0);
             setSelectedVariant(availableVariant || processedProduct.variants[0]);
@@ -60,13 +100,14 @@ const ProductDetail = () => {
     }
   }, [id]);
 
-  // --- TRẠNG THÁI LOADING & ERROR ---
+  // --- GIAO DIỆN LOADING ---
   if (loading) return (
     <div className="flex justify-center items-center h-screen text-white">
         <Loader className="animate-spin mr-2"/> Đang tải dữ liệu...
     </div>
   );
 
+  // --- GIAO DIỆN LỖI ---
   if (error || !product) return (
     <div className="text-center mt-20 text-red-400">
         <h2 className="text-2xl font-bold">Lỗi!</h2>
@@ -74,14 +115,14 @@ const ProductDetail = () => {
     </div>
   );
 
-  // Biến kiểm tra hết hàng
+  // Note: Biến kiểm tra nhanh xem gói đang chọn có hết hàng không
   const isOutOfStock = selectedVariant?.stock === 0;
 
   return (
     <div className="container mx-auto px-4 py-8 text-gray-300">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* --- CỘT TRÁI: THÔNG TIN --- */}
+        {/* --- CỘT TRÁI: THÔNG TIN SẢN PHẨM (Giữ nguyên) --- */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-2xl p-8 flex items-center justify-between border border-slate-700 shadow-lg relative overflow-hidden">
              <div className="z-10">
@@ -89,7 +130,6 @@ const ProductDetail = () => {
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{product.name}</h1>
                 <p className="text-blue-200">Danh mục: {product.category?.name}</p>
              </div>
-             {/* Nếu có thumbnail thật thì hiện ảnh, không thì hiện icon */}
              <div className="z-10">
                 {product.thumbnail && !product.thumbnail.includes('svg') ? (
                     <img src={product.thumbnail} alt={product.name} className="h-32 w-32 object-contain drop-shadow-lg" />
@@ -103,7 +143,6 @@ const ProductDetail = () => {
             <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-vtv-green pl-3">Mô tả sản phẩm</h2>
             <p className="leading-relaxed mb-6 whitespace-pre-line">{product.description || 'Chưa có mô tả chi tiết.'}</p>
             
-            {/* Hiển thị tính năng từ JSON aiMetadata */}
             {product.aiMetadata?.features && (
                 <>
                     <h3 className="font-bold text-white mb-3">Tính năng nổi bật:</h3>
@@ -174,23 +213,33 @@ const ProductDetail = () => {
                     </>
                 )}
                 
-                {/* Nút Mua */}
+                {/* --- KHU VỰC NÚT BẤM (ĐÃ GẮN LOGIC) --- */}
                 {isOutOfStock ? (
+                    // Trường hợp Hết hàng: Khóa nút
                     <button disabled className="w-full bg-slate-600 text-gray-400 font-bold py-3 rounded-lg mb-3 cursor-not-allowed flex justify-center items-center gap-2">
                        <AlertCircle size={20}/> TẠM HẾT HÀNG
                     </button>
                 ) : (
+                    // Trường hợp Còn hàng
                     <>
-                        <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mb-3 shadow-lg shadow-blue-500/20 transition-all">
+                        {/* NÚT MUA NGAY -> Gọi handleBuyNow */}
+                        <button 
+                            onClick={handleBuyNow}
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mb-3 shadow-lg shadow-blue-500/20 transition-all"
+                        >
                            MUA NGAY ({selectedVariant?.name})
                         </button>
-                        <button className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+                        
+                        {/* NÚT THÊM GIỎ HÀNG -> Gọi handleAddToCart */}
+                        <button 
+                            onClick={handleAddToCart}
+                            className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
+                        >
                            <ShoppingCart size={18}/> Thêm vào giỏ
                         </button>
                     </>
                 )}
 
-                {/* Footer thông tin */}
                 <div className="mt-6 pt-6 border-t border-slate-700 space-y-3 text-sm text-gray-400">
                    <div className="flex items-center gap-2">
                       <ShieldCheck size={16} className="text-green-500"/> 
