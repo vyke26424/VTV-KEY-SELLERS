@@ -6,6 +6,16 @@ import useAuthStore from '../store/useAuthStore';
 import axiosClient from '../store/axiosClient';
 
 const Header = () => {
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+        // Chuyển hướng sang /search?q=...
+        navigate(`/search?q=${e.target.value}`);
+        // Reset ô tìm kiếm nếu muốn
+        // e.target.value = ''; 
+    }
+  };
+
   // --- SỬA LẠI ĐÚNG Ở ĐÂY ---
   const { user, isAuthenticated, logout } = useAuthStore(); 
   // -------------------------
@@ -62,9 +72,10 @@ const Header = () => {
         {/* SEARCH BAR */}
         <div className="flex-1 max-w-xl relative hidden md:block">
           <input 
-            type="text" 
-            placeholder="Tìm kiếm sản phẩm..." 
-            className="w-full bg-slate-900 border border-slate-700 text-sm rounded-full py-2.5 pl-5 text-white focus:border-vtv-green focus:outline-none transition-colors"
+              type="text" 
+              placeholder="Tìm kiếm..." 
+              onKeyDown={handleSearch} // <--- QUAN TRỌNG
+              className="w-full bg-slate-900 border border-slate-700 text-sm rounded-full py-2.5 pl-5 text-white focus:border-vtv-green focus:outline-none transition-colors"
           />
           <Search className="absolute right-3 top-2.5 text-gray-500 hover:text-white cursor-pointer" size={18}/>
         </div>
