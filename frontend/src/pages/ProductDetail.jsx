@@ -31,7 +31,7 @@ const ProductDetail = () => {
     addToCart(product, selectedVariant);
     
     // Thông báo cho người dùng biết
-    alert(`Đã thêm "${product.name} - ${selectedVariant.name}" vào giỏ hàng!`);
+    //alert(`Đã thêm "${product.name} - ${selectedVariant.name}" vào giỏ hàng!`);
   };
 
   // --- HÀM 2: XỬ LÝ MUA NGAY ---
