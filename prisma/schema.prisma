@@ -61,7 +61,7 @@ model Product {
   description String? @db.Text
   thumbnail String? // lưu url của ảnh'
   // lưu 1 cái aliases mà người dùng có thể gọi như ["Netflix", "nét phờ líc", "acc xem phim"]
-  keywords Json?
+  keyword keywords[]
   // Dữ liệu cấu trúc để Bot hiểu sâu về sản phẩm. 
   // VD: { "features": ["4K", "No Ads"], "suitable_for": ["Family", "Student"] }
   aiMetadata Json?
@@ -88,6 +88,11 @@ model Product {
   @@index([isDeleted])
 }
 
+model keywords {
+  id Int @id @default(autoincrement())
+  name String @unique 
+  product Product[]
+}
 // Core Logic 
 model ProductVariant {
   id Int @id @default(autoincrement())
