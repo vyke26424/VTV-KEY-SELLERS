@@ -19,6 +19,8 @@ export class ProductsService {
     });
   }
 
+  
+
   // --- [ĐÃ SỬA] LẤY TẤT CẢ SẢN PHẨM (Kèm trạng thái kho) ---
   async findAll() {
     const products = await this.prisma.product.findMany({
@@ -225,4 +227,38 @@ export class ProductsService {
     }
     return { message: `Đã xử lý xong dữ liệu mẫu! (Đã kiểm tra ${count} sản phẩm)` };
   }
+
+async searchProducts(searchTerm: string) {
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      return [];
+    }
+
+    const lowerSearchTerm = searchTerm.toLowerCase().trim();
+
+    // 🚨 FIX: Removed 'mode: "insensitive"' to resolve TypeScript error for MySQL
+    const products = await this.prisma.product.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              // Searching across multiple fields using 'contains'
+              { name: { contains: lowerSearchTerm } }, 
+              { slug: { contains: lowerSearchTerm } },
+              { description: { contains: lowerSearchTerm } },
+            ]
+          },
+          // Only search active products
+          { isActive: true } 
+        ]
+      },
+      // Include necessary relations
+      include: {
+        category: true,
+        variants: true,
+      },
+      take: 20,
+    });
+
+    return products;
+}
 }

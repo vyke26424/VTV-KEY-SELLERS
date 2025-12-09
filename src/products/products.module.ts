@@ -10,5 +10,7 @@ import { PrismaService } from '../prisma/prisma.service';
     ProductsService, 
     PrismaService 
   ],
+// ⬅️ BỔ SUNG: EXPORT ProductsService để module khác dùng
+  exports: [ProductsService],  
 })
 export class ProductsModule {}

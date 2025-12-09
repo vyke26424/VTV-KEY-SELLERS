@@ -17,7 +17,8 @@ import { AdminCategoryController } from './admin/controller/admin-category/admin
 import { AdminProductController } from './admin/controller/admin-product/admin-product.controller';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
-
+// newly added
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -25,7 +26,7 @@ import { ProductsModule } from './products/products.module';
   }),
   ScheduleModule.forRoot(),
     AuthModule,
-  PrismaModule, JwtModule, UserModule, AdminModule, OrdersModule, ProductsModule],
+  PrismaModule, JwtModule, UserModule, AdminModule, OrdersModule, ProductsModule,SearchModule],
   controllers: [AuthController, AdminCategoryController, AdminProductController],
   providers: [AuthService, UserService, AdminProductService, AdminCategoryService],
 })
