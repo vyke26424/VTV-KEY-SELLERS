@@ -30,12 +30,16 @@ axiosClient.interceptors.response.use(
       originalRequest._retry = true; // Đánh dấu để không lặp vô tận
 
       try {
+        console.log("⚠️ Token hết hạn! Đang gọi Refresh Token...");
         // 1. Gọi API Refresh để lấy AccessToken mới + Cookie RefreshToken mới
         // Lưu ý: Không cần truyền body, vì RefreshToken nằm trong HttpOnly Cookie rồi
         const res = await axiosClient.post('/auth/refresh');
 
         const newAccessToken = res.accessToken;
 
+
+        console.log("✅ Đã lấy được Token mới:", newAccessToken);
+        console.log("🔄 Đang thực hiện lại request cũ...");
         // 2. Lưu AccessToken mới vào Store (Zustand)
         // Lưu ý: user giữ nguyên, chỉ update token
         const currentUser = useAuthStore.getState().user;

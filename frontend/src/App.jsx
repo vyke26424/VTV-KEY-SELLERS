@@ -14,11 +14,13 @@ import CheckoutPage from './pages/CheckoutPage';
 import SuccessPage from './pages/SuccessPage';
 import LoginPage from './pages/LoginPage'
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import SessionManager from './components/SessionManager';
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-vtv-dark text-gray-200 font-sans pb-20 flex flex-col">
+        <SessionManager />
         <Header />
         
         <main className="flex-grow">
