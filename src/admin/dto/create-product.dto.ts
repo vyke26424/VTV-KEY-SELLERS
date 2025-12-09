@@ -31,6 +31,8 @@ export class CreateProuct {
     @IsArray()
     @IsString({each : true})
     @IsOptional()
+    @IsArray()
+    @IsString({each : true})
     keywords? : string[]
     @IsObject()
     @IsOptional()
