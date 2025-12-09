@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { useParams, useNavigate } from 'react-router-dom'; // Note: Thêm useNavigate để chuyển trang
-=======
-import { useParams, useNavigate } from 'react-router-dom'; // Thêm useNavigate
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
 import { CheckCircle, ShieldCheck, ShoppingCart, AlertCircle, Loader } from 'lucide-react';
-import useCartStore from '../store/useCartStore'; // <--- 1. Import Store Giỏ hàng
-import useAuthStore from '../store/useAuthStore'; // <--- 2. Import Store Auth
 
 // --- IMPORT STORE ---
 import useCartStore from '../store/useCartStore'; // Note: Lấy hàm thêm giỏ hàng
@@ -16,19 +10,11 @@ const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'curr
 
 const ProductDetail = () => {
   const { id } = useParams();
-<<<<<<< HEAD
   const navigate = useNavigate(); // Hook dùng để chuyển hướng trang (redirect)
 
   // --- KẾT NỐI VỚI ZUSTAND STORE ---
   const addToCart = useCartStore((state) => state.addToCart); // Lấy hàm addToCart từ store
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Kiểm tra xem user đã login chưa
-=======
-  const navigate = useNavigate(); // Hook để chuyển trang
-
-  // --- KẾT NỐI STORE ---
-  const addToCart = useCartStore((state) => state.addToCart); // Hàm thêm vào giỏ
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Trạng thái đăng nhập
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
 
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -37,7 +23,6 @@ const ProductDetail = () => {
 
   const API_URL = 'http://localhost:3000'; 
 
-<<<<<<< HEAD
   // --- HÀM 1: XỬ LÝ THÊM VÀO GIỎ HÀNG ---
   const handleAddToCart = () => {
     if (!product || !selectedVariant) return;
@@ -64,54 +49,18 @@ const ProductDetail = () => {
 
     // Bước 2: Nếu đã đăng nhập
     // -> Thêm sản phẩm vào giỏ hàng trước (để trang Checkout có dữ liệu mà hiển thị)
-=======
-  // --- LOGIC: THÊM VÀO GIỎ HÀNG ---
-  const handleAddToCart = () => {
-    if (!product || !selectedVariant) return;
-
-    // Gọi hàm từ Store (file useCartStore.js của bạn đã viết rất chuẩn rồi)
-    addToCart(product, selectedVariant);
-    
-    // Thông báo nhỏ cho người dùng biết
-    //alert(`Đã thêm "${product.name} - ${selectedVariant.name}" vào giỏ hàng!`);
-  };
-
-  // --- LOGIC: MUA NGAY ---
-  const handleBuyNow = () => {
-    if (!product || !selectedVariant) return;
-
-    // 1. Kiểm tra đăng nhập
-    if (!isAuthenticated) {
-        // Nếu chưa đăng nhập -> Đẩy qua trang Login
-        // Mẹo: Bạn có thể lưu lại url hiện tại để login xong quay lại đây (nâng cao), 
-        // nhưng hiện tại cứ đẩy về login đơn giản trước.
-        if (window.confirm("Bạn cần đăng nhập để mua hàng. Chuyển đến trang đăng nhập ngay?")) {
-            navigate('/login');
-        }
-        return;
-    }
-
-    // 2. Nếu đã đăng nhập
-    // -> Thêm sản phẩm vào giỏ hàng trước (để trang Checkout có dữ liệu mà render)
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
     addToCart(product, selectedVariant);
 
     // -> Chuyển hướng thẳng sang trang Thanh toán
     navigate('/checkout');
   };
 
-<<<<<<< HEAD
   // --- GỌI API LẤY CHI TIẾT SẢN PHẨM ---
-=======
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-<<<<<<< HEAD
         // Note: Gọi API public, không cần Token
-=======
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
         const response = await fetch(`${API_URL}/products/${id}`);
         
         if (!response.ok) {
@@ -120,32 +69,20 @@ const ProductDetail = () => {
 
         const data = await response.json();
 
-<<<<<<< HEAD
         // Note: Xử lý dữ liệu trả về (ép kiểu số cho giá tiền)
-=======
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
         const processedProduct = {
             ...data,
             variants: data.variants.map(v => ({
                 ...v,
-<<<<<<< HEAD
                 price: Number(v.price), // Chuyển string 'Decimal' sang Number
                 orginalPrice: Number(v.orginalPrice),
                 stock: v.stock // Số lượng tồn kho
-=======
-                price: Number(v.price),
-                orginalPrice: Number(v.orginalPrice),
-                stock: v.stock 
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
             }))
         };
 
         setProduct(processedProduct);
 
-<<<<<<< HEAD
         // Note: Tự động chọn gói đầu tiên mà CÒN HÀNG (stock > 0)
-=======
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
         if (processedProduct.variants && processedProduct.variants.length > 0) {
             const availableVariant = processedProduct.variants.find(v => v.stock > 0);
             setSelectedVariant(availableVariant || processedProduct.variants[0]);
@@ -163,10 +100,7 @@ const ProductDetail = () => {
     }
   }, [id]);
 
-<<<<<<< HEAD
   // --- GIAO DIỆN LOADING ---
-=======
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
   if (loading) return (
     <div className="flex justify-center items-center h-screen text-white">
         <Loader className="animate-spin mr-2"/> Đang tải dữ liệu...
@@ -181,21 +115,14 @@ const ProductDetail = () => {
     </div>
   );
 
-<<<<<<< HEAD
   // Note: Biến kiểm tra nhanh xem gói đang chọn có hết hàng không
-=======
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
   const isOutOfStock = selectedVariant?.stock === 0;
 
   return (
     <div className="container mx-auto px-4 py-8 text-gray-300">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-<<<<<<< HEAD
         {/* --- CỘT TRÁI: THÔNG TIN SẢN PHẨM (Giữ nguyên) --- */}
-=======
-        {/* --- CỘT TRÁI (Giữ nguyên) --- */}
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-2xl p-8 flex items-center justify-between border border-slate-700 shadow-lg relative overflow-hidden">
              <div className="z-10">
@@ -286,11 +213,7 @@ const ProductDetail = () => {
                     </>
                 )}
                 
-<<<<<<< HEAD
                 {/* --- KHU VỰC NÚT BẤM (ĐÃ GẮN LOGIC) --- */}
-=======
-                {/* --- NÚT BẤM ĐÃ ĐƯỢC KÍCH HOẠT --- */}
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
                 {isOutOfStock ? (
                     // Trường hợp Hết hàng: Khóa nút
                     <button disabled className="w-full bg-slate-600 text-gray-400 font-bold py-3 rounded-lg mb-3 cursor-not-allowed flex justify-center items-center gap-2">
@@ -299,11 +222,7 @@ const ProductDetail = () => {
                 ) : (
                     // Trường hợp Còn hàng
                     <>
-<<<<<<< HEAD
                         {/* NÚT MUA NGAY -> Gọi handleBuyNow */}
-=======
-                        {/* NÚT MUA NGAY: Gắn hàm handleBuyNow */}
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
                         <button 
                             onClick={handleBuyNow}
                             className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mb-3 shadow-lg shadow-blue-500/20 transition-all"
@@ -311,11 +230,7 @@ const ProductDetail = () => {
                            MUA NGAY ({selectedVariant?.name})
                         </button>
                         
-<<<<<<< HEAD
                         {/* NÚT THÊM GIỎ HÀNG -> Gọi handleAddToCart */}
-=======
-                        {/* NÚT GIỎ HÀNG: Gắn hàm handleAddToCart */}
->>>>>>> parent of c81af72 (Revert "Fix Product Detail Phong Bat")
                         <button 
                             onClick={handleAddToCart}
                             className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
