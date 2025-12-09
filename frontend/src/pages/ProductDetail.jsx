@@ -1,64 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Thêm useNavigate
+import { useParams } from 'react-router-dom';
 import { CheckCircle, ShieldCheck, ShoppingCart, AlertCircle, Loader } from 'lucide-react';
-import useCartStore from '../store/useCartStore'; // <--- 1. Import Store Giỏ hàng
-import useAuthStore from '../store/useAuthStore'; // <--- 2. Import Store Auth
 
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
 const ProductDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate(); // Hook để chuyển trang
-
-  // --- KẾT NỐI STORE ---
-  const addToCart = useCartStore((state) => state.addToCart); // Hàm thêm vào giỏ
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Trạng thái đăng nhập
-
+  const { id } = useParams(); // id ở đây có thể là số (1) hoặc slug (netflix-premium)
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Cấu hình URL API (Sửa port nếu backend bạn chạy khác port 3000)
   const API_URL = 'http://localhost:3000'; 
-
-  // --- LOGIC: THÊM VÀO GIỎ HÀNG ---
-  const handleAddToCart = () => {
-    if (!product || !selectedVariant) return;
-
-    // Gọi hàm từ Store (file useCartStore.js của bạn đã viết rất chuẩn rồi)
-    addToCart(product, selectedVariant);
-    
-    // Thông báo nhỏ cho người dùng biết
-    //alert(`Đã thêm "${product.name} - ${selectedVariant.name}" vào giỏ hàng!`);
-  };
-
-  // --- LOGIC: MUA NGAY ---
-  const handleBuyNow = () => {
-    if (!product || !selectedVariant) return;
-
-    // 1. Kiểm tra đăng nhập
-    if (!isAuthenticated) {
-        // Nếu chưa đăng nhập -> Đẩy qua trang Login
-        // Mẹo: Bạn có thể lưu lại url hiện tại để login xong quay lại đây (nâng cao), 
-        // nhưng hiện tại cứ đẩy về login đơn giản trước.
-        if (window.confirm("Bạn cần đăng nhập để mua hàng. Chuyển đến trang đăng nhập ngay?")) {
-            navigate('/login');
-        }
-        return;
-    }
-
-    // 2. Nếu đã đăng nhập
-    // -> Thêm sản phẩm vào giỏ hàng trước (để trang Checkout có dữ liệu mà render)
-    addToCart(product, selectedVariant);
-
-    // -> Chuyển hướng thẳng sang trang Thanh toán
-    navigate('/checkout');
-  };
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
+        // Gọi API Backend
         const response = await fetch(`${API_URL}/products/${id}`);
         
         if (!response.ok) {
@@ -67,18 +27,22 @@ const ProductDetail = () => {
 
         const data = await response.json();
 
+        // Xử lý dữ liệu trả về để khớp với giao diện
+        // Backend trả về variants, nhưng ta cần đảm bảo price là số để formatCurrency chạy đúng
         const processedProduct = {
             ...data,
             variants: data.variants.map(v => ({
                 ...v,
-                price: Number(v.price),
+                price: Number(v.price), // Chuyển Decimal string sang Number
                 orginalPrice: Number(v.orginalPrice),
+                // Backend trả về trường 'stock' (do ta đã custom trong service)
                 stock: v.stock 
             }))
         };
 
         setProduct(processedProduct);
 
+        // Logic chọn gói mặc định: Chọn gói đầu tiên CÒN HÀNG
         if (processedProduct.variants && processedProduct.variants.length > 0) {
             const availableVariant = processedProduct.variants.find(v => v.stock > 0);
             setSelectedVariant(availableVariant || processedProduct.variants[0]);
@@ -96,6 +60,7 @@ const ProductDetail = () => {
     }
   }, [id]);
 
+  // --- TRẠNG THÁI LOADING & ERROR ---
   if (loading) return (
     <div className="flex justify-center items-center h-screen text-white">
         <Loader className="animate-spin mr-2"/> Đang tải dữ liệu...
@@ -109,13 +74,14 @@ const ProductDetail = () => {
     </div>
   );
 
+  // Biến kiểm tra hết hàng
   const isOutOfStock = selectedVariant?.stock === 0;
 
   return (
     <div className="container mx-auto px-4 py-8 text-gray-300">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* --- CỘT TRÁI (Giữ nguyên) --- */}
+        {/* --- CỘT TRÁI: THÔNG TIN --- */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-2xl p-8 flex items-center justify-between border border-slate-700 shadow-lg relative overflow-hidden">
              <div className="z-10">
@@ -123,6 +89,7 @@ const ProductDetail = () => {
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{product.name}</h1>
                 <p className="text-blue-200">Danh mục: {product.category?.name}</p>
              </div>
+             {/* Nếu có thumbnail thật thì hiện ảnh, không thì hiện icon */}
              <div className="z-10">
                 {product.thumbnail && !product.thumbnail.includes('svg') ? (
                     <img src={product.thumbnail} alt={product.name} className="h-32 w-32 object-contain drop-shadow-lg" />
@@ -136,6 +103,7 @@ const ProductDetail = () => {
             <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-vtv-green pl-3">Mô tả sản phẩm</h2>
             <p className="leading-relaxed mb-6 whitespace-pre-line">{product.description || 'Chưa có mô tả chi tiết.'}</p>
             
+            {/* Hiển thị tính năng từ JSON aiMetadata */}
             {product.aiMetadata?.features && (
                 <>
                     <h3 className="font-bold text-white mb-3">Tính năng nổi bật:</h3>
@@ -206,31 +174,23 @@ const ProductDetail = () => {
                     </>
                 )}
                 
-                {/* --- NÚT BẤM ĐÃ ĐƯỢC KÍCH HOẠT --- */}
+                {/* Nút Mua */}
                 {isOutOfStock ? (
                     <button disabled className="w-full bg-slate-600 text-gray-400 font-bold py-3 rounded-lg mb-3 cursor-not-allowed flex justify-center items-center gap-2">
                        <AlertCircle size={20}/> TẠM HẾT HÀNG
                     </button>
                 ) : (
                     <>
-                        {/* NÚT MUA NGAY: Gắn hàm handleBuyNow */}
-                        <button 
-                            onClick={handleBuyNow}
-                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mb-3 shadow-lg shadow-blue-500/20 transition-all"
-                        >
+                        <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mb-3 shadow-lg shadow-blue-500/20 transition-all">
                            MUA NGAY ({selectedVariant?.name})
                         </button>
-                        
-                        {/* NÚT GIỎ HÀNG: Gắn hàm handleAddToCart */}
-                        <button 
-                            onClick={handleAddToCart}
-                            className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
-                        >
+                        <button className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all">
                            <ShoppingCart size={18}/> Thêm vào giỏ
                         </button>
                     </>
                 )}
 
+                {/* Footer thông tin */}
                 <div className="mt-6 pt-6 border-t border-slate-700 space-y-3 text-sm text-gray-400">
                    <div className="flex items-center gap-2">
                       <ShieldCheck size={16} className="text-green-500"/> 
