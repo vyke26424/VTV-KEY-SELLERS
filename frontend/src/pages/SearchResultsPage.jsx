@@ -1,1 +1,1 @@
-//Để mai eim làm cái này lun cho a nhá --Vyke
+//Để mai eim làm cái này lun cho a nhá cho nó đồng bộ với mấy trang kia --Vyke
