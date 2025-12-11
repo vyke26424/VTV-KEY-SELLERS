@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { StockStatus } from "@prisma/client";
-import { IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsEnum, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Min } from "class-validator";
 
 export class CreateStockDto {
     @IsInt()
@@ -29,8 +30,20 @@ export class UpdateStockDto {
 
 export class FilterStockDto {
     @IsOptional()
+    @Type(() => Number)
     variantId? : number ;
     @IsEnum(StockStatus)
     @IsOptional()
     status? :  StockStatus ;
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
+    page? : number ;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
+    limit? : number ;
 }
