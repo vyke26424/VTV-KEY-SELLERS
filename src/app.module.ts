@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JwtModule } from '@nestjs/jwt';
 
-// --- CÁC MODULE CỦA BẠN ---
+
 import { AuthModule } from './auth/auth/auth.module';
 import { UserModule } from './user/user/user.module';
 import { AdminModule } from './admin/admin/admin.module';
@@ -12,7 +12,7 @@ import { ProductsModule } from './products/products.module';
 import { SearchModule } from './search/search.module';
 import { PrismaModule } from './prisma/prisma.module';
 
-// --- SERVICE & CONTROLLER LẺ  ---
+
 import { AuthService } from './auth/auth/auth.service';
 import { AuthController } from './auth/auth/auth.controller';
 import { UserService } from './user/user/user.service';
@@ -22,8 +22,11 @@ import { AdminCategoryController } from './admin/controller/admin-category/admin
 import { AdminProductController } from './admin/controller/admin-product/admin-product.controller';
 import { AdminProductVariantsService } from './admin/services/admin-product-variants/admin-product-variants.service';
 import { AdminProductVariantsController } from './admin/controller/admin-product-variants/admin-product-variants.controller';
+import { AdminStockitemService } from './admin/services/admin-stockitem/admin-stockitem.service';
+import { AdminStockitemController } from './admin/controller/admin-stockitem/admin-stockitem.controller';
+import { EncryptionService } from './admin/utils/encryption/encryption.service';
 
-// --- RATE LIMITING IMPORTS ---
+
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -45,15 +48,14 @@ import { APP_GUARD } from '@nestjs/core';
     OrdersModule,
     ProductsModule,
     SearchModule],
-  //controllers: [AuthController, AdminCategoryController, AdminProductController],
-  //providers: [AuthService, UserService, AdminProductService, AdminCategoryService,
+  
 
-  //PrismaModule, JwtModule, UserModule, AdminModule, OrdersModule, ProductsModule],
   controllers: [
     AuthController,
     AdminCategoryController,
     AdminProductController,
-    AdminProductVariantsController
+    AdminProductVariantsController,
+    AdminStockitemController
   ],
   providers: [
     AuthService,
@@ -61,11 +63,14 @@ import { APP_GUARD } from '@nestjs/core';
     AdminProductService,
     AdminCategoryService,
     AdminProductVariantsService,
+    AdminStockitemService,
+    EncryptionService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
   ],
+
 
 
 })

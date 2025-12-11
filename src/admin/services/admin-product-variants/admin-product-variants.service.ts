@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateVariantDto, UpdateVariantDto } from '../../dto/variant.dto';
-import { NotFoundError } from 'rxjs';
+
 
 @Injectable()
 export class AdminProductVariantsService {
@@ -89,9 +89,11 @@ export class AdminProductVariantsService {
         return await this.prismaService.productVariant.update({
             where : {id, isDeleted : true},
             data : {
-                isDeleted : true,
+                isDeleted : false,
                 deletedAt : null 
             }
         })
     }
+
+    
 }
