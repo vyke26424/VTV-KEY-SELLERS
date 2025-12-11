@@ -1,8 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CreateStockDto, FilterStockDto, UpdateStockDto } from '../../dto/stock.dto';
 import { AdminStockitemService } from '../../services/admin-stockitem/admin-stockitem.service';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../guard/role.guard';
+import { Roles } from '../../decorator/role.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('admin/stocks')
+@UseGuards(JwtAuthGuard, RoleGuard)
+@Roles(Role.ADMIN)
 export class AdminStockitemController {
     constructor(private readonly stockService : AdminStockitemService){}
     @Post()

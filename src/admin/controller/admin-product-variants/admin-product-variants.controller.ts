@@ -1,8 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { CreateVariantDto, UpdateVariantDto } from '../../dto/variant.dto';
 import { AdminProductVariantsService } from '../../services/admin-product-variants/admin-product-variants.service';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../guard/role.guard';
+import { Roles } from '../../decorator/role.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('admin/product-variants')
+@UseGuards(JwtAuthGuard, RoleGuard)
+@Roles(Role.ADMIN)
 export class AdminProductVariantsController {
     constructor(private readonly variantService : AdminProductVariantsService){}
     @Post(':productId')

@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateStockDto, FilterStockDto, UpdateStockDto } from '../../dto/stock.dto';
 import { NotFoundError } from 'rxjs';
 import { EncryptionService } from '../../utils/encryption/encryption.service';
 import { Prisma, StockStatus } from '@prisma/client';
+
 
 @Injectable()
 export class AdminStockitemService {
