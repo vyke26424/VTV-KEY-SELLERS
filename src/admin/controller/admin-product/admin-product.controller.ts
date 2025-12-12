@@ -44,7 +44,7 @@ export class AdminProductController {
         return await this.productService.remove(id);
     }
     
-    @Patch("id/restore")
+    @Patch(":id/restore")
     async restore(@Param('id', ParseIntPipe) id : number) {
         return await this.productService.restore(id);
     }

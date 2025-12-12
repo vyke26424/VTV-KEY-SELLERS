@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Package, Calendar, X, Copy, Clock } from 'lucide-react'; 
-// import useAuthStore from '../store/useAuthStore'; 
-import axiosClient from '../store/axiosClient';
+import { Package, Calendar, X, Copy, Clock, Key } from 'lucide-react'; // Thêm icon Key cho đẹp
+import axiosClient from '../store/axiosClient'; // Sửa lại đường dẫn import cho đúng thư mục api
 
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
@@ -20,15 +19,11 @@ const OrderHistoryPage = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                // --- SỬA Ở ĐÂY ---
-                // Gọi API mới, axiosClient tự gắn Token vào Header
-                // Backend sẽ đọc Token để biết đây là ai và trả về đúng đơn của người đó
+                // Gọi API lấy lịch sử (đã được giải mã từ backend)
                 const data = await axiosClient.get('/orders/my-orders');
-                
                 setOrders(data);
             } catch (err) {
                 console.error("Lỗi tải đơn hàng:", err);
-                // Nếu lỗi 401 (Hết phiên đăng nhập) axiosClient có thể đã xử lý hoặc bạn redirect ở đây
             } finally {
                 setLoading(false);
             }
@@ -37,7 +32,6 @@ const OrderHistoryPage = () => {
         fetchOrders();
     }, []);
 
-    // Hàm copy key
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text);
         alert('Đã copy key!');
@@ -101,7 +95,7 @@ const OrderHistoryPage = () => {
                                     onClick={() => setSelectedOrder(order)} 
                                     className="text-sm bg-vtv-green text-black px-4 py-2 rounded font-bold hover:bg-green-400 transition flex items-center gap-2 ml-auto"
                                 >
-                                    <Package size={16}/> Xem Key / Tài khoản
+                                    <Key size={16}/> Xem Key / Tài khoản
                                 </button>
                             </div>
                         </div>
@@ -112,22 +106,24 @@ const OrderHistoryPage = () => {
             {/* --- MODAL HIỂN THỊ KEY (Popup) --- */}
             {selectedOrder && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden relative">
+                    <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col">
                         
                         {/* Header Modal */}
-                        <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800">
+                        <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800 shrink-0">
                             <h3 className="text-white font-bold text-lg">Chi tiết đơn hàng {selectedOrder.code}</h3>
                             <button onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-white">
                                 <X size={24}/>
                             </button>
                         </div>
 
-                        {/* Body Modal: Danh sách Key */}
-                        <div className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
+                        {/* Body Modal: Danh sách Key (Có cuộn) */}
+                        <div className="p-6 overflow-y-auto custom-scrollbar space-y-6 flex-1">
                             {selectedOrder.items.map((item, index) => (
                                 <div key={index} className="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                                    
+                                    {/* Info sản phẩm */}
                                     <div className="flex gap-3 mb-3 border-b border-slate-800 pb-3">
-                                        <div className="w-12 h-12 rounded bg-slate-800 flex items-center justify-center overflow-hidden">
+                                        <div className="w-12 h-12 rounded bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
                                             {item.variant?.product?.thumbnail ? (
                                                 <img src={item.variant.product.thumbnail} className="w-full h-full object-cover" alt=""/>
                                             ) : (
@@ -135,23 +131,28 @@ const OrderHistoryPage = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <h4 className="text-vtv-green font-bold text-sm">{item.variant?.product?.name}</h4>
+                                            <h4 className="text-vtv-green font-bold text-sm line-clamp-1">{item.variant?.product?.name}</h4>
                                             <p className="text-gray-400 text-xs">{item.variant?.name}</p>
                                         </div>
                                     </div>
 
+                                    {/* Danh sách Key */}
                                     <div className="space-y-2">
-                                        <p className="text-xs text-gray-400 uppercase font-bold">Mã kích hoạt / Tài khoản:</p>
+                                        <p className="text-xs text-gray-400 uppercase font-bold flex items-center gap-1">
+                                            <Key size={12}/> Mã kích hoạt / Tài khoản:
+                                        </p>
                                         
-                                        {item.codes ? (
-                                            item.codes.split('\n').map((code, idx) => (
-                                                <div key={idx} className="flex items-center gap-2 bg-slate-800 p-2 rounded border border-slate-700 group">
+                                        {/* --- LOGIC MỚI: DUYỆT QUA MẢNG STOCKITEMS --- */}
+                                        {item.stockItems && item.stockItems.length > 0 ? (
+                                            item.stockItems.map((stock, idx) => (
+                                                <div key={stock.id || idx} className="flex items-center gap-2 bg-slate-800 p-2 rounded border border-slate-700 group">
                                                     <code className="flex-1 text-white font-mono text-sm break-all">
-                                                        {code}
+                                                        {/* Hiển thị credential đã giải mã */}
+                                                        {stock.credential}
                                                     </code>
                                                     <button 
-                                                        onClick={() => handleCopy(code)}
-                                                        className="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700"
+                                                        onClick={() => handleCopy(stock.credential)}
+                                                        className="text-gray-400 hover:text-white p-1.5 rounded hover:bg-slate-700 transition"
                                                         title="Copy"
                                                     >
                                                         <Copy size={16}/>
@@ -159,7 +160,7 @@ const OrderHistoryPage = () => {
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="text-yellow-500 text-sm flex items-center gap-2">
+                                            <div className="text-yellow-500 text-sm flex items-center gap-2 bg-yellow-500/10 p-2 rounded border border-yellow-500/20">
                                                 <Clock size={16}/> Đang xử lý... (Vui lòng liên hệ Admin)
                                             </div>
                                         )}
@@ -169,10 +170,10 @@ const OrderHistoryPage = () => {
                         </div>
                         
                         {/* Footer Modal */}
-                        <div className="p-4 border-t border-slate-700 bg-slate-800 text-center">
+                        <div className="p-4 border-t border-slate-700 bg-slate-800 text-center shrink-0">
                             <button 
                                 onClick={() => setSelectedOrder(null)}
-                                className="bg-white text-black font-bold px-6 py-2 rounded-lg hover:bg-gray-200"
+                                className="bg-white text-black font-bold px-6 py-2 rounded-lg hover:bg-gray-200 transition w-full sm:w-auto"
                             >
                                 Đóng
                             </button>
