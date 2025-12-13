@@ -1,26 +1,79 @@
 import { Injectable } from '@nestjs/common';
 import { ProductsService } from '../products/products.service';
+import { PrismaService } from '../prisma/prisma.service'; 
+import { StockStatus } from '@prisma/client'; 
 
 @Injectable()
 export class SearchService {
-  // Inject ProductsService để truy cập hàm tìm kiếm database
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private prisma: PrismaService
+  ) {}
 
-  /**
-   * Phương thức tìm kiếm chung, có thể mở rộng để tìm kiếm nhiều Entity
-   */
-  async searchAll(query: string) {
-    if (!query || query.trim().length < 2) {
+  async searchAll(searchTerm: string) {
+    if (!searchTerm || searchTerm.trim().length < 2) {
       return { products: [] };
     }
 
-    // ⬅️ Gọi phương thức searchProducts đã được định nghĩa trong ProductsService
-    const products = await this.productsService.searchProducts(query);
+    const lowerSearchTerm = searchTerm.toLowerCase().trim();
+
+    const products = await this.prisma.product.findMany({
+      where: {
+        isActive: true,
+        isDeleted: false,
+        OR: [
+            // 1. Tìm kiếm theo Tên, Slug, Mô tả
+            { name: { contains: lowerSearchTerm } }, 
+            { slug: { contains: lowerSearchTerm } }, 
+            { description: { contains: lowerSearchTerm } }, 
+            
+            // 2. TÌM KIẾM THEO KEYWORDS
+            {
+                keyword: {
+                    some: {
+                        name: { 
+                            contains: lowerSearchTerm 
+                        }
+                    }
+                }
+            },
+
+            // 3. TÌM KIẾM THEO TÊN DANH MỤC (category)
+            {
+                category: {
+                    name: {
+                        contains: lowerSearchTerm
+                    }
+                }
+            },
+
+            // 4. TÌM KIẾM TRONG AI METADATA (JSON) - ĐÃ LOẠI BỎ (GÂY LỖI VALIDATION)
+            // Cần dùng $queryRaw để tìm kiếm trong JSON trên MySQL, không thể dùng cú pháp contains.
+        ]
+      },
+      include: {
+        category: true,
+        keyword: true, 
+        variants: {
+            include: {
+                _count: {
+                    select: { 
+                        stockItems: { where: { status: StockStatus.AVAILABLE } } 
+                    }
+                }
+            }
+        },
+      },
+      take: 20,
+      orderBy: {
+          name: 'asc' 
+      }
+    });
     
-    // Trả về kết quả dưới dạng cấu trúc đa Entity (hiện tại chỉ có products)
+    const transformedProducts = this.productsService.transformProducts(products);
+    
     return {
-      products: products,
-      // future: users: await this.userService.searchUsers(query),
+      products: transformedProducts,
     };
   }
 }

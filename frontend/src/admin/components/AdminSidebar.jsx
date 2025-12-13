@@ -13,6 +13,7 @@ const SIDEBAR_ITEMS = [
   { name: 'Đơn hàng', icon: ShoppingCart, path: '/admin/orders' },
   { name: 'Kho hàng', icon: Package, path: '/admin/stock' }, // Map với admin-stockitem
   { name: 'Khách hàng', icon: Users, path: '/admin/customers' },
+  { name: 'Nhân viên', icon: Users, path: '/admin/staff' },
   { name: 'Cài đặt', icon: Settings, path: '/admin/settings' },
 ];
 

@@ -1,9 +1,13 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { SearchService } from '../search/search.service'; // ĐÃ THÊM
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly searchService: SearchService // ĐÃ THÊM
+  ) {}
 
   // --- SEED DATA (Giữ lại để nạp dữ liệu) ---
   @Get('seed-categories')
@@ -18,10 +22,10 @@ export class ProductsController {
 
   // --- TÌM KIẾM SẢN PHẨM ---
   // Lưu ý: Phải đặt route này TRƯỚC route ':idOrSlug' 
-  // Nếu không chữ "search" sẽ bị hiểu nhầm là slug của sản phẩm
   @Get('search')
   search(@Query('q') q: string) {
-    return this.productsService.searchProducts(q);
+    // ĐÃ CẬP NHẬT: Ủy quyền tìm kiếm cho SearchService
+    return this.searchService.searchAll(q);
   }
 
   // --- LẤY TẤT CẢ ---
@@ -31,13 +35,9 @@ export class ProductsController {
   }
 
   // --- LẤY CHI TIẾT (Hỗ trợ cả ID và Slug) ---
-  // Ví dụ: GET /products/1  hoặc  GET /products/netflix-premium
   @Get(':idOrSlug')
   findOne(@Param('idOrSlug') idOrSlug: string) {
-    // Kiểm tra xem input là chuỗi số hay chữ
     const isNumeric = /^\d+$/.test(idOrSlug);
-    
-    // Nếu là số -> chuyển thành Number, nếu là chữ -> giữ nguyên String
     const query = isNumeric ? parseInt(idOrSlug) : idOrSlug;
     
     return this.productsService.findOne(query);

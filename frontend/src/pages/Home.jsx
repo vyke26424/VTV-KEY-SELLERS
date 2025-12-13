@@ -10,9 +10,11 @@ import Banner from '../components/Banner';
 // Giữ lại cấu hình danh mục
 const CATEGORIES = [
   { id: 'hot', title: 'SẢN PHẨM HOT TREND', icon: <Zap size={20} className="text-yellow-400"/> },
-  { id: 'steam', title: 'GAME STEAM', icon: <Gamepad2 size={20} className="text-blue-400"/> },
+  { id: 'game', title: 'GAME HAY', icon: <Gamepad2 size={20} className="text-blue-400"/> },
   { id: 'ai', title: 'SẢN PHẨM AI', icon: <Bot size={20} className="text-green-400"/> },
   { id: 'entertainment', title: 'GIẢI TRÍ', icon: <MonitorPlay size={20} className="text-red-400"/> },
+  { id: 'software', title: 'PHẦN MỀM', icon: <MonitorPlay size={20} className="text-purple-400"/> },
+  { id: 'education', title: 'HỌC TẬP', icon: <MonitorPlay size={20} className="text-indigo-400"/> },
 ];
 
 const Home = () => {
