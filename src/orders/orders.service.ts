@@ -2,65 +2,60 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { StockStatus } from '@prisma/client';
+import { EncryptionService } from '../admin/utils/encryption/encryption.service'; // Import Service mã hóa
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private encryptionService: EncryptionService // <--- 1. Inject vào đây để dùng
+  ) {}
 
+  // --- TẠO ĐƠN HÀNG (Sửa lại logic nối bảng) ---
   async create(createOrderDto: CreateOrderDto) {
     const { userId, items, totalAmount } = createOrderDto;
 
-    // BẮT ĐẦU GIAO DỊCH (Transaction)
     return await this.prisma.$transaction(async (tx) => {
-      
-      // 1. Tạo mã đơn hàng
       const orderCode = `#ORD-${Date.now().toString().slice(-6)}`;
       
-      // --- SỬA Ở ĐÂY: Khai báo mảng với kiểu dữ liệu rõ ràng NGAY TỪ ĐẦU ---
-      // Biến này nằm ngoài vòng lặp để tích lũy dữ liệu
-      const orderItemsData: { variantId: number; quantity: number; price: number; codes: string }[] = [];
+      // Mảng chứa dữ liệu, không cần định nghĩa type cứng nữa để Prisma tự hiểu
+      const orderItemsData: any[] = [];
 
-      // 2. Duyệt qua từng món hàng khách chọn để kiểm tra kho
       for (const item of items) {
-        // Tìm các key đang rảnh (AVAILABLE) của gói này
+        // 1. Tìm key đang rảnh (AVAILABLE)
         const availableStock = await tx.stockItem.findMany({
           where: {
             variantId: item.variantId,
-            status: StockStatus.AVAILABLE, // Chỉ lấy cái nào chưa bán
+            status: StockStatus.AVAILABLE, 
           },
-          take: item.quantity, // Lấy đúng số lượng khách mua
+          take: item.quantity, 
         });
 
-        // Nếu không đủ hàng -> Báo lỗi ngay và Hủy toàn bộ giao dịch
         if (availableStock.length < item.quantity) {
-          throw new BadRequestException(`Sản phẩm (Variant ID: ${item.variantId}) hiện không đủ hàng trong kho.`);
+          throw new BadRequestException(`Sản phẩm (Variant ID: ${item.variantId}) hiện không đủ hàng.`);
         }
 
-        // Lấy danh sách mã key (credentials) để chuẩn bị lưu
-        const credentials = availableStock.map(s => s.credential);
-
-        // 3. Đánh dấu các key này là ĐÃ BÁN (SOLD)
+        // 2. Đánh dấu các key này là ĐÃ BÁN (SOLD)
         const stockIds = availableStock.map(s => s.id);
         await tx.stockItem.updateMany({
           where: { id: { in: stockIds } },
-          data: { 
-            status: StockStatus.SOLD,
-          } 
+          data: { status: StockStatus.SOLD } 
         });
         
-        // --- SỬA Ở ĐÂY: Không khai báo lại biến nữa, chỉ push vào biến bên ngoài ---
+        // 3. Chuẩn bị dữ liệu OrderItem
+        // --- THAY ĐỔI QUAN TRỌNG: Dùng 'connect' thay vì lưu string 'codes' ---
         orderItemsData.push({
             variantId: item.variantId,
             quantity: item.quantity,
             price: item.price,
-            codes: credentials.join('\n') // Lưu key, ngăn cách bằng xuống dòng
+            // Logic này bảo Prisma: "Hãy nối OrderItem này với các StockItem có ID trong danh sách này"
+            stockItems: {
+                connect: stockIds.map(id => ({ id })) 
+            }
         });
       }
 
-      // Kiểm tra nhanh log để xem dữ liệu có chưa (bạn có thể xóa dòng này sau)
-      console.log('Dữ liệu sắp lưu vào DB:', JSON.stringify(orderItemsData, null, 2));
-
-      // 4. Tạo đơn hàng (Lúc này mảng orderItemsData đã có đầy đủ dữ liệu)
+      // 4. Tạo đơn hàng (Prisma sẽ tự động tạo OrderItem và nối dây với StockItem)
       const order = await tx.order.create({
         data: {
           code: orderCode,
@@ -68,12 +63,11 @@ export class OrdersService {
           status: 'COMPLETED',
           userId: userId,
           items: {
-            create: orderItemsData // <--- Lưu mảng đã chuẩn bị
+            create: orderItemsData 
           },
         },
       });
 
-      // 5. Trả kết quả về cho Controller
       return {
         message: 'Thanh toán thành công! Key đã được gửi.',
         orderId: order.id,
@@ -82,22 +76,45 @@ export class OrdersService {
     });
   }
 
-  // Hàm findByUser cũ của bạn (không đổi)
+  // --- LẤY LỊCH SỬ ĐƠN HÀNG (Kèm giải mã Key) ---
   async findByUser(userId: string) {
-    return this.prisma.order.findMany({
+    // 1. Lấy dữ liệu thô từ DB
+    const orders = await this.prisma.order.findMany({
       where: { userId },
       include: {
         items: {
           include: {
+            // Lấy kèm thông tin StockItem đã link với OrderItem này
+            stockItems: true, 
             variant: {
-              include: {
-                product: true 
-              }
+              include: { product: true }
             }
           }
         }
       },
       orderBy: { createdAt: 'desc' }
     });
+
+    // 2. Xử lý giải mã (Decrypt) credential trước khi trả về
+    // Vì key trong DB đang dạng mã hóa (vd: "iv:content"), user không đọc được
+    return orders.map(order => ({
+      ...order,
+      items: order.items.map(item => ({
+        ...item,
+        // Duyệt qua từng key trong kho
+        stockItems: item.stockItems.map(stock => {
+          try {
+            // Giải mã credential
+            return {
+              ...stock,
+              credential: this.encryptionService.decryptCredential(stock.credential)
+            };
+          } catch (e) {
+            // Phòng trường hợp key cũ chưa mã hóa hoặc lỗi, trả về nguyên gốc
+            return stock;
+          }
+        })
+      }))
+    }));
   }
 }

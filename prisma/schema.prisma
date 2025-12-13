@@ -165,9 +165,6 @@ model OrderItem {
   id Int @id @default(autoincrement())
   price Decimal @db.Decimal(10,2)
   quantity Int
-
-  codes     String? @db.Text // lưu key/tài khoản đã bán dưới dạng text
-
   orderId Int
   order Order @relation(fields: [orderId], references: [id])
   variantId Int
