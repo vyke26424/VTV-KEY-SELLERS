@@ -157,32 +157,32 @@ async function main() {
 
     // 2. Tạo Variants & Stock cho sản phẩm đó
     for (const v of p.variants) {
-        // Tạo variant
-        const variant = await prisma.productVariant.create({
-            data: {
-                name: v.name,
-                price: v.price,
-                orginalPrice: v.orginalPrice,
-                productId: product.id,
-            }
+      // Tạo variant
+      const variant = await prisma.productVariant.create({
+        data: {
+          name: v.name,
+          price: v.price,
+          orginalPrice: v.orginalPrice,
+          productId: product.id,
+        },
+      });
+
+      // --- 4. NẠP STOCK (KEY) CHO TỪNG VARIANT ---
+      const stockData: Prisma.StockItemCreateManyInput[] = [];
+      for (let i = 0; i < 20; i++) {
+        // Key giả: VTV-KEY-[ProductSlug]-[Random]
+        const fakeKey = `VTV-${p.slug.toUpperCase().slice(0, 5)}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+        stockData.push({
+          credential: fakeKey,
+          variantId: variant.id,
+          status: StockStatus.AVAILABLE,
         });
+      }
 
-        // --- 4. NẠP STOCK (KEY) CHO TỪNG VARIANT ---
-        // SỬA Ở ĐÂY: Thêm : any[]
-        const stockData: any[] = []; 
-        
-        for(let i = 0; i < 20; i++) {
-            // Key giả: VTV-KEY-[ProductSlug]-[Random]
-            const fakeKey = `VTV-${p.slug.toUpperCase().slice(0,5)}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-            
-            stockData.push({
-                credential: fakeKey,
-                variantId: variant.id,
-                status: StockStatus.AVAILABLE // Đảm bảo StockStatus đã được import ở trên cùng
-            });
-
-        await prisma.stockItem.createMany({ data: stockData });
-        console.log(`   -> Created Variant: ${v.name} (+20 keys)`);
+      // Tạo 20 key cùng lúc cho variant này
+      await prisma.stockItem.createMany({ data: stockData });
+      console.log(`   -> Created Variant: ${v.name} (+20 keys)`);
     }
   }
 
@@ -196,4 +196,4 @@ main()
     })
     .finally(async () => {
         await prisma.$disconnect();
-    });
+    })
