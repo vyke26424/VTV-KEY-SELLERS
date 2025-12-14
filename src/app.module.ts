@@ -25,14 +25,14 @@ import { AdminProductVariantsController } from './admin/controller/admin-product
 import { AdminStockitemService } from './admin/services/admin-stockitem/admin-stockitem.service';
 import { AdminStockitemController } from './admin/controller/admin-stockitem/admin-stockitem.controller';
 import { EncryptionService } from './admin/utils/encryption/encryption.service';
+import { AdminOrdersController } from './admin/controller/admin-orders/admin-orders.controller';
+import { AdminOrdersService } from './admin/services/admin-orders/admin-orders.service';
 
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserController } from './admin/controller/admin-user/admin-user.controller';
-import { AdminOrdersModule } from './admin/admin-orders/admin-orders.module';
 import { AdminUserService } from './admin/services/admin-user/admin-user.service';
-import { AdminUserModule } from './admin/admin-user/admin-user.module';
 
 @Module({
   imports: [
@@ -51,9 +51,7 @@ import { AdminUserModule } from './admin/admin-user/admin-user.module';
     AdminModule,
     OrdersModule,
     ProductsModule,
-    SearchModule,
-    AdminOrdersModule,
-    AdminUserModule],
+    SearchModule],
   
 
   controllers: [
@@ -62,7 +60,8 @@ import { AdminUserModule } from './admin/admin-user/admin-user.module';
     AdminProductController,
     AdminProductVariantsController,
     AdminStockitemController,
-    UserController
+    UserController,
+    AdminOrdersController
   ],
   providers: [
     AuthService,
@@ -77,6 +76,7 @@ import { AdminUserModule } from './admin/admin-user/admin-user.module';
       useClass: ThrottlerGuard,
     },
     AdminUserService,
+    AdminOrdersService,
   ],
 
 

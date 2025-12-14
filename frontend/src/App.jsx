@@ -23,6 +23,9 @@ import ProductListPage from './admin/pages/products/ProductListPage';
 import ProductFormPage from './admin/pages/products/ProductFormPage';
 import CategoryListPage from './admin/pages/categories/CategoryListPage';
 import CategoryFormPage from './admin/pages/categories/CategoryFormPage';
+import OrderListPage from './admin/pages/orders/OrderListPage';
+import UserListPage from './admin/pages/users/UserListPage';
+import StaffListPage from './admin/pages/users/StaffListPage';
 
 function App() {
   return (
@@ -52,7 +55,9 @@ function App() {
               <Route path="categories" element={<CategoryListPage />} />
               <Route path="categories/create" element={<CategoryFormPage />} />
               <Route path="categories/edit/:id" element={<CategoryFormPage />} />
-              
+              <Route path="orders" element={<OrderListPage />} />
+              <Route path="customers" element={<UserListPage />} />              
+              <Route path="staff" element={<StaffListPage />} />
             </Route>
           </Routes>
         </main>
