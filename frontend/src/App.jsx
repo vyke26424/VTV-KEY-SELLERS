@@ -26,6 +26,7 @@ import CategoryFormPage from './admin/pages/categories/CategoryFormPage';
 import OrderListPage from './admin/pages/orders/OrderListPage';
 import UserListPage from './admin/pages/users/UserListPage';
 import StaffListPage from './admin/pages/users/StaffListPage';
+import StockListPage from './admin/pages/stock/StockListPage';
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
               <Route path="orders" element={<OrderListPage />} />
               <Route path="customers" element={<UserListPage />} />              
               <Route path="staff" element={<StaffListPage />} />
+              <Route path="stock" element={<StockListPage />} />
             </Route>
           </Routes>
         </main>
