@@ -67,53 +67,16 @@ export class ProductsService {
     if (!product) return null;
 
     // Tái sử dụng logic transform cho 1 sản phẩm
-    // (Bọc vào mảng rồi lấy phần tử đầu tiên)
     const [transformed] = this.transformProducts([product]);
     return transformed;
   }
 
-  // --- TÌM KIẾM SẢN PHẨM ---
-  async searchProducts(searchTerm: string) {
-    if (!searchTerm || searchTerm.trim().length < 2) {
-      return [];
-    }
-
-    const lowerSearchTerm = searchTerm.toLowerCase().trim();
-
-    const products = await this.prisma.product.findMany({
-      where: {
-        isActive: true,
-        isDeleted: false,
-        OR: [
-            { name: { contains: lowerSearchTerm } }, 
-            { slug: { contains: lowerSearchTerm } },
-            { description: { contains: lowerSearchTerm } },
-        ]
-      },
-      include: {
-        category: true,
-        variants: {
-            include: {
-                _count: {
-                    select: { 
-                        stockItems: { where: { status: StockStatus.AVAILABLE } } 
-                    }
-                }
-            }
-        },
-      },
-      take: 20,
-    });
-
-    return this.transformProducts(products);
-  }
-
-  // --- HELPER: XỬ LÝ DỮ LIỆU TRẢ VỀ (DRY - Don't Repeat Yourself) ---
-  // Gom logic tính toán stock vào 1 chỗ cho gọn
-  private transformProducts(products: any[]) {
+  // --- HELPER: XỬ LÝ DỮ LIỆU TRẢ VỀ (Đã chuyển thành public) ---
+  public transformProducts(products: any[]) { 
     return products.map(product => {
         const totalStock = product.variants.reduce((sum, variant) => {
-          return sum + variant._count.stockItems;
+          const stock = variant._count?.stockItems ?? 0;
+          return sum + stock;
         }, 0);
   
         return {
@@ -122,13 +85,13 @@ export class ProductsService {
           isOutOfStock: totalStock === 0,
           variants: product.variants.map(v => ({
             ...v,
-            stock: v._count.stockItems,
+            stock: v._count?.stockItems ?? 0,
           }))
         };
       });
   }
 
-  // --- SEED DATA (Tạm thời giữ lại để nạp dữ liệu, sau này xóa) ---
+  // --- SEED DATA (Giữ lại) ---
   async seedCategories() { /* ... Giữ nguyên code cũ ... */ }
   async seedProducts() { /* ... Giữ nguyên code cũ ... */ }
 }

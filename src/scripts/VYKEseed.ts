@@ -180,20 +180,21 @@ async function main() {
                 variantId: variant.id,
                 status: StockStatus.AVAILABLE // Đảm bảo StockStatus đã được import ở trên cùng
             });
+        }
 
         await prisma.stockItem.createMany({ data: stockData });
         console.log(`   -> Created Variant: ${v.name} (+20 keys)`);
     }
   }
 
-    console.log('✅ Seeding finished successfully. Stock now adds 1 key per variant per run.'); // [cite: 60]
+  console.log('✅ Seeding finished successfully.');
 }
 
 main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

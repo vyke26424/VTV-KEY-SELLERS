@@ -1,53 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Search, Filter, SlidersHorizontal, ArrowDownWideNarrow } from 'lucide-react';
-import ProductCard from '../components/ProductCard'; // Import card ở trên
-//import axiosClient from '../store/axiosClient';
+import ProductCard from '../components/ProductCard';
+import axiosClient from '../store/axiosClient';
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || ''; // Lấy từ khóa từ URL (?q=...)
+  const query = searchParams.get('q') || ''; 
 
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState('relevance'); // relevance, price-asc, price-desc
-
-  // --- DỮ LIỆU MOCK ĐỂ TEST GIAO DIỆN (Sau này xóa đi) ---
-  const mockDatabase = [
-    { id: 1, name: 'Netflix Premium 4K', thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg', isHot: true, variants: [{price: 65000}] },
-    { id: 2, name: 'Spotify Premium', thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg', isHot: false, variants: [{price: 290000}] },
-    { id: 3, name: 'YouTube Premium', thumbnail: null, isHot: true, variants: [{price: 25000}] },
-    { id: 4, name: 'Windows 11 Pro', thumbnail: null, isHot: false, variants: [{price: 150000}] },
-    { id: 5, name: 'ChatGPT Plus', thumbnail: null, isHot: true, variants: [{price: 450000}] },
-  ];
+  const [loading, setLoading] = useState(true); 
+  const [sortBy, setSortBy] = useState('relevance');
 
   useEffect(() => {
-    // Giả lập gọi API tìm kiếm
     const fetchSearchResults = async () => {
-      setLoading(true);
-      try {
-        // --- TODO: SAU NÀY BẠN THAY BẰNG GỌI API THẬT ---
-        // const { data } = await axiosClient.get(`/products?search=${query}&sort=${sortBy}`);
-        // setProducts(data);
-        // ------------------------------------------------
+      if (!query || query.trim().length < 2) {
+        setProducts([]);
+        setLoading(false);
+        return;
+      }
 
-        // Logic Mock tạm thời: Lọc theo tên
-        await new Promise(resolve => setTimeout(resolve, 800)); // Delay giả 0.8s cho giống thật
+      setLoading(true); 
+      try {
+        // Gọi API search đã được cập nhật logic keyword
+        const response = await axiosClient.get(`/search?q=${query}&sort=${sortBy}`); // [cite: 70]
         
-        const filtered = mockDatabase.filter(p => 
-            p.name.toLowerCase().includes(query.toLowerCase())
-        );
-        setProducts(filtered);
+        // FIX: Đọc TRỰC TIẾP từ response vì interceptor đã loại bỏ response.data
+        // response object here is { products: [...] }
+        if (response && Array.isArray(response.products)) {
+            setProducts(response.products); // <--- FIX APPLIED HERE
+        } else {
+            console.warn("API returned unexpected data structure:", response); // [cite: 71]
+            setProducts([]); 
+        }
 
       } catch (error) {
-        console.error("Lỗi tìm kiếm:", error);
+        console.error("Lỗi tìm kiếm:", error.message || error); 
+        setProducts([]); 
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
 
     fetchSearchResults();
-  }, [query, sortBy]); // Chạy lại khi từ khóa hoặc sort thay đổi
+  }, [query, sortBy]); 
 
   return (
     <div className="min-h-screen bg-vtv-dark pb-20">
@@ -109,22 +105,23 @@ const SearchResultsPage = () => {
             </div>
         </div>
 
-        {/* --- GRID SẢN PHẨM --- */}
+        {/* --- GRID SẢN PHẨM (Conditional Rendering) --- */}
         {loading ? (
-            // Skeleton Loading (Hiệu ứng đang tải)
+            // 1. Loading
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map(i => (
                     <div key={i} className="bg-slate-800/50 rounded-xl h-80 animate-pulse"></div>
                 ))}
             </div>
         ) : products.length > 0 ? (
+            // 2. Results Found
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map(product => (
                     <ProductCard key={product.id} product={product} />
                 ))}
             </div>
         ) : (
-            // Trạng thái RỖNG (Không tìm thấy)
+            // 3. No Results
             <div className="text-center py-20 bg-slate-800/30 rounded-2xl border border-dashed border-slate-700">
                 <div className="inline-block p-6 bg-slate-800 rounded-full mb-4">
                     <Search size={48} className="text-gray-600"/>
