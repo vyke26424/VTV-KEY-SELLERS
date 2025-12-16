@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart, ArrowLeft, Filter } from 'lucide-react';
+import { ArrowLeft, Filter, ShoppingCart } from 'lucide-react';
+import axiosClient from '../store/axiosClient';
 
 // Format tiền tệ
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
-// Component ProductCard (Tái sử dụng code cũ)
+// Component ProductCard (Giữ nguyên)
 const ProductCard = ({ product }) => {
   const minVariant = product.variants?.length > 0 
     ? product.variants.reduce((prev, curr) => parseFloat(prev.price) < parseFloat(curr.price) ? prev : curr) 
@@ -16,23 +17,31 @@ const ProductCard = ({ product }) => {
     : 0;
 
   return (
-    <Link to={`/product/${product.id}`}>
-      <div className="bg-vtv-card rounded-xl overflow-hidden border border-slate-700 hover:border-vtv-green transition-colors group relative flex flex-col h-full cursor-pointer hover:shadow-lg hover:shadow-green-500/10">
-        <div className="h-40 bg-slate-700/50 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300">
-          {product.thumbnail ? <img src={product.thumbnail} alt={product.name} className="w-full h-full object-cover"/> : '📦'}
+    <Link to={`/product/${product.slug}`} className="group h-full">
+      <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-vtv-green transition-all duration-300 group-hover:shadow-lg group-hover:shadow-green-500/10 flex flex-col h-full">
+        <div className="aspect-[4/3] bg-slate-800 relative overflow-hidden">
+          {product.thumbnail ? (
+             <img src={product.thumbnail} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+          ) : (
+             <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>
+          )}
+          {discountPercent > 0 && (
+             <div className="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md">
+               -{discountPercent}%
+             </div>
+          )}
         </div>
-        
-        {discountPercent > 0 && <div className="absolute top-2 right-2 bg-vtv-red text-white text-xs font-bold px-2 py-1 rounded">-{discountPercent}%</div>}
-        
         <div className="p-4 flex flex-col flex-grow">
-          <h3 className="font-semibold text-white text-sm truncate mb-1">{product.name}</h3>
+          <h3 className="font-semibold text-white text-sm line-clamp-2 mb-2 group-hover:text-vtv-green transition-colors">{product.name}</h3>
           <div className="mt-auto">
-            {parseFloat(minVariant.orginalPrice) > 0 && (
-              <span className="text-gray-500 text-xs line-through block">{formatCurrency(minVariant.orginalPrice)}</span>
+            {parseFloat(minVariant.orginalPrice) > parseFloat(minVariant.price) && (
+              <span className="text-gray-500 text-xs line-through block mb-1">{formatCurrency(minVariant.orginalPrice)}</span>
             )}
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-vtv-green font-bold text-lg">{formatCurrency(minVariant.price)}</span>
-              <button className="bg-vtv-green hover:bg-green-500 text-black p-2 rounded-lg transition-colors"><ShoppingCart size={16} /></button>
+            <div className="flex justify-between items-end">
+              <span className="text-vtv-green font-bold text-base">{formatCurrency(minVariant.price)}</span>
+              <button className="bg-slate-800 hover:bg-vtv-green hover:text-black text-gray-300 p-2 rounded-lg transition-colors">
+                 <ShoppingCart size={16} />
+              </button>
             </div>
           </div>
         </div>
@@ -42,99 +51,105 @@ const ProductCard = ({ product }) => {
 };
 
 const CategoryPage = () => {
-  const { slug } = useParams(); // Lấy slug từ URL (ví dụ: 'steam', 'ai')
+  const { slug } = useParams(); 
   const [products, setProducts] = useState([]);
-  const [categoryTitle, setCategoryTitle] = useState('');
-
-  // Cấu hình tên hiển thị cho đẹp
+  const [loading, setLoading] = useState(true);
+  const [categoryName, setCategoryName] = useState('Đang tải...');
+  
+  // Map slug sang tên hiển thị (Có thể mở rộng thêm)
   const categoryNames = {
-    'hot': '🔥 SẢN PHẨM HOT TREND',
-    'steam': '🎮 GAME STEAM GIÁ RẺ',
-    'ai': '🤖 CÔNG CỤ TRÍ TUỆ NHÂN TẠO (AI)',
-    'entertainment': '🎬 GIẢI TRÍ & TRUYỀN HÌNH',
+    'hot': 'SẢN PHẨM HOT TREND 🔥',
+    'game': 'GAME BẢN QUYỀN 🎮',
+    'ai': 'TRÍ TUỆ NHÂN TẠO (AI) 🤖',
+    'entertainment': 'GIẢI TRÍ & PHIM 🎬',
+    'software': 'PHẦN MỀM BẢN QUYỀN 💻',
+    'education': 'HỌC TẬP & VPN 📚',
   };
 
   useEffect(() => {
-    // 1. Set tên tiêu đề trang
-    setCategoryTitle(categoryNames[slug] || 'DANH SÁCH SẢN PHẨM');
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // 1. Xác định activeSlug (Nếu vào /products thì coi là 'hot')
+        const activeSlug = slug ? slug : 'hot'; 
 
-    // 2. Mock Data (Giả lập gọi API lấy TOÀN BỘ sản phẩm)
-    // Thực tế sau này sẽ gọi: fetch(`http://localhost:3000/products?category=${slug}`)
-    const allProducts = [
-      {
-        id: 1, name: "Netflix Premium 4K", thumbnail: "https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg", categorySlug: "entertainment", isHot: true,
-        variants: [{ id: 101, name: "1 Tháng", price: "65000", orginalPrice: "260000" }]
-      },
-      {
-        id: 2, name: "ChatGPT Plus (OpenAI)", categorySlug: "ai", isHot: true,
-        variants: [{ id: 201, name: "Tài khoản riêng", price: "450000", orginalPrice: "550000" }]
-      },
-      {
-        id: 3, name: "Windows 11 Pro Key", categorySlug: "hot", isHot: true,
-        variants: [{ id: 301, name: "Vĩnh viễn", price: "150000", orginalPrice: "3000000"}]
-      },
-      {
-        id: 4, name: "Elden Ring", categorySlug: "steam", isHot: false,
-        variants: [{ id: 401, name: "Standard", price: "890000", orginalPrice: "1200000"}]
-      },
-      {
-        id: 5, name: "Midjourney", categorySlug: "ai", isHot: false,
-        variants: [{ id: 501, name: "Pro", price: "200000", orginalPrice: "400000"}]
-      },
-      // Thêm vài data giả để test trang danh mục cho đầy đặn
-      {
-        id: 6, name: "Youtube Premium", categorySlug: "entertainment", isHot: true,
-        variants: [{ id: 601, name: "6 Tháng", price: "150000", orginalPrice: "300000"}]
-      },
-      {
-        id: 7, name: "Black Myth: Wukong", categorySlug: "steam", isHot: true,
-        variants: [{ id: 701, name: "Deluxe", price: "1200000", orginalPrice: "1500000"}]
-      },
-    ];
+        // 2. Set tên hiển thị
+        setCategoryName(categoryNames[activeSlug] || `DANH MỤC: ${activeSlug.toUpperCase()}`);
 
-    // 3. Lọc sản phẩm theo slug
-    const filtered = allProducts.filter(p => {
-        if (slug === 'hot') return p.isHot;
-        return p.categorySlug === slug;
-    });
+        // 3. Gọi API lấy TOÀN BỘ sản phẩm (để Client tự lọc)
+        // (Lý do: Backend của bạn hiện tại chưa có endpoint lọc riêng cho isHot)
+        const res = await axiosClient.get('/products', {
+            params: { limit: 100 }
+        });
 
-    setProducts(filtered);
-    window.scrollTo(0, 0); // Cuộn lên đầu trang khi chuyển trang
+        let allProducts = [];
+        if (res && Array.isArray(res.product)) {
+            allProducts = res.product;
+        } else if (Array.isArray(res)) {
+            allProducts = res;
+        }
+
+        // --- 4. LOGIC LỌC SẢN PHẨM (QUAN TRỌNG) ---
+        const filtered = allProducts.filter(p => {
+            // TRƯỜNG HỢP 1: Lọc theo cờ isHot (Dựa trên Schema Boolean)
+            if (activeSlug === 'hot') {
+                return p.isHot === true; 
+            }
+
+            // TRƯỜNG HỢP 2: Lọc theo Category Slug (Relation)
+            // Backend trả về: p.category = { slug: "game", name: "Game" }
+            const pCatSlug = p.category?.slug || ''; 
+            
+            return pCatSlug === activeSlug;
+        });
+
+        setProducts(filtered);
+
+      } catch (error) {
+        console.error("Lỗi tải danh mục:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    window.scrollTo(0, 0);
   }, [slug]);
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
-      {/* Breadcrumb / Header */}
+      {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <Link to="/" className="bg-slate-800 p-2 rounded-full hover:bg-slate-700 transition">
-            <ArrowLeft size={20} className="text-gray-400" />
+        <Link to="/" className="bg-slate-800 p-2 rounded-full hover:bg-slate-700 transition text-gray-400 hover:text-white">
+            <ArrowLeft size={20} />
         </Link>
         <div>
-            <div className="text-sm text-gray-500 mb-1">Trang chủ / Danh mục</div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white uppercase">{categoryTitle}</h1>
+            <div className="text-xs text-gray-500 mb-1 font-mono">TRANG CHỦ / DANH MỤC</div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight">{categoryName}</h1>
         </div>
       </div>
 
-      {/* Filter & Sort Bar (Để trang trí cho chuyên nghiệp) */}
-      <div className="bg-vtv-card border border-slate-700 rounded-lg p-4 mb-8 flex justify-between items-center">
-          <span className="text-gray-400 text-sm">Tìm thấy <strong className="text-white">{products.length}</strong> sản phẩm</span>
-          <button className="flex items-center gap-2 text-sm text-white bg-slate-700 px-4 py-2 rounded hover:bg-slate-600 transition">
-             <Filter size={16}/> Lọc & Sắp xếp
-          </button>
-      </div>
-
       {/* Grid Sản Phẩm */}
-      {products.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      {loading ? (
+         <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-vtv-green mx-auto mb-4"></div>
+            <p className="text-gray-500">Đang tìm kiếm sản phẩm...</p>
+         </div>
+      ) : products.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {products.map(product => (
                 <ProductCard key={product.id} product={product} />
             ))}
         </div>
       ) : (
-        <div className="text-center py-20">
-            <div className="text-6xl mb-4">📭</div>
-            <p className="text-gray-400">Chưa có sản phẩm nào trong danh mục này.</p>
-            <Link to="/" className="text-vtv-green hover:underline mt-2 inline-block">Quay lại trang chủ</Link>
+        <div className="text-center py-20 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+            <div className="text-6xl mb-4 grayscale opacity-50">📭</div>
+            <h3 className="text-lg font-bold text-white">Chưa có sản phẩm nào</h3>
+            <p className="text-gray-500 text-sm mt-1">Danh mục này hiện đang được cập nhật thêm.</p>
+            <Link to="/" className="mt-6 inline-block bg-vtv-green text-black font-bold px-6 py-2 rounded-lg hover:bg-green-400 transition">
+                Về trang chủ
+            </Link>
         </div>
       )}
     </div>

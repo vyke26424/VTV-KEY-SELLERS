@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 // --- IMPORT COMPONENT ---
 import ProductCard from '../components/ProductCard';
 import Banner from '../components/Banner';
-// --- IMPORT AXIOS CLIENT (QUAN TRỌNG) ---
 import axiosClient from '../store/axiosClient';
 
 // Cấu hình danh mục (Giữ nguyên)
