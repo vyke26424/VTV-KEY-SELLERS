@@ -55,7 +55,7 @@ async function main() {
     { name: 'Design & Đồ họa', slug: 'design' },
   ];
 
-  const categories = {};
+  const categories: Record<string, number> = {};
   for (const cat of categoriesData) {
     const newCat = await prisma.category.upsert({
       where: { slug: cat.slug },
@@ -268,6 +268,16 @@ async function main() {
     console.log(`📦 Product: ${product.name}`);
 
     for (const v of p.variants) {
+        // Kiểm tra xem variant đã tồn tại chưa để tránh tạo trùng lặp khi chạy lại seed
+        const existingVariant = await prisma.productVariant.findFirst({
+            where: { productId: product.id, name: v.name }
+        });
+
+        if (existingVariant) {
+            console.log(`   -> Variant: ${v.name} (Already exists - Skipping)`);
+            continue;
+        }
+
         const variant = await prisma.productVariant.create({
             data: {
                 name: v.name,
@@ -298,7 +308,15 @@ async function main() {
         console.log(`   -> Variant: ${v.name} (+5 keys encrypted)`);
     }
   }
-
+  await prisma.systemConfig.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      maintenanceMode: false,
+      emailNotification: true,
+      bankInfo: "MB BANK - 000011112222 - ANH VYKE ADMIN"
+    }
+  });
   console.log('✅ Seeding finished successfully.');
 }
 
