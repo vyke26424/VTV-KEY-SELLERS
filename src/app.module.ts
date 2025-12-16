@@ -35,6 +35,7 @@ import { UserController } from './admin/controller/admin-user/admin-user.control
 import { AdminUserService } from './admin/services/admin-user/admin-user.service';
 import { AdminSettingsService } from './admin/services/admin-settings/admin-settings.service';
 import { AdminSettingsController } from './admin/controller/admin-settings/admin-settings.controller';
+import { MaintenanceGuard } from './common/guards/maintenance.guard';
 
 @Module({
   imports: [
@@ -74,9 +75,15 @@ import { AdminSettingsController } from './admin/controller/admin-settings/admin
     AdminProductVariantsService,
     AdminStockitemService,
     EncryptionService,
+    // Rate limiting 
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    // Maintenance Guard
+    {
+      provide: APP_GUARD,
+      useClass: MaintenanceGuard,
     },
     AdminUserService,
     AdminOrdersService,

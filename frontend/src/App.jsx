@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+
 // Import Components
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -16,6 +17,7 @@ import LoginPage from './pages/LoginPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import SessionManager from './components/SessionManager';
 import SearchResultsPage from './pages/SearchResultsPage';
+import MaintenancePage from './pages/MaintenancePage';
 // Import Admin pages
 import AdminLayout from './admin/layouts/AdminLayout';
 import DashboardPage from './admin/pages/DashboardPage';
@@ -37,6 +39,7 @@ function App() {
 
         <main className="flex-grow">
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryPage />} />
@@ -46,6 +49,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/orders" element={<OrderHistoryPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
+            <Route path="/maintenance" element={<MaintenancePage />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>

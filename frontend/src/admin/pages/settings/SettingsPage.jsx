@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Save, User, Lock, Bell, Shield, CreditCard } from 'lucide-react';
-import useAuthStore from '../../../store/useAuthStore'; // Lấy thông tin Admin đang login
+import { Save, User, Lock, Shield, CreditCard } from 'lucide-react';
+import useAuthStore from '../../../store/useAuthStore'; 
 import axiosClient from '../../../store/axiosClient';
 
 const SettingsPage = () => {
-  const { user } = useAuthStore(); // Lấy user từ Zustand store
+  const { user, loginSuccess } = useAuthStore(); // loginSuccess để cập nhật lại store nếu đổi tên
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
 
-  // State form profile
+  // --- STATE 1: PROFILE ---
   const [profile, setProfile] = useState({
     fullName: user?.fullName || '',
     email: user?.email || '',
@@ -16,23 +16,69 @@ const SettingsPage = () => {
     confirmPassword: ''
   });
 
-  // State cấu hình (Mock)
+  // --- STATE 2: SYSTEM CONFIG ---
   const [config, setConfig] = useState({
     maintenanceMode: false,
     emailNotification: true,
-    bankInfo: 'MB Bank - 999999999 - NGUYEN VAN A'
+    bankInfo: ''
   });
 
+  // --- 1. LOAD CONFIG KHI MỞ TAB SYSTEM ---
+  useEffect(() => {
+    if (activeTab === 'system') {
+        const fetchConfig = async () => {
+            try {
+                const res = await axiosClient.get('/admin/settings');
+                setConfig(res);
+            } catch (error) {
+                console.error("Lỗi tải config:", error);
+            }
+        };
+        fetchConfig();
+    }
+  }, [activeTab]);
+
+  // --- 2. UPDATE PROFILE ---
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
+    
+    if (profile.password && profile.password !== profile.confirmPassword) {
+        return alert("Mật khẩu xác nhận không khớp!");
+    }
+
     setLoading(true);
     try {
-        // Gọi API update profile (Cần backend hỗ trợ route PATCH /me hoặc /users/:id)
-        // Ở đây demo success
-        await new Promise(r => setTimeout(r, 1000)); 
+        // Gọi API update user (Gửi fullName và password nếu có)
+        await axiosClient.patch(`/admin/users/${user.id}`, {
+            fullName: profile.fullName,
+            password: profile.password || undefined // Nếu rỗng thì không gửi
+        });
+
+        // Cập nhật lại Auth Store (để hiển thị tên mới trên Sidebar ngay lập tức)
+        // Lưu ý: Token giữ nguyên, chỉ update thông tin user
+        const updatedUser = { ...user, fullName: profile.fullName };
+        // Giả lập cập nhật store (cần check lại hàm loginSuccess của bạn hỗ trợ tham số nào)
+        // Nếu loginSuccess cần token, bạn có thể lấy token cũ từ store
+        const token = useAuthStore.getState().token;
+        loginSuccess(updatedUser, token);
+
         alert("Cập nhật thông tin thành công!");
+        setProfile(prev => ({...prev, password: '', confirmPassword: ''})); // Reset ô pass
     } catch (error) {
-        alert("Lỗi cập nhật.");
+        alert("Lỗi: " + (error.response?.data?.message || "Không thể cập nhật."));
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  // --- 3. UPDATE SYSTEM CONFIG ---
+  const handleConfigUpdate = async () => {
+    setLoading(true);
+    try {
+        await axiosClient.patch('/admin/settings', config);
+        alert("Đã lưu cấu hình hệ thống!");
+    } catch (error) {
+        alert("Lỗi lưu cấu hình.");
     } finally {
         setLoading(false);
     }
@@ -63,6 +109,7 @@ const SettingsPage = () => {
 
         {/* Content */}
         <div className="md:col-span-3">
+            {/* --- TAB PROFILE --- */}
             {activeTab === 'profile' && (
                 <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
                     <h2 className="text-lg font-bold text-white mb-4">Thông tin tài khoản</h2>
@@ -85,16 +132,28 @@ const SettingsPage = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Mật khẩu mới</label>
-                                    <input type="password" className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:border-vtv-green outline-none"/>
+                                    <input 
+                                        type="password" 
+                                        value={profile.password}
+                                        onChange={e => setProfile({...profile, password: e.target.value})}
+                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:border-vtv-green outline-none"
+                                        placeholder="Nhập mật khẩu mới"
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Xác nhận mật khẩu</label>
-                                    <input type="password" className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:border-vtv-green outline-none"/>
+                                    <input 
+                                        type="password" 
+                                        value={profile.confirmPassword}
+                                        onChange={e => setProfile({...profile, confirmPassword: e.target.value})}
+                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:border-vtv-green outline-none"
+                                        placeholder="Nhập lại mật khẩu mới"
+                                    />
                                 </div>
                             </div>
                         </div>
                         <div className="pt-4 flex justify-end">
-                            <button disabled={loading} className="bg-vtv-green text-black font-bold px-6 py-2.5 rounded-lg hover:bg-green-400 transition flex items-center gap-2 shadow-lg shadow-green-500/20">
+                            <button disabled={loading} className="bg-vtv-green text-black font-bold px-6 py-2.5 rounded-lg hover:bg-green-400 transition flex items-center gap-2 shadow-lg shadow-green-500/20 disabled:opacity-50">
                                 <Save size={20}/> {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
                             </button>
                         </div>
@@ -102,6 +161,7 @@ const SettingsPage = () => {
                 </div>
             )}
 
+            {/* --- TAB SYSTEM CONFIG --- */}
             {activeTab === 'system' && (
                 <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
                     <h2 className="text-lg font-bold text-white">Cấu hình chung</h2>
@@ -114,6 +174,7 @@ const SettingsPage = () => {
                             value={config.bankInfo}
                             onChange={e => setConfig({...config, bankInfo: e.target.value})}
                             className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:border-vtv-green outline-none"
+                            placeholder="Tên ngân hàng - Số TK - Chủ TK"
                         ></textarea>
                     </div>
 
@@ -143,8 +204,12 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="pt-4 flex justify-end">
-                        <button className="bg-slate-800 text-white font-bold px-6 py-2.5 rounded-lg hover:bg-slate-700 transition">
-                            Lưu cấu hình
+                        <button 
+                            onClick={handleConfigUpdate}
+                            disabled={loading}
+                            className="bg-slate-800 text-white font-bold px-6 py-2.5 rounded-lg hover:bg-slate-700 transition disabled:opacity-50"
+                        >
+                            {loading ? 'Đang lưu...' : 'Lưu cấu hình'}
                         </button>
                     </div>
                 </div>

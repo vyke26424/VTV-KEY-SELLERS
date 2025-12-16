@@ -27,7 +27,14 @@ axiosClient.interceptors.response.use(
   (response) => response.data, 
   async (error) => {
     const originalRequest = error.config;
-
+    // Nếu lỗi 503 (Maintenance)
+    if (error.response && error.response.status === 503) {
+        // Chuyển hướng sang trang bảo trì
+        if (window.location.pathname !== '/maintenance') {
+             window.location.href = '/maintenance';
+        }
+        return Promise.reject(error);
+    }
     // Nếu lỗi 401 và chưa retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
