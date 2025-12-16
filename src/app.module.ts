@@ -33,6 +33,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserController } from './admin/controller/admin-user/admin-user.controller';
 import { AdminUserService } from './admin/services/admin-user/admin-user.service';
+import { AdminSettingsService } from './admin/services/admin-settings/admin-settings.service';
+import { AdminSettingsController } from './admin/controller/admin-settings/admin-settings.controller';
 
 @Module({
   imports: [
@@ -61,7 +63,8 @@ import { AdminUserService } from './admin/services/admin-user/admin-user.service
     AdminProductVariantsController,
     AdminStockitemController,
     UserController,
-    AdminOrdersController
+    AdminOrdersController,
+    AdminSettingsController
   ],
   providers: [
     AuthService,
@@ -77,6 +80,7 @@ import { AdminUserService } from './admin/services/admin-user/admin-user.service
     },
     AdminUserService,
     AdminOrdersService,
+    AdminSettingsService,
   ],
 
 
