@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { Prisma, Role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminUserService {
@@ -75,5 +76,23 @@ export class AdminUserService {
     // Loại bỏ password trước khi trả về
     const { password, ...result } = user; 
     return result;
+  }
+  // --- 3. CẬP NHẬT THÔNG TIN USER ---
+  async update(id: string, data: any) {
+    const updateData: any = {
+        fullName: data.fullName,
+        // ... các trường khác nếu cần
+    };
+
+    // Nếu có gửi password lên thì mới hash và cập nhật
+    if (data.password && data.password.trim() !== '') {
+        const salt = await bcrypt.genSalt(10);
+        updateData.password = await bcrypt.hash(data.password, salt);
+    }
+
+    return await this.prisma.user.update({
+        where: { id },
+        data: updateData
+    });
   }
 }

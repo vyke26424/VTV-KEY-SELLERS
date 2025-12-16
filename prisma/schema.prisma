@@ -244,3 +244,12 @@ model RefreshToken {
   createAt DateTime @default(now())
   expiresAt DateTime
 }
+
+model SystemConfig {
+  id                Int     @id @default(autoincrement())
+  maintenanceMode   Boolean @default(false) // Chế độ bảo trì
+  emailNotification Boolean @default(true)  // Nhận email
+  bankInfo          String? @db.Text        // Thông tin ngân hàng
+  
+  updatedAt         DateTime @updatedAt
+}
