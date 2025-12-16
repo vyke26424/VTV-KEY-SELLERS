@@ -27,7 +27,7 @@ import OrderListPage from './admin/pages/orders/OrderListPage';
 import UserListPage from './admin/pages/users/UserListPage';
 import StaffListPage from './admin/pages/users/StaffListPage';
 import StockListPage from './admin/pages/stock/StockListPage';
-
+import SettingsPage from './admin/pages/settings/SettingsPage';
 function App() {
   return (
     <Router>
@@ -60,6 +60,7 @@ function App() {
               <Route path="customers" element={<UserListPage />} />              
               <Route path="staff" element={<StaffListPage />} />
               <Route path="stock" element={<StockListPage />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Routes>
         </main>
