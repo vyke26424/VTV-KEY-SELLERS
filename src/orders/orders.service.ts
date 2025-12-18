@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { StockStatus } from '@prisma/client';
@@ -15,6 +15,7 @@ export class OrdersService {
   async create(createOrderDto: CreateOrderDto) {
     const { userId, items, totalAmount } = createOrderDto;
 
+    try {
     return await this.prisma.$transaction(async (tx) => {
       const orderCode = `#ORD-${Date.now().toString().slice(-6)}`;
       
@@ -43,12 +44,11 @@ export class OrdersService {
         });
         
         // 3. Chuẩn bị dữ liệu OrderItem
-        // --- THAY ĐỔI QUAN TRỌNG: Dùng 'connect' thay vì lưu string 'codes' ---
+        // Schema đã sửa (bỏ @unique), ta gộp nhiều StockItem vào 1 OrderItem cho gọn DB
         orderItemsData.push({
             variantId: item.variantId,
             quantity: item.quantity,
             price: item.price,
-            // Logic này bảo Prisma: "Hãy nối OrderItem này với các StockItem có ID trong danh sách này"
             stockItems: {
                 connect: stockIds.map(id => ({ id })) 
             }
@@ -74,6 +74,13 @@ export class OrdersService {
         code: orderCode,
       };
     });
+    } catch (error) {
+        console.error("🔥 Lỗi tạo đơn hàng (OrdersService):", error); // Quan trọng: Xem lỗi chi tiết ở Terminal Backend
+        
+        // Nếu là lỗi BadRequest (hết hàng) thì ném tiếp, còn lỗi lạ (Prisma) thì gói vào 500 kèm message
+        if (error instanceof BadRequestException) throw error;
+        throw new InternalServerErrorException(error.message || "Lỗi Database không xác định");
+    }
   }
 
   // --- LẤY LỊCH SỬ ĐƠN HÀNG (Kèm giải mã Key) ---

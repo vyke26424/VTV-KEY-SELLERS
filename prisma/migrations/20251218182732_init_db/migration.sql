@@ -18,8 +18,13 @@ CREATE TABLE `Category` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
+    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `deletedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Category_slug_key`(`slug`),
+    INDEX `Category_isDeleted_idx`(`isDeleted`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -30,15 +35,27 @@ CREATE TABLE `Product` (
     `slug` VARCHAR(191) NOT NULL,
     `description` TEXT NULL,
     `thumbnail` VARCHAR(191) NULL,
-    `keywords` JSON NULL,
     `aiMetadata` JSON NULL,
     `avgRating` DOUBLE NOT NULL DEFAULT 0,
     `categoryId` INTEGER NOT NULL,
+    `isHot` BOOLEAN NOT NULL DEFAULT false,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `deletedAt` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Product_slug_key`(`slug`),
+    INDEX `Product_isDeleted_idx`(`isDeleted`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `keywords` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `keywords_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -49,7 +66,12 @@ CREATE TABLE `ProductVariant` (
     `price` DECIMAL(10, 2) NOT NULL,
     `orginalPrice` DECIMAL(10, 2) NOT NULL,
     `productId` INTEGER NOT NULL,
+    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `deletedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
+    INDEX `ProductVariant_isDeleted_idx`(`isDeleted`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -64,7 +86,6 @@ CREATE TABLE `StockItem` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `StockItem_orderItemId_key`(`orderItemId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -128,22 +149,47 @@ CREATE TABLE `Review` (
     `comment` TEXT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `productId` INTEGER NOT NULL,
+    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `deletedAt` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `Review_productId_idx`(`productId`),
+    INDEX `Review_isDeleted_idx`(`isDeleted`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RefreshToken` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` TEXT NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `tokenId` VARCHAR(191) NOT NULL,
+    `revoked` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `expiresAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `RefreshToken_tokenId_key`(`tokenId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SystemConfig` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `maintenanceMode` BOOLEAN NOT NULL DEFAULT false,
+    `emailNotification` BOOLEAN NOT NULL DEFAULT true,
+    `bankInfo` TEXT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `RefreshToke` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `token` VARCHAR(191) NOT NULL,
-    `userId` VARCHAR(191) NOT NULL,
-    `revoked` BOOLEAN NOT NULL DEFAULT false,
-    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `expiresAt` DATETIME(3) NOT NULL,
+CREATE TABLE `_ProductTokeywords` (
+    `A` INTEGER NOT NULL,
+    `B` INTEGER NOT NULL,
 
-    UNIQUE INDEX `RefreshToke_token_key`(`token`),
-    PRIMARY KEY (`id`)
+    UNIQUE INDEX `_ProductTokeywords_AB_unique`(`A`, `B`),
+    INDEX `_ProductTokeywords_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -183,4 +229,10 @@ ALTER TABLE `Review` ADD CONSTRAINT `Review_userId_fkey` FOREIGN KEY (`userId`) 
 ALTER TABLE `Review` ADD CONSTRAINT `Review_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `RefreshToke` ADD CONSTRAINT `RefreshToke_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `RefreshToken` ADD CONSTRAINT `RefreshToken_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_ProductTokeywords` ADD CONSTRAINT `_ProductTokeywords_A_fkey` FOREIGN KEY (`A`) REFERENCES `Product`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_ProductTokeywords` ADD CONSTRAINT `_ProductTokeywords_B_fkey` FOREIGN KEY (`B`) REFERENCES `keywords`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

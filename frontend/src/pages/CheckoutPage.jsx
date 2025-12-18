@@ -16,7 +16,10 @@ const CheckoutPage = () => {
 
   const [loading, setLoading] = useState(false);
   // Tính tổng tiền
-  const totalAmount = cart.reduce((total, item) => total + (parseFloat(item.selectedVariant?.price || item.price) * item.quantity), 0);
+  const totalAmount = cart.reduce((total, item) => {
+    const price = parseFloat(item.selectedVariant?.price || item.price) || 0;
+    return total + (price * item.quantity);
+  }, 0);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -30,16 +33,29 @@ const CheckoutPage = () => {
 
     setLoading(true);
 
+    // LỌC DỮ LIỆU: Chỉ lấy những item có variantId hợp lệ (khác 0)
+    const validItems = cart
+      .map(item => ({
+          variantId: parseInt(item.selectedVariant?.id || 0), // Ép kiểu về số nguyên (Int) để tránh lỗi Prisma
+          quantity: item.quantity,
+          price: parseFloat(item.selectedVariant?.price || item.price) || 0
+      }))
+      .filter(item => !isNaN(item.variantId) && item.variantId !== 0 && item.quantity > 0);
+
+    if (validItems.length === 0) {
+        alert("Giỏ hàng có sản phẩm lỗi (không xác định được gói). Vui lòng xóa và chọn lại.");
+        setLoading(false);
+        return;
+    }
+
     // Chuẩn bị dữ liệu (Backend sẽ lấy userId từ Token, nhưng gửi thêm cũng không sao)
     const orderData = {
         userId: user.id, // Dữ liệu này thực tế backend sẽ override bằng Token
         totalAmount: totalAmount,
-        items: cart.map(item => ({
-            variantId: item.selectedVariant?.id || 0,
-            quantity: item.quantity,
-            price: parseFloat(item.selectedVariant?.price || item.price)
-        }))
+        items: validItems
     };
+
+    console.log("📦 Dữ liệu gửi đi thanh toán:", orderData); // Xem log này trong Console (F12) để debug
 
     try {
         // --- SỬA ĐỔI: Dùng axiosClient ---

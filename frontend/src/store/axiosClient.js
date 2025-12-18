@@ -35,6 +35,11 @@ axiosClient.interceptors.response.use(
         return Promise.reject(error);
     }
 
+    // --- LOG LỖI SERVER (500) ĐỂ DỄ DEBUG ---
+    if (error.response?.status === 500) {
+        console.error(`🔥 Lỗi Server (500) tại ${originalRequest.url}:`, error.response.data);
+    }
+
     // --- 2. XỬ LÝ LỖI 503 (BẢO TRÌ) ---
     if (error.response && error.response.status === 503) {
         if (window.location.pathname !== '/maintenance') {
