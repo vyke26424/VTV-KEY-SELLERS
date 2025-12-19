@@ -44,7 +44,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="pb-20 min-h-screen"> 
+    <div className="pb-20 min-h-screen bg-gradient-to-b from-slate-800 to-vtv-dark">
       <Banner />
 
       <div className="container mx-auto px-4 space-y-12 mt-12">
@@ -64,7 +64,7 @@ const Home = () => {
             if (filteredProducts.length === 0) return null;
 
             return (
-               <section key={cat.id} className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+               <section key={cat.id} className="bg-vtv-card p-6 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
                   {/* Header Danh mục */}
                   <div className="flex items-center justify-between mb-6 border-b border-slate-800 pb-2">
                     <h2 className="text-xl font-bold flex items-center gap-3 text-white uppercase">
