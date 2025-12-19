@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, ShoppingBag, ShoppingCart, 
-  Users, FolderTree, Settings, Menu, X, Package 
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  ShoppingCart,
+  Users,
+  FolderTree,
+  Settings,
+  Menu,
+  X,
+  Package,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,23 +28,23 @@ const AdminSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <motion.div 
+    <motion.div
       animate={{ width: isCollapsed ? 80 : 250 }}
       className="bg-slate-900 border-r border-slate-800 h-screen sticky top-0 flex flex-col z-20 transition-all duration-300 shadow-xl"
     >
       {/* Logo Area */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
         {!isCollapsed && (
-          <motion.span 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="text-xl font-black text-white tracking-tighter"
           >
             VTV<span className="text-vtv-green">ADMIN</span>
           </motion.span>
         )}
-        
-        <button 
+
+        <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2 rounded-lg hover:bg-slate-800 text-gray-400 hover:text-white transition"
         >
@@ -55,16 +62,17 @@ const AdminSidebar = () => {
               end={item.path === '/admin'} // Chỉ active chính xác path cho Dashboard
               className={({ isActive }) => `
                 flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative overflow-hidden
-                ${isActive 
-                  ? 'bg-vtv-green text-black font-bold shadow-[0_0_15px_rgba(34,197,94,0.4)]' 
-                  : 'text-gray-400 hover:bg-slate-800 hover:text-white'
+                ${
+                  isActive
+                    ? 'bg-vtv-green text-black font-bold shadow-[0_0_15px_rgba(34,197,94,0.4)]'
+                    : 'text-gray-400 hover:bg-slate-800 hover:text-white'
                 }
               `}
             >
               <item.icon size={22} className="flex-shrink-0" />
-              
+
               {!isCollapsed && (
-                <motion.span 
+                <motion.span
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="whitespace-nowrap"
@@ -92,7 +100,9 @@ const AdminSidebar = () => {
           </div>
           {!isCollapsed && (
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-white truncate">Admin User</p>
+              <p className="text-sm font-bold text-white truncate">
+                Admin User
+              </p>
               <p className="text-xs text-gray-500 truncate">Super Admin</p>
             </div>
           )}

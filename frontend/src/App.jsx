@@ -1,9 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-
 import ScrollToTop from './components/ScrollToTop';
-
 
 // Import Components
 import Header from './components/Header';
@@ -64,9 +62,12 @@ function App() {
               <Route path="products/edit/:id" element={<ProductFormPage />} />
               <Route path="categories" element={<CategoryListPage />} />
               <Route path="categories/create" element={<CategoryFormPage />} />
-              <Route path="categories/edit/:id" element={<CategoryFormPage />} />
+              <Route
+                path="categories/edit/:id"
+                element={<CategoryFormPage />}
+              />
               <Route path="orders" element={<OrderListPage />} />
-              <Route path="customers" element={<UserListPage />} />              
+              <Route path="customers" element={<UserListPage />} />
               <Route path="staff" element={<StaffListPage />} />
               <Route path="stock" element={<StockListPage />} />
               <Route path="settings" element={<SettingsPage />} />

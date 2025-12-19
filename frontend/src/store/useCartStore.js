@@ -9,15 +9,18 @@ const useCartStore = create(
       // 1. Thêm sản phẩm vào giỏ
       addToCart: (product, variant = null) => {
         const { cart } = get();
-        
+
         // Nếu không chọn variant (ở trang Home), lấy variant đầu tiên làm mặc định
-        const selectedVariant = variant || (product.variants && product.variants[0]) || {};
-        
+        const selectedVariant =
+          variant || (product.variants && product.variants[0]) || {};
+
         // Tạo ID duy nhất cho sản phẩm trong giỏ (ID sản phẩm + ID variant)
         const cartItemId = `${product.id}-${selectedVariant.id || 'default'}`;
 
         // Kiểm tra xem món này đã có trong giỏ chưa
-        const existingItem = cart.find((item) => item.cartItemId === cartItemId);
+        const existingItem = cart.find(
+          (item) => item.cartItemId === cartItemId,
+        );
 
         if (existingItem) {
           // Có rồi -> Tăng số lượng lên 1
@@ -25,7 +28,7 @@ const useCartStore = create(
             cart: cart.map((item) =>
               item.cartItemId === cartItemId
                 ? { ...item, quantity: item.quantity + 1 }
-                : item
+                : item,
             ),
           });
         } else {
@@ -42,9 +45,9 @@ const useCartStore = create(
             ],
           });
         }
-        
+
         // Thông báo nhẹ (Optional)
-        // alert("Đã thêm vào giỏ hàng!"); 
+        // alert("Đã thêm vào giỏ hàng!");
       },
 
       // 2. Xóa sản phẩm
@@ -59,7 +62,8 @@ const useCartStore = create(
         set((state) => ({
           cart: state.cart.map((item) => {
             if (item.cartItemId === cartItemId) {
-              const newQuantity = action === 'increase' ? item.quantity + 1 : item.quantity - 1;
+              const newQuantity =
+                action === 'increase' ? item.quantity + 1 : item.quantity - 1;
               return { ...item, quantity: Math.max(1, newQuantity) }; // Không cho nhỏ hơn 1
             }
             return item;
@@ -72,8 +76,8 @@ const useCartStore = create(
     }),
     {
       name: 'vtv-cart-storage', // Tên key lưu trong LocalStorage
-    }
-  )
+    },
+  ),
 );
 
 export default useCartStore;
