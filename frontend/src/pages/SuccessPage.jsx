@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const SuccessPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-vtv-dark px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <motion.div 
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}

@@ -19,7 +19,7 @@ const AdminLayout = () => {
   }, [isAuthenticated, user, navigate]);
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-gray-300 font-sans">
+    <div className="flex min-h-screen text-gray-300 font-sans">
       {/* 1. Sidebar bên trái */}
       <AdminSidebar />
 

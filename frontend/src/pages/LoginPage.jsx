@@ -98,7 +98,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
       
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-vtv-green/5 rounded-full blur-[100px]"></div>

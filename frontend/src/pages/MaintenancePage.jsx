@@ -9,7 +9,7 @@ const MaintenancePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
       {/* Background Decor (Hiệu ứng nền mờ ảo) */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

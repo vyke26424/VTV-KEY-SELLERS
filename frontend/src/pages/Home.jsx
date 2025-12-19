@@ -44,7 +44,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="pb-20 min-h-screen bg-gradient-to-b from-slate-800 to-vtv-dark">
+    <div className="pb-20 min-h-screen">
       <Banner />
 
       <div className="container mx-auto px-4 space-y-12 mt-12">

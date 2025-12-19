@@ -33,7 +33,7 @@ import SettingsPage from './admin/pages/settings/SettingsPage';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-vtv-dark text-gray-200 font-sans pb-20 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-b from-slate-800 to-vtv-dark text-gray-200 font-sans pb-20 flex flex-col">
         <SessionManager />
         <Header />
 

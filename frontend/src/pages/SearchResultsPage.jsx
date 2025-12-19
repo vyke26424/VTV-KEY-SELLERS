@@ -46,7 +46,7 @@ const SearchResultsPage = () => {
   }, [query, sortBy]); 
 
   return (
-    <div className="min-h-screen bg-vtv-dark pb-20">
+    <div className="min-h-screen pb-20">
       
       {/* Header kết quả */}
       <div className="bg-slate-900 border-b border-slate-800 pt-8 pb-8 px-4">
