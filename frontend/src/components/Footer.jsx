@@ -51,7 +51,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs">
-          <p>© 2025 VTV Key Shop. All rights reserved.</p>
+          <p>© 2025 VTV Key Shop. Bản quyền thuộc về Vỹ Tứ Vũ.</p>
           <div className="flex gap-4 mt-2 md:mt-0">
              <span>Điều khoản sử dụng</span>
              <span>Chính sách bảo mật</span>
