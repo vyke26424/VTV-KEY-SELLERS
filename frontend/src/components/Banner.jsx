@@ -141,19 +141,19 @@ const Banner = () => {
         {/* NÚT ĐIỀU HƯỚNG (Mũi tên trái phải) */}
         <button 
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100"
+          className="absolute z-20 left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100"
         >
           <ChevronLeft size={24} />
         </button>
         <button 
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100"
+          className="absolute z-20 right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100"
         >
           <ChevronRight size={24} />
         </button>
 
         {/* DOTS (Chấm tròn bên dưới) */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+        <div className="absolute z-20 bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
           {SLIDES.map((_, index) => (
             <button
               key={index}
