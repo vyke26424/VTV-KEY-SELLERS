@@ -60,7 +60,6 @@ const ProductDetail = () => {
       }
     };
     fetchProductData();
-    window.scrollTo(0, 0);
   }, [currentParam]);
 
   const handleAddToCart = () => {

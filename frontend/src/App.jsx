@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
+import ScrollToTop from './components/ScrollToTop';
+
+
 // Import Components
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -33,6 +36,7 @@ import SettingsPage from './admin/pages/settings/SettingsPage';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-gradient-to-b from-slate-800 to-vtv-dark text-gray-200 font-sans flex flex-col">
         <SessionManager />
         <Header />
