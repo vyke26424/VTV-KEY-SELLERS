@@ -114,7 +114,6 @@ const CategoryPage = () => {
     };
 
     fetchData();
-    window.scrollTo(0, 0);
   }, [slug]);
 
   return (

@@ -101,11 +101,22 @@ const ProductDetail = () => {
           {/* CỘT TRÁI: ẢNH & INFO */}
           <div className="lg:col-span-8 space-y-6">
              
-             {/* 1. HEADER: GRADIENT XANH-TÍM (Đúng màu cũ) */}
-             <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col sm:flex-row gap-6 items-center border border-white/10">
-                <div className="absolute inset-0 bg-black/10"></div>
+             {/* 1. HEADER: DYNAMIC AMBIENT BACKGROUND*/}
+             <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col sm:flex-row gap-6 items-center border border-white/10">
+                
+                {/* Lớp nền Ambient từ ảnh sản phẩm */}
+                {product.thumbnail && (
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center blur-3xl scale-150 opacity-60"
+                        style={{ backgroundImage: `url(${product.thumbnail})` }}
+                    ></div>
+                )}
+                
+                {/* Lớp phủ tối để chữ dễ đọc */}
+                <div className="absolute inset-0 bg-black/40"></div>
 
-                <div className="w-40 h-40 sm:w-48 sm:h-48 shrink-0 relative z-10 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 p-4 shadow-xl">
+                {/* Nội dung Header */}
+                <div className="w-40 h-40 sm:w-48 sm:h-48 shrink-0 relative z-10 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 p-4 shadow-xl">
                     {product.thumbnail ? (
                         <img src={product.thumbnail} alt={product.name} className="w-full h-full object-contain drop-shadow-2xl"/>
                     ) : <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>}
@@ -113,10 +124,20 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="relative z-10 text-center sm:text-left flex-1">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 leading-tight">{product.name}</h1>
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sm text-blue-100 mb-4">
-                        <span className="bg-white/10 px-3 py-1 rounded-full border border-white/20 backdrop-blur-md">{product.category?.name}</span>
-                        <span className="flex items-center gap-1"><Star size={14} className="text-yellow-400" fill="currentColor"/> 5.0</span>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 leading-tight text-shadow-md">{product.name}</h1>
+                    
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sm text-white mb-4">
+                        <span className="bg-white/20 px-3 py-1 rounded-full border border-white/30 backdrop-blur-md">{product.category?.name}</span>
+                        
+                        <span className="flex items-center gap-1 bg-red-500/80 text-white px-2 py-1 rounded border border-white/20 text-xs font-bold shadow-sm">
+                            🇻🇳 Vietnam
+                        </span>
+
+                        <span className="flex items-center gap-1 bg-green-500/80 text-white px-2 py-1 rounded border border-white/20 text-xs font-bold animate-pulse shadow-sm">
+                            <Zap size={12} fill="currentColor"/> Giao ngay
+                        </span>
+
+                        <span className="flex items-center gap-1 ml-2"><Star size={14} className="text-yellow-400" fill="currentColor"/> 5.0</span>
                     </div>
                 </div>
              </div>
