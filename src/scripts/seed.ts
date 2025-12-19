@@ -29,36 +29,22 @@ const encryptionService = new EncryptionService(mockConfigService);
 async function main() {
   console.log('🌱 Start seeding...');
 
-  // --- ADMINS ---
-  // const hashedAdminPass = await bcrypt.hash('admin123', 10);
-  // const hashedVuPass = await bcrypt.hash('hoangvu2004', 10);
-  // const adminEmail = 'admin@vtvkeys.com';
-  // const vuEmail = 'hoangvu2004@gmail.com';
+  // --- TẠO ADMIN ---
+  const hashedPassword = await bcrypt.hash('admin123', 10);
+  const adminEmail = 'admin@vtvkeys.com';
 
-  // await prisma.user.upsert({
-  //   where: { email: adminEmail },
-  //   update: {},
-  //   create: {
-  //     email: adminEmail,
-  //     password: hashedAdminPass,
-  //     fullName: 'Quản Trị Viên',
-  //     role: Role.ADMIN,
-  //     balance: 99999999,
-  //   },
-  // });
-
-  // await prisma.user.upsert({
-  //   where: { email: vuEmail },
-  //   update: { password: hashedVuPass },
-  //   create: {
-  //     email: vuEmail,
-  //     password: hashedVuPass,
-  //     fullName: 'Hoàng Vũ Admin',
-  //     role: Role.ADMIN,
-  //     balance: 99999999,
-  //   },
-  // });
-  // console.log(`👤 Admins ready: ${adminEmail}, ${vuEmail}`);
+  const admin = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {},
+    create: {
+      email: adminEmail,
+      password: hashedPassword,
+      fullName: 'Quản Trị Viên',
+      role: Role.ADMIN,
+      balance: 999999, // Đại gia
+    },
+  });
+  console.log(`👤 Admin ready: ${admin.email}`);
 
   // --- CATEGORIES ---
   const categoriesData = [
