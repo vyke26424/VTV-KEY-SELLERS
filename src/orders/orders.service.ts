@@ -2,7 +2,8 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { StockStatus } from '@prisma/client';
-import { EncryptionService } from '../admin/utils/encryption/encryption.service'; // Import Service mã hóa
+import { EncryptionService } from '../admin/utils/encryption/encryption.service'; 
+import { InteractionType } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -21,6 +22,8 @@ export class OrdersService {
       
       // Mảng chứa dữ liệu, không cần định nghĩa type cứng nữa để Prisma tự hiểu
       const orderItemsData: any[] = [];
+      // Mảng chứa các interaction để createMany sau
+      const interactionsData: any[] = [];
 
       for (const item of items) {
         // 1. Tìm key đang rảnh (AVAILABLE)
@@ -53,9 +56,24 @@ export class OrdersService {
                 connect: stockIds.map(id => ({ id })) 
             }
         });
+        //4. Chuẩn bị dữ liệu Interaction
+        const variant = await tx.productVariant.findUnique({
+             where: { id: item.variantId },
+             select: { productId: true }
+          });
+
+          if (variant) {
+             interactionsData.push({
+                userId: userId,
+                productId: variant.productId,
+                type: InteractionType.PURCHASE,
+                score: 20, // Cộng 20 điểm như bạn yêu cầu
+                meta: { source: 'order_creation', variantId: item.variantId }
+             });
+          }
       }
 
-      // 4. Tạo đơn hàng (Prisma sẽ tự động tạo OrderItem và nối dây với StockItem)
+      // 5. Tạo đơn hàng (Prisma sẽ tự động tạo OrderItem và nối dây với StockItem)
       const order = await tx.order.create({
         data: {
           code: orderCode,
