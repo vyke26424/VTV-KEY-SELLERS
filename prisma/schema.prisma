@@ -245,6 +245,7 @@ model RefreshToken {
   expiresAt DateTime
 }
 
+
 model SystemConfig {
   id                Int     @id @default(autoincrement())
   maintenanceMode   Boolean @default(false) // Chế độ bảo trì
@@ -252,4 +253,21 @@ model SystemConfig {
   bankInfo          String? @db.Text        // Thông tin ngân hàng
   
   updatedAt         DateTime @updatedAt
+}
+
+model ChatSession {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  title String? @default("Cuộc hội thoại mới")
+  message ChatMessage[]
+}
+
+model ChatMessage {
+  id Int @id @default(autoincrement())
+  content String @db.Text
+  role String  
+  createdAt DateTime @default(now())
+  sessionId Int 
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
 }

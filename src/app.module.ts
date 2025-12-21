@@ -31,11 +31,18 @@ import { AdminOrdersService } from './admin/services/admin-orders/admin-orders.s
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+
 import { UserController } from './admin/controller/admin-user/admin-user.controller';
 import { AdminUserService } from './admin/services/admin-user/admin-user.service';
 import { AdminSettingsService } from './admin/services/admin-settings/admin-settings.service';
 import { AdminSettingsController } from './admin/controller/admin-settings/admin-settings.controller';
 import { MaintenanceGuard } from './common/guards/maintenance.guard';
+
+import { ChatService } from './admin/services/chat/chat.service';
+import { ChatController } from './admin/controller/chat/chat.controller';
+
+import { HttpModule } from "@nestjs/axios";
+
 
 @Module({
   imports: [
@@ -54,7 +61,8 @@ import { MaintenanceGuard } from './common/guards/maintenance.guard';
     AdminModule,
     OrdersModule,
     ProductsModule,
-    SearchModule],
+    SearchModule,
+    HttpModule],
   
 
   controllers: [
@@ -63,9 +71,13 @@ import { MaintenanceGuard } from './common/guards/maintenance.guard';
     AdminProductController,
     AdminProductVariantsController,
     AdminStockitemController,
+
     UserController,
     AdminOrdersController,
-    AdminSettingsController
+    AdminSettingsController,
+
+    ChatController
+
   ],
   providers: [
     AuthService,
@@ -80,6 +92,7 @@ import { MaintenanceGuard } from './common/guards/maintenance.guard';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+
     // Maintenance Guard
     {
       provide: APP_GUARD,
@@ -88,6 +101,9 @@ import { MaintenanceGuard } from './common/guards/maintenance.guard';
     AdminUserService,
     AdminOrdersService,
     AdminSettingsService,
+
+    ChatService,
+
   ],
 
 

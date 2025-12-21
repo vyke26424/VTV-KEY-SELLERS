@@ -142,3 +142,16 @@ Con ghệ thử gọi mấy cái api của dashboard category của admin để 
     "seoScore": 95
   }
 }**
+
+
+
+{
+  "name": "Youtube Premium 1 Năm",
+  "description": "Nâng cấp chính chủ...",
+  // Đây là phần quan trọng
+  "meta": {
+    "keywords": ["youtube không quảng cáo", "youtube music", "nâng cấp mail chính chủ", "ytb premium"],
+    "features": ["nghe nhạc tắt màn hình", "không quảng cáo"], 
+    "suitable_for": ["sinh viên", "người hay nghe nhạc"]
+  }
+}
