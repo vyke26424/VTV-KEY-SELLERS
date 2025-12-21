@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { OrdersService } from '../../services/orders/orders.service';
+import { CreateOrderDto } from '../../dto/create-order.dto';
 import { AuthGuard } from '@nestjs/passport'; // Guard chặn người chưa đăng nhập
 import { Request } from 'express'; // Interface Request
 

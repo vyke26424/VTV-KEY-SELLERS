@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { PrismaService } from '../prisma/prisma.service';
+import { CreateOrderDto } from '../../dto/create-order.dto';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { StockStatus } from '@prisma/client';
-import { EncryptionService } from '../admin/utils/encryption/encryption.service'; 
+import { EncryptionService } from '../../../admin/utils/encryption/encryption.service'; 
 import { InteractionType } from '@prisma/client';
 
 @Injectable()

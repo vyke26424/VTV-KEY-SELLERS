@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { SearchService } from './search.service';
-import { Public } from '../auth/decorators/public.decorator'; // Giả sử decorator này tồn tại
+import { SearchService } from '../../services/search/search.service';
+import { Public } from '../../../auth/decorators/public.decorator'; // Giả sử decorator này tồn tại
 
 @Controller('search') // Base URL là /search
 export class SearchController {
