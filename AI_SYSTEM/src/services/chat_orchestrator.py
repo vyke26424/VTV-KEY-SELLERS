@@ -107,7 +107,7 @@ chat_orchestrator = ChatOrchestrator()
 async def main() : 
     async with SessionLocal() as db : 
         or_service = ChatOrchestrator()
-        user_question = 'chat box bên bạn được tạo ra như nào thế ? '
+        user_question = 'chính sách bảo hành ? '
         history = []
         result  = await or_service.handle_request(user_question, history, db)
         print(result)

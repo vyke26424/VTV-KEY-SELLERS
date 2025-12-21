@@ -1,3 +1,5 @@
+Chính sách bảo hành : 
+
 1. Phạm vi bảo hành
 
 Sản phẩm áp dụng: Tất cả các Key/Tài khoản được xuất ra từ hệ thống.

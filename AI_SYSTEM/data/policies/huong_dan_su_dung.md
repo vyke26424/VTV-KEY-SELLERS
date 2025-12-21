@@ -1,3 +1,5 @@
+Hướng dẫn sử dụng : 
+
 Bước 1: Lựa chọn Sản phẩm
 
 Truy cập trang chủ, tìm kiếm phần mềm cần mua (Ví dụ: Office 365, Windows 10...).
@@ -27,7 +29,5 @@ Sau khi thanh toán thành công, hệ thống sẽ tự động trích xuất 0
 Thông tin Key sẽ hiển thị ngay trên màn hình "Thành công" và gửi về Email của khách hàng.
 
 Bước 5: Kích hoạt & Hỗ trợ
-
 Khách hàng copy Key vừa nhận và nhập vào phần mềm.
-
 Nếu gặp khó khăn, liên hệ bộ phận Support kèm theo Mã đơn hàng để được hỗ trợ nhanh nhất.

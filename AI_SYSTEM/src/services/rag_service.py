@@ -225,7 +225,7 @@ class RAGService :
 
                     logger.info(f"Tìm thấy: '{doc[:50]}...' - Distance: {distance}")
 
-                    if distance < 0.7 : 
+                    if distance < 0.8 : 
                         valid_docs.append(doc)
                         
                         if meta.get("type") == "Product" and "product_id" in meta : 
