@@ -9,6 +9,8 @@ import { ProductsController } from './controller/products/products.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { SearchService } from './services/search/search.service';
 import { SearchController } from './controller/search/search.controller';
+import { InteractionsService } from './services/interactions/interactions.service';
+import { InteractionsController } from './controller/interactions/interactions.controller';
 
 @Module({
   controllers: [
@@ -16,6 +18,7 @@ import { SearchController } from './controller/search/search.controller';
     OrdersController,
     ProductsController,
     SearchController,
+    InteractionsController,
   ],
   providers: [
     UserService,
@@ -24,6 +27,7 @@ import { SearchController } from './controller/search/search.controller';
     ProductsService,
     PrismaService,
     SearchService,
+    InteractionsService,
   ],
   exports: [UserService, ProductsService, SearchService],
 })
