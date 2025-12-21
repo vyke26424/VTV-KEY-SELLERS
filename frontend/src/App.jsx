@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import ScrollToTop from './components/ScrollToTop';
 
 // Import Components
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+import ChatWidget from './components/ChatBot/ChatWidget';
 
 // Import Pages
 import Home from './pages/Home';
@@ -37,6 +38,7 @@ function App() {
       <ScrollToTop />
       <div className="min-h-screen bg-gradient-to-b from-slate-800 to-vtv-dark text-gray-200 font-sans flex flex-col">
         <SessionManager />
+        <ChatWidget />
         <Header />
 
         <main className="flex-grow">

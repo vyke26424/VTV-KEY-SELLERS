@@ -54,6 +54,7 @@ export class OrdersService {
                 connect: stockIds.map(id => ({ id })) 
             }
         });
+      }
         
       // 4. Tạo đơn hàng (Prisma sẽ tự động tạo OrderItem và nối dây với StockItem)
       const order = await tx.order.create({
