@@ -217,5 +217,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+chroma_db_data/
+*.sqlite3
+*.bin
+
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,python,visualstudiocode
