@@ -20,6 +20,8 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import SessionManager from './components/SessionManager';
 import SearchResultsPage from './pages/SearchResultsPage';
 import MaintenancePage from './pages/MaintenancePage';
+import PolicyPage from './pages/PolicyPage';
+
 // Import Admin pages
 import AdminLayout from './admin/layouts/AdminLayout';
 import DashboardPage from './admin/pages/DashboardPage';
@@ -55,6 +57,7 @@ function App() {
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/maintenance" element={<MaintenancePage />} />
             <Route path="/products" element={<CategoryPage />} />
+            <Route path="/policy/:type" element={<PolicyPage />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>

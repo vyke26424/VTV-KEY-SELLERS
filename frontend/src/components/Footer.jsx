@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // <--- 1. NHỚ THÊM DÒNG NÀY
 import { Facebook, Youtube, Instagram } from 'lucide-react';
 
 const Footer = () => {
@@ -11,48 +12,50 @@ const Footer = () => {
             <h3 className="text-white font-bold mb-4 uppercase">Về VTVKey</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                <Link to="/about" className="hover:text-vtv-green transition">
                   Về chúng tôi
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                <Link to="/news" className="hover:text-vtv-green transition">
                   Tin tức công nghệ
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                <Link to="/contact" className="hover:text-vtv-green transition">
                   Hợp tác kinh doanh
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Cột 2 */}
+          {/* Cột 2 - ĐÃ SỬA LINK Ở ĐÂY */}
           <div>
             <h3 className="text-white font-bold mb-4 uppercase">
               Hỗ trợ khách hàng
             </h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                {/* Link tới trang Hướng dẫn */}
+                <Link to="/policy/guide" className="hover:text-vtv-green transition">
                   Hướng dẫn mua hàng
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                {/* Link tới trang Bảo hành */}
+                <Link to="/policy/warranty" className="hover:text-vtv-green transition">
                   Chính sách bảo hành
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                <Link to="/faq" className="hover:text-vtv-green transition">
                   Câu hỏi thường gặp
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-vtv-green transition">
+                <Link to="/contact" className="hover:text-vtv-green transition">
                   Liên hệ hỗ trợ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -61,7 +64,6 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-bold mb-4 uppercase">Thanh toán</h3>
             <div className="flex flex-wrap gap-2">
-              {/* Giả lập icon thanh toán bằng text box */}
               <span className="bg-white text-blue-800 px-2 py-1 rounded font-bold text-xs">
                 VISA
               </span>
