@@ -20,6 +20,8 @@ import { ChatService } from './services/chat/chat.service';
 import { ChatController } from './controller/chat/chat.controller';
 import { AdminDashboardController } from './controller/admin-dashboard/admin-dashboard.controller';
 import { AdminDashboardService } from './services/admin-dashboard/admin-dashboard.service';
+import { AdminSearchController } from './controller/admin-search/admin-search.controller';
+import { AdminSearchService } from './services/admin-search/admin-search.service';
 
 @Module({
     imports: [HttpModule],
@@ -32,7 +34,8 @@ import { AdminDashboardService } from './services/admin-dashboard/admin-dashboar
         AdminOrdersController,
         AdminSettingsController,
         ChatController,
-        AdminDashboardController
+        AdminDashboardController,
+        AdminSearchController
     ],
     providers: [
         AdminProductService,
@@ -45,6 +48,7 @@ import { AdminDashboardService } from './services/admin-dashboard/admin-dashboar
         AdminSettingsService,
         ChatService,
         AdminDashboardService,
+        AdminSearchService,
     ]
 })
 export class AdminModule {}

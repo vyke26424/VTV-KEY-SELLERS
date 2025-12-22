@@ -10,70 +10,87 @@ export class SearchService {
     private prisma: PrismaService
   ) {}
 
-  async searchAll(searchTerm: string) {
-    if (!searchTerm || searchTerm.trim().length < 2) {
-      return { products: [] };
-    }
-
-    const lowerSearchTerm = searchTerm.toLowerCase().trim();
-
-    const products = await this.prisma.product.findMany({
-      where: {
+  async searchAll(searchTerm: string, sort?: string, categoryId?: number) {
+    const whereCondition: any = {
         isActive: true,
         isDeleted: false,
-        OR: [
-            // 1. Tìm kiếm theo Tên, Slug, Mô tả
-            { name: { contains: lowerSearchTerm } }, 
-            { slug: { contains: lowerSearchTerm } }, 
-            { description: { contains: lowerSearchTerm } }, 
-            
-            // 2. TÌM KIẾM THEO KEYWORDS
-            {
-                keyword: {
-                    some: {
-                        name: { 
-                            contains: lowerSearchTerm 
-                        }
-                    }
-                }
-            },
+    };
 
-            // 3. TÌM KIẾM THEO TÊN DANH MỤC (category)
-            {
-                category: {
-                    name: {
-                        contains: lowerSearchTerm
-                    }
-                }
-            },
+    // 1. Logic tìm kiếm từ khóa
+    if (searchTerm && searchTerm.trim().length >= 2) {
+        const lower = searchTerm.toLowerCase().trim();
+        whereCondition.OR = [
+            { name: { contains: lower } },
+            { slug: { contains: lower } },
+            { description: { contains: lower } },
+            { keyword: { some: { name: { contains: lower } } } }
+        ];
+    }
 
-            // 4. TÌM KIẾM TRONG AI METADATA (JSON) - ĐÃ LOẠI BỎ (GÂY LỖI VALIDATION)
-            // Cần dùng $queryRaw để tìm kiếm trong JSON trên MySQL, không thể dùng cú pháp contains.
-        ]
-      },
+    // 2. Logic lọc danh mục
+    if (categoryId) {
+        whereCondition.categoryId = Number(categoryId);
+    }
+
+    // 3. Lấy dữ liệu từ DB
+    const products = await this.prisma.product.findMany({
+      where: whereCondition,
       include: {
         category: true,
-        keyword: true, 
+        keyword: true,
         variants: {
+            // Include variant để tí nữa tính giá
             include: {
-                _count: {
-                    select: { 
-                        stockItems: { where: { status: StockStatus.AVAILABLE } } 
-                    }
-                }
+                _count: { select: { stockItems: { where: { status: StockStatus.AVAILABLE } } } }
             }
         },
       },
-      take: 20,
-      orderBy: {
-          name: 'asc' 
-      }
+      take: 100, // Lấy 100 kết quả để sort cho chính xác hơn
     });
     
-    const transformedProducts = this.productsService.transformProducts(products);
-    
+    // 4. Transform dữ liệu & TÍNH GIÁ THẤP NHẤT (QUAN TRỌNG)
+    // Chúng ta map qua từng sản phẩm để tìm ra giá rẻ nhất của nó
+    let result = products.map(product => {
+        // Chuyển đổi dữ liệu cơ bản (nếu productsService có logic riêng thì dùng, ko thì dùng spread)
+        // Ở đây mình làm thủ công để đảm bảo có minPrice
+        
+        // Tìm giá thấp nhất trong các variants
+        const prices = product.variants?.map(v => Number(v.price)) || [];
+        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+
+        return {
+            ...product,
+            minPrice: minPrice, // Gắn thêm trường minPrice ảo để sort
+            // Giữ lại các field cần thiết cho Frontend
+            variants: product.variants.map(v => ({
+                ...v,
+                price: Number(v.price),
+                orginalPrice: Number(v.orginalPrice)
+            }))
+        };
+    });
+
+    // 5. Xử lý Sắp xếp (Dựa trên minPrice vừa tính)
+    if (sort === 'price-asc') {
+        // Giá thấp đến cao
+        result.sort((a, b) => a.minPrice - b.minPrice);
+    } else if (sort === 'price-desc') {
+        // Giá cao đến thấp
+        result.sort((a, b) => b.minPrice - a.minPrice);
+    } else if (sort === 'newest') {
+        // Mới nhất
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
     return {
-      products: transformedProducts,
+      products: result,
     };
+  }
+
+  // API lấy danh sách filter 
+  async getCategoriesForFilter() {
+      return this.prisma.category.findMany({
+          select: { id: true, name: true, slug: true }
+      });
   }
 }
