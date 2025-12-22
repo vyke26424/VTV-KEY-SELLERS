@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Loader2, Sparkles, ShoppingBag } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Sparkles, ShoppingBag, RefreshCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axiosClient from '../../store/axiosClient';
+import useAuthStore from '../../store/useAuthStore';
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,26 +10,28 @@ const ChatWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   
-  // State for animation
+  // --- STATE MỚI: Để tùy chỉnh dòng chữ loading ---
+  const [loadingText, setLoadingText] = useState('AI đang tìm kiếm...'); 
+
+  const { isAuthenticated } = useAuthStore();
+  const prevAuthRef = useRef(isAuthenticated);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Initial dummy message
-  const [messages, setMessages] = useState([
-    {
-      id: 'welcome',
-      content: 'Chào bạn! Tôi là trợ lý ảo AI của VTV Key Sellers. Tôi có thể giúp bạn tìm key bản quyền hoặc giải đáp thắc mắc nào?',
-      sender: 'bot',
-      timestamp: new Date(),
-    },
-  ]);
+  // Message chào mặc định
+  const welcomeMessage = {
+    id: 'welcome',
+    content: 'Chào bạn! Tôi là trợ lý ảo AI của VTV Key Sellers. Tôi có thể giúp bạn tìm key bản quyền hoặc giải đáp thắc mắc nào?',
+    sender: 'bot',
+    timestamp: new Date(),
+  };
 
+  const [messages, setMessages] = useState([welcomeMessage]);
   const messagesEndRef = useRef(null);
 
   // 1. Animation Logic
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
-      // Initialize session when chat opens
       if (!sessionId) {
         initializeSession();
       }
@@ -38,25 +41,31 @@ const ChatWidget = () => {
     }
   }, [isOpen]);
 
-  // 2. Initialize Session (Load history or Create new)
+  // 2. Logic Reset khi Logout (User A -> User B)
+  useEffect(() => {
+    if (prevAuthRef.current === true && isAuthenticated === false) {
+        handleResetSession(false); 
+    }
+    prevAuthRef.current = isAuthenticated;
+  }, [isAuthenticated]);
+
+  // 3. Initialize Session
   const initializeSession = async () => {
     try {
       const storedSessionId = localStorage.getItem('chat_session_id');
       
       if (storedSessionId) {
-        // Try to fetch history
         try {
           const res = await axiosClient.get(`/chat/history/${storedSessionId}`);
           setSessionId(parseInt(storedSessionId));
           
-          // Map history to UI format
           if (res && res.length > 0) {
             const historyMessages = res.map(msg => ({
               id: msg.id.toString(),
               content: msg.content,
               sender: msg.role === 'user' ? 'user' : 'bot',
               timestamp: new Date(msg.createdAt),
-              products: [] // History might not save products, or you need to update backend to return them
+              products: [] 
             }));
             setMessages(historyMessages);
           }
@@ -65,19 +74,45 @@ const ChatWidget = () => {
             console.warn("Session expired or not found, creating new one...");
         }
       }
-
-      // Create new session if no history or fetch failed
-      const res = await axiosClient.post('/chat/session');
-      const newSessionId = res.sessionId;
-      setSessionId(newSessionId);
-      localStorage.setItem('chat_session_id', newSessionId);
-
+      createNewSession();
     } catch (error) {
       console.error("Error initializing chat session:", error);
     }
   };
 
-  // 3. Auto-scroll
+  const createNewSession = async () => {
+      try {
+        const res = await axiosClient.post('/chat/session');
+        const newSessionId = res.sessionId;
+        setSessionId(newSessionId);
+        localStorage.setItem('chat_session_id', newSessionId);
+      } catch (error) {
+          console.error("Failed to create session", error);
+      }
+  }
+
+  // --- LOGIC RESET SESSION (Đã sửa loading text) ---
+  const handleResetSession = async (shouldCreateNew = true) => {
+      setSessionId(null);
+      localStorage.removeItem('chat_session_id');
+      setMessages([welcomeMessage]);
+
+      if (shouldCreateNew && isOpen) {
+          // Set text riêng cho việc Reset
+          setLoadingText("Xin chờ xíu nhaa..."); 
+          setIsLoading(true);
+          
+          // Giả lập delay một chút cho mượt (nếu API quá nhanh)
+          await new Promise(r => setTimeout(r, 500)); 
+          await createNewSession();
+          
+          setIsLoading(false);
+          // Trả lại text mặc định
+          setLoadingText("AI đang tìm kiếm..."); 
+      }
+  };
+
+  // 4. Auto-scroll
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -86,16 +121,19 @@ const ChatWidget = () => {
     scrollToBottom();
   }, [messages, isVisible, isLoading]);
 
-  // 4. Handle Send Message
+  // 5. Handle Send Message
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     if (!inputValue.trim()) return;
-    if (!sessionId) {
-        // Retry creating session if missing
-        await initializeSession();
+    
+    let currentSessionId = sessionId;
+    if (!currentSessionId) {
+        const res = await axiosClient.post('/chat/session');
+        currentSessionId = res.sessionId;
+        setSessionId(currentSessionId);
+        localStorage.setItem('chat_session_id', currentSessionId);
     }
 
-    // Optimistic Update: Show user message immediately
     const userMessage = {
       id: Date.now().toString(),
       content: inputValue,
@@ -104,26 +142,25 @@ const ChatWidget = () => {
     };
     setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
+    
+    // Set text mặc định khi chat
+    setLoadingText("AI đang tìm kiếm...");
     setIsLoading(true);
 
     try {
-        // Call Backend API
         const response = await axiosClient.post('/chat/send', {
-            sessionId: sessionId,
+            sessionId: currentSessionId,
             content: userMessage.content
         });
 
-        const data = response; // { intent, message, products }
-
-        // Create Bot Message Object
+        const data = response; 
         const botMessage = {
             id: data.message.id.toString(),
             content: data.message.content,
             sender: 'bot',
             timestamp: new Date(),
-            products: data.products || [] // Attach recommended products
+            products: data.products || [] 
         };
-        
         setMessages((prev) => [...prev, botMessage]);
 
     } catch (error) {
@@ -140,7 +177,7 @@ const ChatWidget = () => {
     }
   };
 
-  // --- SUB-COMPONENT: Product Card in Chat ---
+  // Sub-component Product Card
   const ChatProductCard = ({ product }) => (
     <div className="min-w-[160px] w-[160px] bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex flex-col shadow-lg mr-3 snap-start">
         <div className="h-24 w-full bg-slate-900 relative">
@@ -191,14 +228,27 @@ const ChatWidget = () => {
                     </div>
                     <div>
                         <h3 className="font-bold text-white text-base">Trợ Lý AI</h3>
-                        <p className="text-xs text-vtv-green font-medium">
-                            {sessionId ? `Session #${sessionId}` : 'Đang kết nối...'}
-                        </p>
+                        {/* --- SỬA ĐỔI HEADER: Bỏ Session ID, thay bằng dòng trạng thái gọn gàng --- */}
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-vtv-green animate-pulse"></span>
+                            <p className="text-xs text-gray-300 font-medium">Sẵn sàng hỗ trợ</p>
+                        </div>
                     </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white rounded-full p-2">
-                    <X size={20} />
-                </button>
+                
+                <div className="flex items-center space-x-1">
+                    <button 
+                        onClick={() => handleResetSession(true)} 
+                        title="Tạo cuộc trò chuyện mới"
+                        className="text-gray-400 hover:text-vtv-green hover:bg-slate-800 rounded-full p-2 transition-colors"
+                    >
+                        <RefreshCcw size={18} />
+                    </button>
+                    
+                    <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white hover:bg-slate-800 rounded-full p-2 transition-colors">
+                        <X size={20} />
+                    </button>
+                </div>
             </div>
 
             {/* List tin nhắn */}
@@ -207,7 +257,6 @@ const ChatWidget = () => {
                     const isUser = msg.sender === 'user';
                     return (
                         <div key={msg.id || index} className={`flex flex-col w-full ${isUser ? 'items-end' : 'items-start'}`}>
-                            {/* Bong bóng chat */}
                             <div className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${
                                 isUser 
                                     ? 'bg-vtv-green text-black font-medium rounded-tr-none' 
@@ -216,14 +265,12 @@ const ChatWidget = () => {
                                 <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                             </div>
                             
-                            {/* Product Recommendations (Only for Bot) */}
                             {!isUser && msg.products && msg.products.length > 0 && (
                                 <div className="mt-3 w-full max-w-[95%]">
                                     <div className="flex items-center gap-2 mb-2">
                                         <ShoppingBag size={12} className="text-vtv-green"/>
                                         <span className="text-[10px] text-gray-400 uppercase font-bold">Gợi ý cho bạn</span>
                                     </div>
-                                    {/* Horizontal Scroll List */}
                                     <div className="flex overflow-x-auto pb-2 snap-x scrollbar-hide">
                                         {msg.products.map(product => (
                                             <ChatProductCard key={product.id} product={product} />
@@ -232,7 +279,6 @@ const ChatWidget = () => {
                                 </div>
                             )}
 
-                            {/* Timestamp */}
                             <span className={`text-[10px] mt-1 ${isUser ? 'text-gray-500 mr-1' : 'text-gray-500 ml-1'}`}>
                                 {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                             </span>
@@ -240,11 +286,12 @@ const ChatWidget = () => {
                     );
                 })}
 
+                {/* --- SỬA ĐỔI LOADING: Hiển thị text động --- */}
                 {isLoading && (
                     <div className="flex justify-start">
                         <div className="bg-slate-700 p-3 rounded-2xl rounded-tl-none flex items-center space-x-2 border border-slate-600">
                             <Loader2 size={16} className="animate-spin text-vtv-green" />
-                            <span className="text-gray-400 text-xs">AI đang tìm kiếm...</span>
+                            <span className="text-gray-400 text-xs">{loadingText}</span>
                         </div>
                     </div>
                 )}
