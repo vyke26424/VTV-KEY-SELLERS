@@ -18,6 +18,8 @@ import { AdminSettingsService } from './services/admin-settings/admin-settings.s
 import { AdminSettingsController } from './controller/admin-settings/admin-settings.controller';
 import { ChatService } from './services/chat/chat.service';
 import { ChatController } from './controller/chat/chat.controller';
+import { AdminDashboardController } from './controller/admin-dashboard/admin-dashboard.controller';
+import { AdminDashboardService } from './services/admin-dashboard/admin-dashboard.service';
 
 @Module({
     imports: [HttpModule],
@@ -29,7 +31,8 @@ import { ChatController } from './controller/chat/chat.controller';
         UserController,
         AdminOrdersController,
         AdminSettingsController,
-        ChatController
+        ChatController,
+        AdminDashboardController
     ],
     providers: [
         AdminProductService,
@@ -41,6 +44,7 @@ import { ChatController } from './controller/chat/chat.controller';
         AdminOrdersService,
         AdminSettingsService,
         ChatService,
+        AdminDashboardService,
     ]
 })
 export class AdminModule {}

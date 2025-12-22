@@ -12,6 +12,7 @@ import {
   Package,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useAuthStore from '../../store/useAuthStore';
 
 const SIDEBAR_ITEMS = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
@@ -26,7 +27,8 @@ const SIDEBAR_ITEMS = [
 
 const AdminSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-
+// --- LẤY USER TỪ STORE ---
+  const { user } = useAuthStore();
   return (
     <motion.div
       animate={{ width: isCollapsed ? 80 : 250 }}
@@ -92,18 +94,20 @@ const AdminSidebar = () => {
         </nav>
       </div>
 
-      {/* Footer Sidebar */}
       <div className="p-4 border-t border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg">
-            AD
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg uppercase">
+            {/* Lấy 2 chữ cái đầu của tên */}
+            {user?.fullName ? user.fullName.substring(0, 2) : 'AD'}
           </div>
           {!isCollapsed && (
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-white truncate">
-                Admin User
+                {user?.fullName || 'Admin User'}
               </p>
-              <p className="text-xs text-gray-500 truncate">Super Admin</p>
+              <p className="text-xs text-gray-500 truncate">
+                 {user?.email || 'Super Admin'}
+              </p>
             </div>
           )}
         </div>
