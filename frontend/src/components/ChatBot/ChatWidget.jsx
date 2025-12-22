@@ -50,8 +50,8 @@ const ChatWidget = () => {
           setSessionId(parseInt(storedSessionId));
           
           // Map history to UI format
-          if (res.data && res.data.length > 0) {
-            const historyMessages = res.data.map(msg => ({
+          if (res && res.length > 0) {
+            const historyMessages = res.map(msg => ({
               id: msg.id.toString(),
               content: msg.content,
               sender: msg.role === 'user' ? 'user' : 'bot',
@@ -68,7 +68,7 @@ const ChatWidget = () => {
 
       // Create new session if no history or fetch failed
       const res = await axiosClient.post('/chat/session');
-      const newSessionId = res.data.sessionId;
+      const newSessionId = res.sessionId;
       setSessionId(newSessionId);
       localStorage.setItem('chat_session_id', newSessionId);
 
@@ -113,7 +113,7 @@ const ChatWidget = () => {
             content: userMessage.content
         });
 
-        const data = response.data; // { intent, message, products }
+        const data = response; // { intent, message, products }
 
         // Create Bot Message Object
         const botMessage = {

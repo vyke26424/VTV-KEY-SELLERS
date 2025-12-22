@@ -1,26 +1,22 @@
-/* FILE: src/modules/interactions/interactions.controller.ts */
-import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
 import { InteractionsService } from '../../services/interactions/interactions.service';
 import { InteractionType } from '@prisma/client';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard'; 
+// import { JwtAuthGuard } from ...
 
 @Controller('interactions')
 export class InteractionsController {
   constructor(private readonly interactionsService: InteractionsService) {}
 
-  // API để Frontend gọi mỗi khi user xem/thêm giỏ
   @Post('log')
-  // @UseGuards(JwtAuthGuard) // Có thể mở hoặc đóng tùy logic (cho phép khách vãng lai không?)
-  async logAction(@Body() body: { userId?: string; productId: number; type: InteractionType; duration?: number }) {
-    // Nếu chưa login, userId có thể null hoặc lấy từ session guest
-    if (!body.userId) return { message: 'Guest interaction ignored (or handle differently)' };
-    
-    return this.interactionsService.logInteraction(body.userId, body.productId, body.type, body.duration);
+  // @UseGuards(JwtAuthGuard) // Mở nếu muốn bắt buộc login
+  async logAction(@Body() body: { userId: string; productId: number; type: InteractionType }) {
+    return this.interactionsService.logInteraction(body.userId, body.productId, body.type);
   }
 
-  // API lấy danh sách gợi ý
-  @Get('trending')
-  async getTrending() {
-    return this.interactionsService.getTrendingProducts(10);
+  @Get('recommend')
+  async getRecommend(@Req() req) {
+    // Lấy userId từ token hoặc query param
+    const userId = req.query.userId as string; 
+    return this.interactionsService.getRecommendations(userId);
   }
 }

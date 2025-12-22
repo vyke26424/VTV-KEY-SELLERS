@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
+import useAuthStore from '../store/useAuthStore';
+import axiosClient from '../store/axiosClient';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
@@ -10,6 +12,7 @@ const formatCurrency = (amount) =>
 
 const ProductCard = ({ product }) => {
   const addToCart = useCartStore((state) => state.addToCart);
+  const user = useAuthStore((state) => state.user); // Lấy thông tin User
 
   const minVariant =
     product.variants?.length > 0
@@ -28,32 +31,40 @@ const ProductCard = ({ product }) => {
       : 0;
 
   const handleAddToCart = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Ngăn chặn Link điều hướng vào trang chi tiết
     addToCart(product, minVariant);
+
+    // LOG HÀNH ĐỘNG ADD_TO_CART ---
+    if (user?.id) {
+      axiosClient
+        .post('/interactions/log', {
+          userId: user.id,
+          productId: product.id,
+          type: 'ADD_TO_CART',
+        })
+        .catch((err) => console.error('Log Card AddToCart Error:', err));
+    }
   };
 
   return (
     <Link to={`/product/${product.slug}`} className="group block h-full">
-      {/* Container Chính: Đã bỏ padding p-3, giữ lại bo góc và border */}
+      {/* Container Chính */}
       <div className="bg-slate-800/40 border border-slate-700 rounded-xl h-full flex flex-col justify-between transition-all duration-300 hover:border-vtv-green hover:-translate-y-1 hover:shadow-xl hover:shadow-vtv-green/10 overflow-hidden relative shadow-md">
-        {/* --- HEADER: Chứa Ảnh, Tên và Nền Ambient Mới (Khu vực mũi tên chỉ) --- */}
+        {/* --- HEADER --- */}
         <div className="relative overflow-hidden p-3">
-          {' '}
-          {/* Thêm padding p-3 vào đây */}
           {product.thumbnail && (
             <>
-              {/* LỚP AMBIENT HEADER: Nền mờ ảo lan tỏa từ ảnh thumbnail */}
+              {/* LỚP AMBIENT HEADER */}
               <div
                 className="absolute inset-0 w-full h-full bg-cover bg-center blur-xl scale-150 opacity-30 transition-opacity duration-500 group-hover:opacity-50"
                 style={{ backgroundImage: `url(${product.thumbnail})` }}
               ></div>
-              {/* Lớp phủ tối nhẹ để làm nổi bật chữ và icon trên nền mờ */}
               <div className="absolute inset-0 bg-black/20"></div>
             </>
           )}
-          {/* Nội dung Header (Được đẩy nổi lên trên nền mờ) */}
+
           <div className="flex gap-3 relative z-10">
-            {/* KHU VỰC ẢNH ICON (Giữ nguyên hiệu ứng ambient cũ của nó làm điểm nhấn kép) */}
+            {/* KHU VỰC ẢNH ICON */}
             <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg relative border border-slate-700/50 overflow-hidden shadow-sm">
               {product.thumbnail ? (
                 <>
@@ -91,8 +102,7 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
 
-        {/* --- FOOTER: Chứa Giá & Action (Nền tối sạch sẽ) --- */}
-        {/* Thêm p-3 để bù lại padding đã xóa ở container chính. Thêm nền tối mờ để tách biệt. */}
+        {/* --- FOOTER --- */}
         <div className="flex items-end justify-between p-3 border-t border-slate-700/50 relative z-10 bg-slate-900/50 backdrop-blur-sm">
           <div className="hidden sm:block bg-slate-800 text-[#a3e635] text-[10px] font-bold px-2 py-1 rounded border border-slate-700">
             KHUYẾN MÃI

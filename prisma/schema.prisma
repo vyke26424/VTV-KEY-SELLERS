@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
- // output   = "../generated/prisma"
+  // output   = "../generated/prisma"
   //moduleFormat = "cjs"
 }
 
@@ -16,21 +16,22 @@ datasource db {
 }
 
 model User {
-  id String @id @default(cuid())
-  email String @unique 
+  id       String  @id @default(cuid())
+  email    String  @unique
   password String
   fullName String?
-  role Role @default(USER)
-  balance Decimal @default(0) @db.Decimal(10,2)
-  
+  role     Role    @default(USER)
+  balance  Decimal @default(0) @db.Decimal(10, 2)
+
   // quan hệ 
-  orders Order[]
-  reviews Review[]
+  orders       Order[]
+  reviews      Review[]
   interactions UserInteraction[] // Dữ liệu cho recommendation
 
-  refreshTokens RefreshToken[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  refreshTokens       RefreshToken[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  userRecommendations UserRecommendation[]
 }
 
 enum Role {
@@ -40,92 +41,94 @@ enum Role {
 }
 
 model Category {
-  id Int @id @default(autoincrement())
-  name String
-  slug String @unique
+  id       Int       @id @default(autoincrement())
+  name     String
+  slug     String    @unique
   products Product[]
 
-  isDeleted Boolean @default(false)
+  isDeleted Boolean   @default(false)
   deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  //@@index([slug])
 
   @@index([isDeleted])
-  //@@index([slug])
 }
 
 model Product {
-  id Int @id @default(autoincrement())
-  name String
-  slug String @unique // tên được chuẩn hóa
-  description String? @db.Text
-  thumbnail String? // lưu url của ảnh'
+  id          Int        @id @default(autoincrement())
+  name        String
+  slug        String     @unique // tên được chuẩn hóa
+  description String?    @db.Text
+  thumbnail   String? // lưu url của ảnh'
   // lưu 1 cái aliases mà người dùng có thể gọi như ["Netflix", "nét phờ líc", "acc xem phim"]
-  keyword keywords[]
+  keyword     keywords[]
   // Dữ liệu cấu trúc để Bot hiểu sâu về sản phẩm. 
   // VD: { "features": ["4K", "No Ads"], "suitable_for": ["Family", "Student"] }
-  aiMetadata Json?
+  aiMetadata  Json?
   // điểm đánh giá trung bình
-  avgRating Float @default(0) //
+  avgRating   Float      @default(0) //
 
   categoryId Int
-  category Category @relation(fields: [categoryId], references: [id]) 
-  
+  category   Category @relation(fields: [categoryId], references: [id])
+
   // này thì là các gói như netflix 1 năm, netflix 1 tháng
-  variants ProductVariant[]
-  reviews Review[]
+  variants     ProductVariant[]
+  reviews      Review[]
   interactions UserInteraction[] // để biết user nào đã xem/click
 
-  isHot Boolean @default(false) // sản phẩm nổi bật
+  isHot    Boolean @default(false) // sản phẩm nổi bật
   isActive Boolean @default(true)
 
-  isDeleted Boolean @default(false)
+  isDeleted Boolean   @default(false)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  userRecommendations UserRecommendation[]
+
   @@index([isDeleted])
 }
 
 model keywords {
-  id Int @id @default(autoincrement())
-  name String @unique 
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
   product Product[]
 }
+
 // Core Logic 
 model ProductVariant {
-  id Int @id @default(autoincrement())
-  name String // vd : gói 1 tháng , gói gia đình
-  price Decimal @db.Decimal(10,2)
-  orginalPrice Decimal @db.Decimal(10,2) // Dùng để lừa người dùng có giảm giá :v
+  id           Int     @id @default(autoincrement())
+  name         String // vd : gói 1 tháng , gói gia đình
+  price        Decimal @db.Decimal(10, 2)
+  orginalPrice Decimal @db.Decimal(10, 2) // Dùng để lừa người dùng có giảm giá :v
 
-  productId Int
-  product Product @relation(fields: [productId], references: [id])
+  productId  Int
+  product    Product     @relation(fields: [productId], references: [id])
   stockItems StockItem[] // kho key/account
-  orderItems OrderItem[] 
+  orderItems OrderItem[]
 
-  isDeleted Boolean @default(false)
+  isDeleted Boolean   @default(false)
   deletedAt DateTime?
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([isDeleted])
 }
 
 model StockItem {
-  id Int @id @default(autoincrement())
+  id         Int            @id @default(autoincrement())
   // Mã hóa
-  credential String @db.Text
-  metadata Json? // ngày hết hạn gốc, email recovery...
-  status StockStatus @default(AVAILABLE)
-  variantId Int
-  variant ProductVariant @relation(fields: [variantId], references: [id])
+  credential String         @db.Text
+  metadata   Json? // ngày hết hạn gốc, email recovery...
+  status     StockStatus    @default(AVAILABLE)
+  variantId  Int
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
 
   // Liên kết đơn hàng khi đã bán
   orderItemId Int?
-  orderItem OrderItem? @relation(fields: [orderItemId], references: [id])
+  orderItem   OrderItem? @relation(fields: [orderItemId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -140,15 +143,15 @@ enum StockStatus {
 
 // Giao dịch và đơn hàng
 model Order {
-  id Int @id @default(autoincrement())
-  code String @unique // #ORD123
-  totalAmount Decimal @db.Decimal(10,2)
-  status OrderStatus @default(PENDING)
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  id          Int         @id @default(autoincrement())
+  code        String      @unique // #ORD123
+  totalAmount Decimal     @db.Decimal(10, 2)
+  status      OrderStatus @default(PENDING)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
 
-  items OrderItem[]
-  payment Payment ?
+  items   OrderItem[]
+  payment Payment?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -162,43 +165,66 @@ enum OrderStatus {
 }
 
 model OrderItem {
-  id Int @id @default(autoincrement())
-  price Decimal @db.Decimal(10,2)
-  quantity Int
-  orderId Int
-  order Order @relation(fields: [orderId], references: [id])
-  variantId Int
-  variant ProductVariant @relation(fields: [variantId], references: [id])
+  id         Int            @id @default(autoincrement())
+  price      Decimal        @db.Decimal(10, 2)
+  quantity   Int
+  orderId    Int
+  order      Order          @relation(fields: [orderId], references: [id])
+  variantId  Int
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
   stockItems StockItem[]
 }
 
 model Payment {
-  id Int @id @default(autoincrement())
-  amount Decimal @db.Decimal(10, 2)
-  method String //VNPAY, MOMO
+  id      Int     @id @default(autoincrement())
+  amount  Decimal @db.Decimal(10, 2)
+  method  String //VNPAY, MOMO
   transId String? //transaction ID từ cổng thanh toán
-  status String // SUCCESS, FAILDED
+  status  String // SUCCESS, FAILDED
 
-  orderId Int @unique
-  order Order @relation(fields: [orderId], references: [id])
+  orderId Int   @unique
+  order   Order @relation(fields: [orderId], references: [id])
 }
 
 // Hệ thống gợi ý và phân tích
+model UserRecommendation {
+  id Int @id @default(autoincrement())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Điểm dự đoán độ phù hợp (Prediction Score) do AI tính
+  // VD: 0.95 (Rất hợp), 0.1 (Không hợp)
+  score Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Mỗi user chỉ có 1 dòng gợi ý cho 1 sản phẩm để tránh trùng lặp
+  @@unique([userId, productId])
+  // Index để query lấy top sản phẩm điểm cao nhất cho nhanh
+  @@index([userId, score])
+}
 
 // Bảng này lưu implicit feedback dùng để train model gợi ý
 model UserInteraction {
-  id  Int @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   userId String? // null để track khách vãng lai qua cookie nếu thích
-  user User? @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
 
   productId Int
-  product Product @relation(fields: [productId], references: [id])
-  type InteractionType
+  product   Product         @relation(fields: [productId], references: [id])
+  type      InteractionType
+  // điểm tương tác, dùng để tính trọng số
+  score     Int             @default(0)
   // thời gian user xem sản phẩm (giây)
-  duration Int? @default(0)
+  duration  Int?            @default(0)
   //metadata
-  meta Json?
-  
+  meta      Json?
+
   createdAt DateTime @default(now())
 
   @@index([userId])
@@ -206,25 +232,24 @@ model UserInteraction {
 }
 
 enum InteractionType {
-  VIEW // xem chi tiết, weight thấp
+  VIEW // xem chi tiết, weight thấp // Bấm sản phẩm
   ADD_TO_CART // thêm giỏ hàng, weight trung bình
   PURCHASE // đã mua, weight cao nhất, trigger từ Order
-  LIKE // yêu thích
-  SHARE // chia sẻ (mà 2 trường này cũng chắc không có thời gian đụng tới đâu : ) 
+  READ_MORE // đọc thêm thông tin sản phẩm
 }
 
 model Review {
-  id Int @id @default(autoincrement())
-  rating Int // 1-5 sao
+  id      Int     @id @default(autoincrement())
+  rating  Int // 1-5 sao
   comment String? @db.Text
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   productId Int
-  product Product @relation(fields: [productId], references: [id])
-  
-  isDeleted Boolean @default(false)
+  product   Product @relation(fields: [productId], references: [id])
+
+  isDeleted Boolean   @default(false)
   deletedAt DateTime?
 
   createdAt DateTime @default(now())
@@ -234,39 +259,37 @@ model Review {
 }
 
 model RefreshToken {
-  id Int @id @default(autoincrement())
-  token String @db.Text //Thêm thằng @db.Text để tránh lỗi token quá dài
-  userId String
-  tokenId String @unique
-  user User @relation(fields: [userId], references: [id])
-  revoked Boolean @default(false)
-  createAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  token     String   @db.Text //Thêm thằng @db.Text để tránh lỗi token quá dài
+  userId    String
+  tokenId   String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  revoked   Boolean  @default(false)
+  createAt  DateTime @default(now())
   expiresAt DateTime
 }
-
 
 model SystemConfig {
   id                Int     @id @default(autoincrement())
   maintenanceMode   Boolean @default(false) // Chế độ bảo trì
-  emailNotification Boolean @default(true)  // Nhận email
-  bankInfo          String? @db.Text        // Thông tin ngân hàng
-  
-  updatedAt         DateTime @updatedAt
+  emailNotification Boolean @default(true) // Nhận email
+  bankInfo          String? @db.Text // Thông tin ngân hàng
+
+  updatedAt DateTime @updatedAt
 }
 
 model ChatSession {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title String? @default("Cuộc hội thoại mới")
-  message ChatMessage[]
+  id        Int           @id @default(autoincrement())
+  createdAt DateTime      @default(now())
+  title     String?       @default("Cuộc hội thoại mới")
+  message   ChatMessage[]
 }
 
 model ChatMessage {
-  id Int @id @default(autoincrement())
-  content String @db.Text
-  role String  
-  createdAt DateTime @default(now())
-  sessionId Int 
-  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
+  id        Int         @id @default(autoincrement())
+  content   String      @db.Text
+  role      String
+  createdAt DateTime    @default(now())
+  sessionId Int
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
