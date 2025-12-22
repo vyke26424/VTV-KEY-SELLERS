@@ -21,6 +21,7 @@ import SessionManager from './components/SessionManager';
 import SearchResultsPage from './pages/SearchResultsPage';
 import MaintenancePage from './pages/MaintenancePage';
 import PolicyPage from './pages/PolicyPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Import Admin pages
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -34,6 +35,8 @@ import UserListPage from './admin/pages/users/UserListPage';
 import StaffListPage from './admin/pages/users/StaffListPage';
 import StockListPage from './admin/pages/stock/StockListPage';
 import SettingsPage from './admin/pages/settings/SettingsPage';
+import ProtectedRoute from './admin/components/ProtectedRoute';
+
 function App() {
   return (
     <Router>
@@ -60,23 +63,28 @@ function App() {
             <Route path="/policy/:type" element={<PolicyPage />} />
 
             {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<DashboardPage />} />{' '}
-              <Route path="products" element={<ProductListPage />} />
-              <Route path="products/create" element={<ProductFormPage />} />
-              <Route path="products/edit/:id" element={<ProductFormPage />} />
-              <Route path="categories" element={<CategoryListPage />} />
-              <Route path="categories/create" element={<CategoryFormPage />} />
-              <Route
-                path="categories/edit/:id"
-                element={<CategoryFormPage />}
-              />
-              <Route path="orders" element={<OrderListPage />} />
-              <Route path="customers" element={<UserListPage />} />
-              <Route path="staff" element={<StaffListPage />} />
-              <Route path="stock" element={<StockListPage />} />
-              <Route path="settings" element={<SettingsPage />} />
+            <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="products" element={<ProductListPage />} />
+                <Route path="products/create" element={<ProductFormPage />} />
+                <Route path="products/edit/:id" element={<ProductFormPage />} />
+                <Route path="categories" element={<CategoryListPage />} />
+                <Route path="categories/create" element={<CategoryFormPage />} />
+                <Route
+                  path="categories/edit/:id"
+                  element={<CategoryFormPage />}
+                />
+                <Route path="orders" element={<OrderListPage />} />
+                <Route path="customers" element={<UserListPage />} />
+                <Route path="staff" element={<StaffListPage />} />
+                <Route path="stock" element={<StockListPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
             </Route>
+
+            {/* Not Found Route */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
 
