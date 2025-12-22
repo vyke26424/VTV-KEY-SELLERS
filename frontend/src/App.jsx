@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'; // Thêm Outlet
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from 'react-router-dom'; // Thêm Outlet
 
 // Import Components
 import Header from './components/Header';
@@ -21,6 +26,9 @@ import SearchResultsPage from './pages/SearchResultsPage';
 import MaintenancePage from './pages/MaintenancePage';
 import PolicyPage from './pages/PolicyPage';
 import NotFoundPage from './pages/NotFoundPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import FAQPage from './pages/FAQPage';
 
 // Import Admin (Giữ nguyên...)
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -57,9 +65,8 @@ function App() {
       <ScrollToTop />
       {/* SessionManager chạy toàn cục để check token */}
       <SessionManager />
-      
+
       <div className="min-h-screen bg-gradient-to-b from-slate-800 to-vtv-dark text-gray-200 font-sans flex flex-col">
-        
         <Routes>
           {/* --- NHÓM ROUTE PUBLIC (Dùng PublicLayout) --- */}
           <Route element={<PublicLayout />}>
@@ -76,6 +83,9 @@ function App() {
             <Route path="/products" element={<CategoryPage />} />
             <Route path="/policy/:type" element={<PolicyPage />} />
             <Route path="*" element={<NotFoundPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/faq" element={<FAQPage />} />
           </Route>
 
           {/* --- NHÓM ROUTE ADMIN (Không dính Header/Footer của khách) --- */}
@@ -87,7 +97,10 @@ function App() {
               <Route path="products/edit/:id" element={<ProductFormPage />} />
               <Route path="categories" element={<CategoryListPage />} />
               <Route path="categories/create" element={<CategoryFormPage />} />
-              <Route path="categories/edit/:id" element={<CategoryFormPage />} />
+              <Route
+                path="categories/edit/:id"
+                element={<CategoryFormPage />}
+              />
               <Route path="orders" element={<OrderListPage />} />
               <Route path="customers" element={<UserListPage />} />
               <Route path="staff" element={<StaffListPage />} />
@@ -95,7 +108,6 @@ function App() {
               <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>
-
         </Routes>
       </div>
     </Router>
