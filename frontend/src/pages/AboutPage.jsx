@@ -7,7 +7,7 @@ const AboutPage = () => {
     <div className="py-12 text-gray-300">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-black text-white mb-4">Về <span className="text-vtv-green">VTVKEY</span></h1>
+          <h1 className="text-4xl font-black text-white mb-4">Về <span className="text-white mb-4">VTV</span><span className="text-vtv-green">KEY</span></h1>
           <p className="text-lg text-gray-400">
             Hệ thống cung cấp phần mềm bản quyền & giải pháp số hàng đầu Việt Nam.
           </p>
