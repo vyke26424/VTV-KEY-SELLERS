@@ -232,7 +232,7 @@ const ChatWidget = () => {
             <div className="relative">
               <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-vtv-green/50 overflow-hidden">
                 <img
-                  src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZ0cHRiM3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5/l0HlHFRbY9bRq6p0s/giphy.gif"
+                  src="/Fairy.gif"
                   alt="AI Avatar"
                   className="w-full h-full object-cover"
                 />
@@ -240,7 +240,7 @@ const ChatWidget = () => {
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-vtv-green rounded-full border-2 border-vtv-dark animate-pulse"></div>
             </div>
             <div>
-              <h3 className="font-bold text-white text-base">Trợ Lý AI</h3>
+              <h3 className="font-bold text-white text-base">Trợ Lý AI - FAIRY</h3>
               {/* --- SỬA ĐỔI HEADER: Bỏ Session ID, thay bằng dòng trạng thái gọn gàng --- */}
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-vtv-green animate-pulse"></span>
