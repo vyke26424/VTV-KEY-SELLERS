@@ -215,170 +215,175 @@ const ChatWidget = () => {
   );
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
-      {/* --- Cửa sổ Chat --- */}
-      <div
-        className={`
-                mb-4 w-[380px] h-[600px] 
+    <div className="fixed bottom-6 right-6 z-50 flex items-end font-sans">
+      {/* Dùng flex-row-reverse để đảo vị trí: 
+          Nút bấm (phần tử đầu tiên trong code) sẽ nằm bên trái.
+          Khung chat (phần tử thứ hai) sẽ nằm bên phải.
+      */}
+      <div className="flex flex-row-reverse items-end gap-4 relative">
+        
+        {/* Nút X to / Mở Chat */}
+        <button
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={`
+            w-14 h-14 rounded-full shadow-2xl flex items-center justify-center 
+            text-black transition-all duration-300 transform hover:scale-110 active:scale-95
+            border-2 border-vtv-dark flex-shrink-0 z-50
+            ${isOpen ? 'bg-slate-700 text-white rotate-90' : 'bg-vtv-green hover:bg-green-400 animate-bounce-slow'}
+          `}
+        >
+          {isOpen ? <X size={24} /> : <MessageCircle size={28} />}
+        </button>
+
+        {/* Cửa sổ Chat */}
+        <div
+          className={`
+                w-[380px] h-[500px] 
                 bg-vtv-card border border-slate-700 
                 rounded-2xl shadow-2xl flex flex-col overflow-hidden 
                 transition-all duration-300 ease-out origin-bottom-right
-                ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10 pointer-events-none absolute'}
+                ${isOpen ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-90 translate-x-10 pointer-events-none absolute'}
             `}
-      >
-        {/* Header */}
-        <div className="bg-vtv-dark/95 backdrop-blur-md p-4 border-b border-vtv-green/30 flex justify-between items-center shadow-md">
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-vtv-green/50 overflow-hidden">
-                <img
-                  src="/Fairy.gif"
-                  alt="AI Avatar"
-                  className="w-full h-full object-cover"
-                />
+        >
+          {/* Header */}
+          <div className="bg-vtv-dark/95 backdrop-blur-md p-4 border-b border-vtv-green/30 flex justify-between items-center shadow-md">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-vtv-green/50 overflow-hidden">
+                  <img
+                    src="/Fairy.gif"
+                    alt="AI Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-vtv-green rounded-full border-2 border-vtv-dark animate-pulse"></div>
               </div>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-vtv-green rounded-full border-2 border-vtv-dark animate-pulse"></div>
-            </div>
-            <div>
-              <h3 className="font-bold text-white text-base">Trợ Lý AI - FAIRY</h3>
-              {/* --- SỬA ĐỔI HEADER: Bỏ Session ID, thay bằng dòng trạng thái gọn gàng --- */}
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-vtv-green animate-pulse"></span>
-                <p className="text-xs text-gray-300 font-medium">
-                  Sẵn sàng hỗ trợ
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => handleResetSession(true)}
-              title="Tạo cuộc trò chuyện mới"
-              className="text-gray-400 hover:text-vtv-green hover:bg-slate-800 rounded-full p-2 transition-colors"
-            >
-              <RefreshCcw size={18} />
-            </button>
-
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-white hover:bg-slate-800 rounded-full p-2 transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
-
-        {/* List tin nhắn */}
-        <div className="flex-1 p-4 overflow-y-auto bg-[#0B1221] flex flex-col space-y-4 custom-scrollbar">
-          {messages.map((msg, index) => {
-            const isUser = msg.sender === 'user';
-            return (
-              <div
-                key={msg.id || index}
-                className={`flex flex-col w-full ${isUser ? 'items-end' : 'items-start'}`}
-              >
-                <div
-                  className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${
-                    isUser
-                      ? 'bg-vtv-green text-black font-medium rounded-tr-none'
-                      : 'bg-slate-700 text-gray-100 rounded-tl-none border border-slate-600'
-                  }`}
-                >
-                  <p className="leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
+              <div>
+                <h3 className="font-bold text-white text-base">Trợ Lý AI - FAIRY</h3>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-vtv-green animate-pulse"></span>
+                  <p className="text-xs text-gray-300 font-medium">
+                    Sẵn sàng hỗ trợ
                   </p>
                 </div>
-
-                {!isUser && msg.products && msg.products.length > 0 && (
-                  <div className="mt-3 w-full max-w-[95%]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <ShoppingBag size={12} className="text-vtv-green" />
-                      <span className="text-[10px] text-gray-400 uppercase font-bold">
-                        Gợi ý cho bạn
-                      </span>
-                    </div>
-                    <div className="flex overflow-x-auto pb-2 snap-x scrollbar-hide">
-                      {msg.products.map((product) => (
-                        <ChatProductCard key={product.id} product={product} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <span
-                  className={`text-[10px] mt-1 ${isUser ? 'text-gray-500 mr-1' : 'text-gray-500 ml-1'}`}
-                >
-                  {msg.timestamp
-                    ? new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })
-                    : ''}
-                </span>
-              </div>
-            );
-          })}
-
-          {/* --- SỬA ĐỔI LOADING: Hiển thị text động --- */}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-slate-700 p-3 rounded-2xl rounded-tl-none flex items-center space-x-2 border border-slate-600">
-                <Loader2 size={16} className="animate-spin text-vtv-green" />
-                <span className="text-gray-400 text-xs">{loadingText}</span>
               </div>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
 
-        {/* Input Area */}
-        <form
-          onSubmit={handleSendMessage}
-          className="p-3 bg-vtv-card border-t border-slate-700 flex items-center space-x-2"
-        >
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Hỏi về sản phẩm..."
-            className="flex-1 bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-vtv-green focus:ring-1 focus:ring-vtv-green transition placeholder-gray-500"
-            disabled={isLoading}
-          />
-          <button
-            type="submit"
-            disabled={isLoading || !inputValue.trim()}
-            className={`p-3 rounded-xl transition-all shadow-lg flex-shrink-0 flex items-center justify-center ${
-              isLoading || !inputValue.trim()
-                ? 'bg-slate-800 text-gray-500 cursor-not-allowed'
-                : 'bg-vtv-green text-black hover:bg-green-400'
-            }`}
-          >
-            {isLoading ? (
-              <Loader2 size={20} className="animate-spin" />
-            ) : (
-              <Send size={20} />
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={() => handleResetSession(true)}
+                title="Tạo cuộc trò chuyện mới"
+                className="text-gray-400 hover:text-vtv-green hover:bg-slate-800 rounded-full p-2 transition-colors"
+              >
+                <RefreshCcw size={18} />
+              </button>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-gray-400 hover:text-white hover:bg-slate-800 rounded-full p-2 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* List tin nhắn */}
+          <div className="flex-1 p-4 overflow-y-auto bg-[#0B1221] flex flex-col space-y-4 custom-scrollbar">
+            {messages.map((msg, index) => {
+              const isUser = msg.sender === 'user';
+              return (
+                <div
+                  key={msg.id || index}
+                  className={`flex flex-col w-full ${isUser ? 'items-end' : 'items-start'}`}
+                >
+                  <div
+                    className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${
+                      isUser
+                        ? 'bg-vtv-green text-black font-medium rounded-tr-none'
+                        : 'bg-slate-700 text-gray-100 rounded-tl-none border border-slate-600'
+                    }`}
+                  >
+                    <p className="leading-relaxed whitespace-pre-wrap">
+                      {msg.content}
+                    </p>
+                  </div>
+
+                  {!isUser && msg.products && msg.products.length > 0 && (
+                    <div className="mt-3 w-full max-w-[95%]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ShoppingBag size={12} className="text-vtv-green" />
+                        <span className="text-[10px] text-gray-400 uppercase font-bold">
+                          Gợi ý cho bạn
+                        </span>
+                      </div>
+                      <div className="flex overflow-x-auto pb-2 snap-x scrollbar-hide">
+                        {msg.products.map((product) => (
+                          <ChatProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <span
+                    className={`text-[10px] mt-1 ${isUser ? 'text-gray-500 mr-1' : 'text-gray-500 ml-1'}`}
+                  >
+                    {msg.timestamp
+                      ? new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : ''}
+                  </span>
+                </div>
+              );
+            })}
+
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-slate-700 p-3 rounded-2xl rounded-tl-none flex items-center space-x-2 border border-slate-600">
+                  <Loader2 size={16} className="animate-spin text-vtv-green" />
+                  <span className="text-gray-400 text-xs">{loadingText}</span>
+                </div>
+              </div>
             )}
-          </button>
-        </form>
+            <div ref={messagesEndRef} />
+          </div>
 
-        <div className="bg-vtv-card py-1 text-center border-t border-slate-800">
-          <p className="text-[10px] text-gray-500">Powered by VTV AI System</p>
+          {/* Input Area */}
+          <form
+            onSubmit={handleSendMessage}
+            className="p-3 bg-vtv-card border-t border-slate-700 flex items-center space-x-2"
+          >
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Hỏi về sản phẩm..."
+              className="flex-1 bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-vtv-green focus:ring-1 focus:ring-vtv-green transition placeholder-gray-500"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !inputValue.trim()}
+              className={`p-3 rounded-xl transition-all shadow-lg flex-shrink-0 flex items-center justify-center ${
+                isLoading || !inputValue.trim()
+                  ? 'bg-slate-800 text-gray-500 cursor-not-allowed'
+                  : 'bg-vtv-green text-black hover:bg-green-400'
+              }`}
+            >
+              {isLoading ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                <Send size={20} />
+              )}
+            </button>
+          </form>
+
+          <div className="bg-vtv-card py-1 text-center border-t border-slate-800">
+            <p className="text-[10px] text-gray-500">Powered by VTV AI System</p>
+          </div>
         </div>
       </div>
-
-      {/* Button Mở Chat */}
-      <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`
-            w-14 h-14 rounded-full shadow-2xl flex items-center justify-center 
-            text-black transition-all duration-300 transform hover:scale-110 active:scale-95
-            border-2 border-vtv-dark
-            ${isOpen ? 'bg-slate-700 text-white rotate-90' : 'bg-vtv-green hover:bg-green-400 animate-bounce-slow'}
-        `}
-      >
-        {isOpen ? <X size={24} /> : <MessageCircle size={28} />}
-      </button>
     </div>
   );
 };
