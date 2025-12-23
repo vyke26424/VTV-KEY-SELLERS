@@ -91,6 +91,45 @@ export class ProductsService {
       });
   }
 
+  async getRecommendations(userId: string) {
+    if (!userId) return [];
+    // 1. Lấy danh sách ID sản phẩm được gợi ý trong bảng UserRecommendation
+    const recommendations = await this.prisma.userRecommendation.findMany({
+        where: { userId: userId },
+        orderBy: { score: 'desc' }, // Lấy điểm cao nhất (gợi ý chuẩn nhất)
+        take: 8, // Lấy 8 sản phẩm thôi
+        include: {
+            product: { // Join sang bảng Product để lấy thông tin hiển thị
+                include: {
+                    category: true,
+                    variants: { // Lấy giá rẻ nhất để hiển thị "Từ..."
+                        orderBy: { price: 'asc' },
+                        take: 1
+                    }
+                }
+            }
+        }
+    });
+    // 2. Chuyển đổi dữ liệu để trả về cho Frontend
+    return recommendations.map(rec => {
+        const p = rec.product;
+        // Logic tính giá min (nếu có variant)
+        const minPrice = p.variants.length > 0 ? Number(p.variants[0].price) : 0;
+        const originalPrice = p.variants.length > 0 ? Number(p.variants[0].orginalPrice) : 0;
+
+        return {
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            thumbnail: p.thumbnail,
+            isHot: p.isHot,
+            category: p.category,
+            price: minPrice, // Trả về giá rẻ nhất để Frontend hiển thị
+            originalPrice: originalPrice,
+            variants: p.variants // Hoặc trả về mảng variant nếu Frontend cần map
+        };
+    });
+  }
   // --- SEED DATA (Giữ lại) ---
   async seedCategories() { /* ... Giữ nguyên code cũ ... */ }
   async seedProducts() { /* ... Giữ nguyên code cũ ... */ }

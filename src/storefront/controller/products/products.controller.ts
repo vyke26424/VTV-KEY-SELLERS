@@ -1,15 +1,16 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
 import { ProductsService } from '../../services/products/products.service';
-import { SearchService } from '../../services/search/search.service'; // ĐÃ THÊM
+import { SearchService } from '../../services/search/search.service';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
-    private readonly searchService: SearchService // ĐÃ THÊM
+    private readonly searchService: SearchService 
   ) {}
 
-  // --- SEED DATA (Giữ lại để nạp dữ liệu) ---
+  // --- SEED DATA ---
   @Get('seed-categories')
   seedCategories() {
     return this.productsService.seedCategories();
@@ -20,12 +21,18 @@ export class ProductsController {
     return this.productsService.seedProducts();
   }
 
-  // --- TÌM KIẾM SẢN PHẨM ---
-  // Lưu ý: Phải đặt route này TRƯỚC route ':idOrSlug' 
+  // --- TÌM KIẾM ---
   @Get('search')
   search(@Query('q') q: string) {
-    // ĐÃ CẬP NHẬT: Ủy quyền tìm kiếm cho SearchService
     return this.searchService.searchAll(q);
+  }
+
+  // --- LẤY SẢN PHẨM RECOMMENDATION
+  @Get('recommendations')
+  @UseGuards(JwtAuthGuard) 
+  async getRecommendations(@Req() req) {
+      const userId = req.user.userId;
+      return this.productsService.getRecommendations(userId);
   }
 
   // --- LẤY TẤT CẢ ---
@@ -34,7 +41,7 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  // --- LẤY CHI TIẾT (Hỗ trợ cả ID và Slug) ---
+  // --- LẤY CHI TIẾT ---
   @Get(':idOrSlug')
   findOne(@Param('idOrSlug') idOrSlug: string) {
     const isNumeric = /^\d+$/.test(idOrSlug);
