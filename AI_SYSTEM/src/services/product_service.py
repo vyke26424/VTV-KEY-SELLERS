@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 from src.database.models import Product, ProductVariant
-
+from sqlalchemy import text
 
 
 class ProductService : 
