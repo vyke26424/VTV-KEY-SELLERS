@@ -22,6 +22,7 @@ import { AdminDashboardController } from './controller/admin-dashboard/admin-das
 import { AdminDashboardService } from './services/admin-dashboard/admin-dashboard.service';
 import { AdminSearchController } from './controller/admin-search/admin-search.controller';
 import { AdminSearchService } from './services/admin-search/admin-search.service';
+import { CloudinaryService } from './services/cloudinary/cloudinary.service';
 
 @Module({
     imports: [HttpModule],
@@ -38,6 +39,7 @@ import { AdminSearchService } from './services/admin-search/admin-search.service
         AdminSearchController
     ],
     providers: [
+        CloudinaryService,
         AdminProductService,
         AdminCategoryService,
         AdminProductVariantsService,

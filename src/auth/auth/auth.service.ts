@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as argon2 from "argon2";
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +8,7 @@ import ms from "ms";
 import { SignupDto } from '../dto/signup.dto';
 import { LoginDto } from '../dto/login.dto';
 import { Prisma } from '@prisma/client';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,15 +31,15 @@ export class AuthService {
                 }
             });
             const tokens = await this.issueTokens(user.id, user.role);
-            
+
             // Trả về Token + User Info (để Frontend hiển thị ngay)
             return {
                 ...tokens,
-                user: { 
-                    id: user.id, 
-                    email: user.email, 
-                    fullName: user.fullName, 
-                    role: user.role 
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    fullName: user.fullName,
+                    role: user.role
                 }
             };
         } catch (error) {
@@ -118,7 +119,7 @@ export class AuthService {
     async issueTokens(userId: string, role: string) {
         const payload = { sub: userId, role }
         const jti = uuidv4();
-        
+
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(payload, {
                 secret: this.configService.getOrThrow('JWT_ACCESS_SECRET'),
@@ -167,5 +168,31 @@ export class AuthService {
             }
         }
         return false;
+    }
+
+    // --- ĐỔI MẬT KHẨU ---
+    async changePassword(userId: string, dto: ChangePasswordDto) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!user) throw new BadRequestException('Người dùng không tồn tại');
+
+        const isMatch = await argon2.verify(user.password, dto.currentPassword);
+        
+        if (!isMatch) {
+            throw new BadRequestException('Mật khẩu hiện tại không chính xác');
+        }
+
+        const newHashedPassword = await argon2.hash(dto.newPassword);
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                password: newHashedPassword,
+            },
+        });
+
+        return { message: 'Đổi mật khẩu thành công' };
     }
 }

@@ -57,7 +57,6 @@ def run_collaborative_filtering():
     # Nếu chỉ có 1 user thì không tìm được người giống, fallback về gợi ý Top Trending
     if user_item_matrix.shape[0] < 2:
         print("⚠️ Cần ít nhất 2 User để so sánh sở thích. Đang chạy fallback...")
-        # (Ở đây bạn có thể viết logic fallback, nhưng tạm thời mình return để bạn test tạo thêm user)
         return
 
     # Bước 3.2: Tính độ tương đồng giữa các User (Cosine Similarity)

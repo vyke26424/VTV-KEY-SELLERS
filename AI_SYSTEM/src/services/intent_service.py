@@ -40,7 +40,7 @@ class IntentService :
             
             DANH SÁCH INTENT:
             1. SEARCH_PRODUCT: Tìm mua, hỏi giá (VD : "Acc netflix giá sao").
-            LƯU Ý : Nếu user hỏi chung chung "có gì bán không", "danh sách sản phẩm" -> gán là RECOMENDATION để RAG xử lý
+            LƯU Ý : Nếu user hỏi chung chung "có gì bán không", "danh sách sản phẩm" -> gán là RECOMMENDATION để RAG xử lý
             2. SUPPORT_RAG: Hỏi cách dùng, báo lỗi (VD : "Không đăng nhập được").
             3. ORDER_TRACKING: Hỏi đơn hàng (VD : "Đơn ORD123 chưa có key").
             4. RECOMMENDATION: Nhờ tư vấn (VD : "Nên dùng gói nào").

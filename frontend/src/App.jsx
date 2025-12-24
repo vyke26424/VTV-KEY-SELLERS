@@ -29,6 +29,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
+import ProfilePage from './pages/ProfilePage';
 
 // Import Admin (Giữ nguyên...)
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -74,10 +75,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryPage />} />
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/orders" element={<OrderHistoryPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/maintenance" element={<MaintenancePage />} />
             <Route path="/products" element={<CategoryPage />} />
@@ -86,9 +85,16 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/orders" element={<OrderHistoryPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+            </Route>
           </Route>
 
-          {/* --- NHÓM ROUTE ADMIN (Không dính Header/Footer của khách) --- */}
+          {/* --- NHÓM ROUTE CẦN ĐĂNG NHẬP --- */}
+
+          {/* --- NHÓM ROUTE ADMIN --- */}
           <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<DashboardPage />} />

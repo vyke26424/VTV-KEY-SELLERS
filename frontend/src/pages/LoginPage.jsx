@@ -31,10 +31,8 @@ const LoginPage = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // ❌ ĐÃ XÓA DÒNG setError('') Ở ĐÂY ĐỂ TRÁNH MẤT LỖI TỰ ĐỘNG
   };
 
-  // ✅ Thêm hàm này: Chỉ khi user chủ động click vào ô nhập thì mới tắt lỗi
   const handleFocus = () => {
     if (error) setError('');
   };

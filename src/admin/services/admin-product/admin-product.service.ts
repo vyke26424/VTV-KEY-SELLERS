@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException, Param, UseGuards } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { CreateProuct } from '../../dto/create-product.dto';
+import { CreateProduct } from '../../dto/create-product.dto';
 import { Prisma } from '@prisma/client';
 import slugify from 'slugify';
 import { FindAllProductDto } from '../../dto/findAll-product.dto';
@@ -15,7 +15,7 @@ import { StockStatus } from '@prisma/client';
 export class AdminProductService {
     constructor(private readonly prismaSerivce: PrismaService) { }
 
-    async create(data: CreateProuct) {
+    async create(data: CreateProduct) {
         const tagOrCreate = data.keywords?.map((key) => ({
             where: { name: key },
             create: { name: key }
@@ -84,7 +84,11 @@ export class AdminProductService {
                 { name: { contains: search } },
                 { slug: { contains: search } },
                 { description: { contains: search } },
-                // ...
+                {
+                    keyword: { some: { name: { contains: search } } }
+                }
+
+
             ]
         }
 

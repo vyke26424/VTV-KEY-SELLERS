@@ -11,43 +11,45 @@ import { UpdateCategoryDto } from '../../dto/update_category.dto';
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Roles(Role.ADMIN)
 export class AdminCategoryController {
-    constructor(private readonly categoryService : AdminCategoryService){}
+    constructor(private readonly categoryService: AdminCategoryService) { }
     @Post()
     @HttpCode(HttpStatus.CREATED) //201
-    async create(@Body() data : CreateCategory) {
+    async create(@Body() data: CreateCategory) {
         return await this.categoryService.create(data);
     }
 
     @Get()
-    async findAll (@Query('page', new DefaultValuePipe(1), ParseIntPipe) page : number,
-                    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit : number,
-                    @Query('search',) search : string) {
-        return await this.categoryService.findAll({page, limit, search});
+    async findAll(@Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query('search',) search: string) {
+        return await this.categoryService.findAll({ page, limit, search });
     }
 
     @Get(':id')
     async findOne(
-        @Param('id', ParseIntPipe) id : number
+        @Param('id', ParseIntPipe) id: number
     ) {
         return await this.categoryService.findOne(id);
     }
 
     @Patch(":id")
-    async update(@Body() data : UpdateCategoryDto,
-    @Param('id', ParseIntPipe) id : number) {
-        return this.categoryService.update(id, data)
+    async update(
+        @Body() data: UpdateCategoryDto,
+        @Param('id', ParseIntPipe) id: number
+    ) {
+        return await this.categoryService.update(id, data);
     }
 
     @Delete(':id')
     async delete(
-        @Param('id', ParseIntPipe) id : number
+        @Param('id', ParseIntPipe) id: number
     ) {
         return await this.categoryService.remove(id);
     }
 
     @Patch(':id/restore')
     async restore(
-        @Param('id', ParseIntPipe) id : number
+        @Param('id', ParseIntPipe) id: number
     ) {
         return await this.categoryService.restore(id);
     }

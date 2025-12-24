@@ -7,8 +7,10 @@ import { AuthService } from './auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
-
+import { JwtAuthGuard } from '../guards/jwt-auth.guard'; 
+import { GetUser } from '../decorators/get_user.decorator';
 import type { RequestWithUser } from '../interfaces/request_user.interface';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 
 @Controller('auth')
@@ -43,7 +45,7 @@ export class AuthController {
     }
 
     @Post('login')
-    @Throttle({ default: { limit: 100, ttl: 60000 } }) // Giới hạn 5 request mỗi 60 giây // đang teset để 100
+    @Throttle({ default: { limit: 100, ttl: 60000 } }) // Giới hạn 20 request mỗi 60 giây // đang teset để 100
     @HttpCode(HttpStatus.OK) //200
     async login(
         @Body() dto: LoginDto,
@@ -103,5 +105,15 @@ export class AuthController {
         return { accessToken };
 
     }
+
+    @Post('change-password')
+  @UseGuards(JwtAuthGuard) // Bắt buộc phải đăng nhập mới được đổi
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @GetUser('userId') userId: string, 
+    @Body() dto: ChangePasswordDto
+  ) {
+    return await this.authService.changePassword(userId, dto);
+  }
 
 }
