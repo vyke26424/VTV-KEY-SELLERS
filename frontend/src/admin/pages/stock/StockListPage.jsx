@@ -117,13 +117,31 @@ const StockListPage = () => {
           </button>
           <button
             onClick={() => setActiveStatus('AVAILABLE')}
-            className={`px-3 py-1 text-xs font-bold rounded border ${activeStatus === 'AVAILABLE' ? 'bg-green-500 text-black border-green-500' : 'bg-slate-800 text-gray-400 border-slate-700'}`}
+            className={`px-3 py-1 text-xs font-bold rounded border transition ${
+              activeStatus === 'AVAILABLE' 
+                ? 'bg-green-500 text-black border-green-500' 
+                : 'bg-slate-800 text-green-500 border-slate-700 hover:border-green-500/50'
+            }`}
           >
             Chưa bán
           </button>
           <button
+            onClick={() => setActiveStatus('LOCKED')}
+            className={`px-3 py-1 text-xs font-bold rounded border transition ${
+              activeStatus === 'LOCKED'
+                ? 'bg-yellow-500 text-black border-yellow-500'
+                : 'bg-slate-800 text-yellow-500 border-slate-700 hover:border-yellow-500/50'
+            }`}
+          >
+            Đang giữ
+          </button>
+          <button
             onClick={() => setActiveStatus('SOLD')}
-            className={`px-3 py-1 text-xs font-bold rounded border ${activeStatus === 'SOLD' ? 'bg-blue-500 text-white border-blue-500' : 'bg-slate-800 text-gray-400 border-slate-700'}`}
+            className={`px-3 py-1 text-xs font-bold rounded border transition ${
+              activeStatus === 'SOLD' 
+                ? 'bg-blue-500 text-white border-blue-500' 
+                : 'bg-slate-800 text-blue-500 border-slate-700 hover:border-blue-500/50'
+            }`}
           >
             Đã bán
           </button>
