@@ -21,7 +21,7 @@ import { AuthService } from './auth/auth/auth.service';
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([{
       ttl: 60000, // Thời gian sống: 60000ms = 60 giây
-      limit: 100, // Giới hạn: Tối đa 100 request mỗi 60 giây cho 1 IP
+      limit: 150, // Giới hạn: Tối đa 100 request mỗi 60 giây cho 1 IP
     }]),
     AuthModule,
     PrismaModule,

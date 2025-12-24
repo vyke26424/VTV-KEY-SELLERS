@@ -8,7 +8,8 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-} from 'lucide-react';
+  ShieldAlert,
+} from 'lucide-react'; // Thêm icon ShieldAlert cho ngầu
 import { motion } from 'framer-motion';
 import useAuthStore from '../store/useAuthStore';
 import axiosClient from '../store/axiosClient';
@@ -37,13 +38,11 @@ const LoginPage = () => {
     if (error) setError('');
   };
 
+  // --- HÀM LOGIN / SIGNUP ĐÃ NÂNG CẤP ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Reset lỗi cũ trước khi gọi mới
     setError('');
 
-    // Validate sơ bộ
     if (!formData.email || !formData.password) {
       setError('Vui lòng nhập đầy đủ thông tin!');
       triggerShake();
@@ -79,7 +78,11 @@ const LoginPage = () => {
 
       if (err.response) {
         const status = err.response.status;
-        if (status === 401) {
+
+        if (status === 429) {
+          message = 'Thao tác quá nhanh! Bình tĩnh chút nào bạn ơi 🙏';
+        }
+        else if (status === 401) {
           message = 'Email hoặc mật khẩu không chính xác!';
         } else if (status === 409) {
           message = 'Email này đã được sử dụng!';
@@ -93,13 +96,12 @@ const LoginPage = () => {
       }
 
       setError(message);
-      triggerShake(); // Rung lắc form
+      triggerShake();
     } finally {
       setLoading(false);
     }
   };
 
-  // Hàm tạo hiệu ứng rung
   const triggerShake = () => {
     setShake(true);
     setTimeout(() => setShake(false), 500);
@@ -107,12 +109,14 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
+      {/* Background Effects (Giữ nguyên) */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-vtv-green/5 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="w-full max-w-md z-10">
+        {/* Toggle Buttons (Giữ nguyên) */}
         <div className="flex bg-slate-900 p-1 rounded-full mb-8 border border-slate-800 shadow-xl">
           <button
             onClick={() => {
@@ -154,14 +158,20 @@ const LoginPage = () => {
               : 'Trở thành thành viên của chúng tôi ngay hôm nay'}
           </p>
 
-          {/* Alert Error: Giờ nó sẽ không tự mất nữa */}
+          {/* Alert Error (Update style nếu bị rate limit) */}
           {error && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-lg mb-6 text-sm flex items-center gap-2 font-medium"
+              className={`border p-3 rounded-lg mb-6 text-sm flex items-center gap-2 font-medium 
+                ${error.includes('nhanh') ? 'bg-yellow-500/10 border-yellow-500/50 text-yellow-500' : 'bg-red-500/10 border-red-500/50 text-red-400'}`}
             >
-              <AlertCircle size={18} className="shrink-0" /> {error}
+              {error.includes('nhanh') ? (
+                <ShieldAlert size={18} />
+              ) : (
+                <AlertCircle size={18} />
+              )}{' '}
+              {error}
             </motion.div>
           )}
 
@@ -177,7 +187,7 @@ const LoginPage = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    onFocus={handleFocus} // <--- Thêm onFocus
+                    onFocus={handleFocus}
                     className="w-full bg-slate-950 border border-slate-700 group-hover:border-slate-600 rounded-lg py-3 pl-10 pr-4 text-white focus:border-vtv-green outline-none transition-all placeholder:text-slate-600"
                     placeholder="Nguyễn Văn A"
                   />
@@ -199,7 +209,7 @@ const LoginPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  onFocus={handleFocus} // <--- Thêm onFocus
+                  onFocus={handleFocus}
                   className={`w-full bg-slate-950 border ${error && error.includes('Email') ? 'border-red-500' : 'border-slate-700'} group-hover:border-slate-600 rounded-lg py-3 pl-10 pr-4 text-white focus:border-vtv-green outline-none transition-all placeholder:text-slate-600`}
                   placeholder="name@example.com"
                 />
@@ -220,8 +230,8 @@ const LoginPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  onFocus={handleFocus} // <--- Thêm onFocus
-                  className={`w-full bg-slate-950 border ${error ? 'border-red-500' : 'border-slate-700'} group-hover:border-slate-600 rounded-lg py-3 pl-10 pr-10 text-white focus:border-vtv-green outline-none transition-all placeholder:text-slate-600`}
+                  onFocus={handleFocus}
+                  className={`w-full bg-slate-950 border ${error && !error.includes('Email') && !error.includes('nhanh') ? 'border-red-500' : 'border-slate-700'} group-hover:border-slate-600 rounded-lg py-3 pl-10 pr-10 text-white focus:border-vtv-green outline-none transition-all placeholder:text-slate-600`}
                   placeholder="••••••••"
                 />
                 <Lock

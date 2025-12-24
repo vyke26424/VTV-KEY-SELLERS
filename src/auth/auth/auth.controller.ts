@@ -25,7 +25,7 @@ export class AuthController {
     // };
 
     @Post('signup')
-    @Throttle({ default: { limit: 100, ttl: 60000 } }) // Giới hạn 3 request mỗi 60 giây // đang teset nên để 100 nhó
+    @Throttle({ default: { limit: 5, ttl: 60000 } }) // Giới hạn 3 request mỗi 60 giây // đang teset nên để 100 nhó
     @HttpCode(HttpStatus.CREATED) // 201
     async signup(@Body() dto: SignupDto,
         @Res({ passthrough: true }) res: express.Response) {
@@ -45,7 +45,7 @@ export class AuthController {
     }
 
     @Post('login')
-    @Throttle({ default: { limit: 100, ttl: 60000 } }) // Giới hạn 20 request mỗi 60 giây // đang teset để 100
+    @Throttle({ default: { limit: 5, ttl: 60000 } }) // Giới hạn 20 request mỗi 60 giây // đang teset để 100
     @HttpCode(HttpStatus.OK) //200
     async login(
         @Body() dto: LoginDto,
