@@ -44,7 +44,7 @@ export class OrdersService {
           const stockIds = availableStock.map(s => s.id);
           await tx.stockItem.updateMany({
             where: { id: { in: stockIds } },
-            data: { status: StockStatus.SOLD } 
+            data: { status: StockStatus.LOCKED } 
           });
           
           // Push data (Logic cũ giữ nguyên)
@@ -63,7 +63,7 @@ export class OrdersService {
           data: {
             code: orderCode,
             totalAmount: totalAmount,
-            status: 'COMPLETED',
+            status: 'PENDING',
             userId: userId,
             items: {
               create: orderItemsData 
@@ -72,13 +72,13 @@ export class OrdersService {
         });
 
         return {
-          message: 'Thanh toán thành công! Key đã được gửi.',
+          message: 'Đặt hàng thành công!',
           orderId: order.id,
           code: orderCode,
         };
       });
 
-      // --- 3. LOGIC MỚI: CỘNG ĐIỂM PURCHASE CHO AI (Chạy sau khi Transaction thành công) ---
+      // --- 3. LOGIC MỚI: CỘNG ĐIỂM PURCHASE CHO AI ---
       // Lưu ý: Dùng try-catch riêng để nếu lỗi log điểm cũng không làm lỗi đơn hàng của khách
       this.logPurchaseScore(userId, items).catch(err => 
           console.error("⚠️ Lỗi background log điểm Purchase:", err)
@@ -87,7 +87,7 @@ export class OrdersService {
       return result;
 
     } catch (error) {
-        console.error("🔥 Lỗi tạo đơn hàng (OrdersService):", error);
+        console.error("Lỗi tạo đơn hàng (OrdersService):", error);
         
         if (error instanceof BadRequestException) throw error;
         throw new InternalServerErrorException(error.message || "Lỗi Database không xác định");
@@ -114,12 +114,11 @@ export class OrdersService {
       });
 
       await Promise.all(promises);
-      console.log(`✅ AI System: Đã cộng điểm PURCHASE cho User ${userId}`);
+      console.log(`AI System: Đã cộng điểm PURCHASE cho User ${userId}`);
   }
 
-  // --- LẤY LỊCH SỬ ĐƠN HÀNG (Giữ nguyên code cũ của bạn) ---
+  // --- LẤY LỊCH SỬ ĐƠN HÀNG  ---
   async findByUser(userId: string) {
-    // ... (Code cũ giữ nguyên không đổi)
     const orders = await this.prisma.order.findMany({
       where: { userId },
       include: {
@@ -140,6 +139,9 @@ export class OrdersService {
       items: order.items.map(item => ({
         ...item,
         stockItems: item.stockItems.map(stock => {
+          if (order.status !== 'COMPLETED') { 
+             return { ...stock, credential: null }; // Trả về null để Frontend biết đường xử lý
+          }
           try {
             return {
               ...stock,

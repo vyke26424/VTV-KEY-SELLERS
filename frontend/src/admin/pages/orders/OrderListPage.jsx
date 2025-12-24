@@ -28,7 +28,9 @@ const formatDate = (dateString) =>
 const STATUS_COLORS = {
   PENDING: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50',
   COMPLETED: 'bg-green-500/20 text-green-500 border-green-500/50',
+  SUCCESS: 'bg-green-500/20 text-green-500 border-green-500/50', // Thêm SUCCESS
   CANCELED: 'bg-red-500/20 text-red-500 border-red-500/50',
+  CANCELLED: 'bg-red-500/20 text-red-500 border-red-500/50', // Thêm CANCELLED
   REFUNDED: 'bg-purple-500/20 text-purple-500 border-purple-500/50',
 };
 
@@ -85,24 +87,32 @@ const OrderListPage = () => {
     }
   };
 
-  // --- CẬP NHẬT TRẠNG THÁI ---
+  // --- CẬP NHẬT TRẠNG THÁI (Đã sửa logic gọi API riêng) ---
   const handleUpdateStatus = async (newStatus) => {
     if (!selectedOrder) return;
-    if (!window.confirm(`Bạn có chắc muốn đổi trạng thái thành ${newStatus}?`))
+    
+    const actionName = newStatus === 'COMPLETED' ? 'DUYỆT ĐƠN' : 'HỦY ĐƠN';
+    if (!window.confirm(`Bạn có chắc muốn ${actionName} #${selectedOrder.code}?`))
       return;
 
     try {
       setIsUpdating(true);
-      await axiosClient.patch(`/admin/orders/${selectedOrder.id}/status`, {
-        status: newStatus,
-      });
+      
+      // Gọi API riêng biệt
+      if (newStatus === 'COMPLETED') {
+          await axiosClient.patch(`/admin/orders/${selectedOrder.id}/approve`);
+      } else if (newStatus === 'CANCELED') {
+          await axiosClient.patch(`/admin/orders/${selectedOrder.id}/cancel`);
+      }
 
-      // Cập nhật lại UI
-      setSelectedOrder((prev) => ({ ...prev, status: newStatus }));
-      fetchOrders(pagination.page); // Reload list bên ngoài
-      alert('Cập nhật thành công!');
+      // Cập nhật UI tạm thời
+      const displayStatus = newStatus === 'COMPLETED' ? 'COMPLETED' : 'CANCELED';
+      setSelectedOrder((prev) => ({ ...prev, status: displayStatus }));
+      fetchOrders(pagination.page); 
+      alert(`${actionName} thành công!`);
     } catch (error) {
-      alert('Lỗi cập nhật trạng thái');
+      const msg = error.response?.data?.message || 'Lỗi cập nhật';
+      alert(`Thất bại: ${msg}`);
     } finally {
       setIsUpdating(false);
     }
@@ -152,7 +162,9 @@ const OrderListPage = () => {
                 </td>
               </tr>
             ) : orders.length > 0 ? (
-              orders.map((order) => (
+              orders.map((order) => {
+                const statusKey = order.status?.toUpperCase();
+                return (
                 <tr key={order.id} className="hover:bg-slate-800/50 transition">
                   <td className="p-4 font-mono font-bold text-white">
                     {order.code}
@@ -173,7 +185,7 @@ const OrderListPage = () => {
                   </td>
                   <td className="p-4 text-center">
                     <span
-                      className={`px-2 py-1 rounded text-[10px] font-bold border ${STATUS_COLORS[order.status] || 'text-gray-500'}`}
+                      className={`px-2 py-1 rounded text-[10px] font-bold border ${STATUS_COLORS[statusKey] || 'text-gray-500'}`}
                     >
                       {order.status}
                     </span>
@@ -187,7 +199,7 @@ const OrderListPage = () => {
                     </button>
                   </td>
                 </tr>
-              ))
+              )})
             ) : (
               <tr>
                 <td colSpan="6" className="p-8 text-center text-gray-500">
@@ -198,7 +210,7 @@ const OrderListPage = () => {
           </tbody>
         </table>
 
-        {/* Pagination (Tái sử dụng logic cũ) */}
+        {/* Pagination */}
         <div className="p-4 border-t border-slate-800 flex justify-center gap-2">
           <button
             disabled={pagination.page === 1}
@@ -259,7 +271,7 @@ const OrderListPage = () => {
                   </p>
                   <div className="mt-2">
                     <span
-                      className={`px-2 py-1 rounded text-xs font-bold border ${STATUS_COLORS[selectedOrder.status]}`}
+                      className={`px-2 py-1 rounded text-xs font-bold border ${STATUS_COLORS[selectedOrder.status?.toUpperCase()]}`}
                     >
                       {selectedOrder.status}
                     </span>
@@ -299,11 +311,25 @@ const OrderListPage = () => {
                           {formatCurrency(item.price)}
                         </div>
                       </div>
-                      {/* Hiển thị số lượng Key đã gửi (Admin ko xem key thật) */}
-                      <div className="text-right">
-                        <span className="text-xs bg-slate-800 text-gray-300 px-2 py-1 rounded border border-slate-700">
-                          Đã gửi {item.stockItems?.length || 0} Key
-                        </span>
+                      
+                      {/* --- LOGIC HIỂN THỊ TRẠNG THÁI KEY MỚI (MÀU XANH/ĐỎ/VÀNG) --- */}
+                      <div className="text-right flex items-center">
+                        {selectedOrder.status === 'COMPLETED' || selectedOrder.status === 'SUCCESS' ? (
+                          // 1. Đã xong -> MÀU XANH
+                          <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded border border-green-500/50 font-bold">
+                            Đã gửi {item.stockItems?.length || 0} Key
+                          </span>
+                        ) : selectedOrder.status === 'CANCELED' || selectedOrder.status === 'CANCELLED' ? (
+                          // 2. Đã hủy -> MÀU ĐỎ
+                          <span className="text-xs bg-red-500/20 text-red-500 px-2 py-1 rounded border border-red-500/50 font-bold">
+                            Đã hủy & Hoàn kho
+                          </span>
+                        ) : (
+                          // 3. Còn lại -> MÀU VÀNG
+                          <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded border border-yellow-500/20">
+                            Đang giữ {item.stockItems?.length || 0} Key
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -321,7 +347,6 @@ const OrderListPage = () => {
 
             {/* Footer Action */}
             <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-end gap-3">
-              {/* Chỉ cho phép đổi trạng thái nếu chưa Completed/Canceled */}
               {selectedOrder.status === 'PENDING' && (
                 <>
                   <button

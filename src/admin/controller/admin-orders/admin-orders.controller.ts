@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, Patch, Body, ParseIntPipe, UseGuards, DefaultValuePipe } from '@nestjs/common';
-import { AdminOrdersService } from '../../services/admin-orders/admin-orders.service'; // Sửa lại đường dẫn import nếu cần
+import { AdminOrdersService } from '../../services/admin-orders/admin-orders.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../../guard/role.guard';
 import { Roles } from '../../decorator/role.decorator';
@@ -26,11 +26,15 @@ export class AdminOrdersController {
     return this.ordersService.findOne(id);
   }
 
-  @Patch(':id/status')
-  updateStatus(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('status') status: OrderStatus
-  ) {
-    return this.ordersService.updateStatus(id, status);
+  // 1. API DUYỆT ĐƠN (Approve)
+  @Patch(':id/approve')
+  async approveOrder(@Param('id', ParseIntPipe) id: number) {
+    return await this.ordersService.approveOrder(id);
+  }
+
+  // 2. API HỦY ĐƠN (Cancel)
+  @Patch(':id/cancel')
+  async cancelOrder(@Param('id', ParseIntPipe) id: number) {
+    return await this.ordersService.cancelOrder(id);
   }
 }
