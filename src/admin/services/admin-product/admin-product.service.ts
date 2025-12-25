@@ -164,29 +164,29 @@ export class AdminProductService {
 
 
     async update(id: number, data: UpdateProduct) {
+        // 1. Check tồn tại (Chỉ cần chưa xóa mềm là được)
         const product = await this.prismaSerivce.product.findUnique({
-            where: { id, isDeleted: false, }
+            where: { id, isDeleted: false } 
         });
+        
         if (!product) {
             throw new NotFoundException('Không tìm thấy sản phẩm');
         }
+
+        // 2. Xử lý Slug (Giữ nguyên logic của bạn)
         let newSlug: string | undefined = undefined;
         if (data.slug && data.slug !== product.slug) {
             newSlug = await this.checkUniqueSlug(slugify(data.slug, {
-                strict: true,
-                trim: true,
-                locale: 'vi',
-                lower: true
+                strict: true, trim: true, locale: 'vi', lower: true
             }));
         }
         if (data.name && data.name !== product.name && !data.slug) {
             newSlug = await this.checkUniqueSlug(slugify(data.name, {
-                strict: true,
-                trim: true,
-                locale: 'vi',
-                lower: true
+                strict: true, trim: true, locale: 'vi', lower: true
             }));
         }
+
+        // 3. Xử lý Keyword (Giữ nguyên)
         let keywordUpdate: any;
         if (data.keywords) {
             keywordUpdate = {
@@ -198,8 +198,10 @@ export class AdminProductService {
             }
         }
 
+        // 4. Update vào DB (ĐÃ BỔ SUNG isHot & isActive)
         return await this.prismaSerivce.product.update({
-            where: { id, isActive: true, },
+            // 👇 QUAN TRỌNG: Bỏ điều kiện isActive: true để Admin sửa được cả bài đang ẩn
+            where: { id }, 
             data: {
                 name: data.name,
                 slug: newSlug,
@@ -207,7 +209,11 @@ export class AdminProductService {
                 thumbnail: data.thumbnail,
                 aiMetadata: data.meta ?? undefined,
                 categoryId: data.categoryId,
-                keyword: keywordUpdate
+                keyword: keywordUpdate,
+                
+                // 👇 QUAN TRỌNG: Thêm 2 dòng này thì mới lưu được trạng thái
+                isHot: data.isHot,       
+                isActive: data.isActive  
             },
             include: {
                 keyword: true
