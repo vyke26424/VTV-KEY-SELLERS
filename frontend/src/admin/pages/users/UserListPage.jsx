@@ -3,9 +3,27 @@ import { Search, Eye, Users, User, DollarSign, ShoppingBag } from 'lucide-react'
 import { motion } from 'framer-motion';
 import axiosClient from '../../../store/axiosClient';
 
-// Format tiền
+// Format tiền & Ngày
 const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
 const formatDate = (dateString) => new Date(dateString).toLocaleDateString('vi-VN');
+
+// --- HELPER: MÀU TRẠNG THÁI ---
+const getStatusColor = (status) => {
+    switch (status?.toUpperCase()) {
+        case 'COMPLETED':
+        case 'SUCCESS':
+            return 'text-green-500 bg-green-500/10 border border-green-500/20';
+        case 'PENDING':
+        case 'LOCKED':
+            return 'text-yellow-500 bg-yellow-500/10 border border-yellow-500/20';
+        case 'CANCELED':
+        case 'CANCELLED':
+        case 'REFUNDED':
+            return 'text-red-500 bg-red-500/10 border border-red-500/20';
+        default:
+            return 'text-gray-400 bg-slate-800 border border-slate-700';
+    }
+};
 
 const UserListPage = () => {
     const [users, setUsers] = useState([]);
@@ -128,7 +146,7 @@ const UserListPage = () => {
                         )}
                     </tbody>
                 </table>
-                {/* Pagination (Giống các trang khác) */}
+                {/* Pagination */}
                 <div className="p-4 border-t border-slate-800 flex justify-center gap-2">
                     <button disabled={pagination.page===1} onClick={() => fetchUsers(pagination.page-1)} className="px-3 py-1 bg-slate-800 rounded disabled:opacity-50">Trước</button>
                     <span className="px-3 py-1 text-white font-bold">{pagination.page} / {pagination.totalPage}</span>
@@ -160,14 +178,19 @@ const UserListPage = () => {
                         <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                             {selectedUser.orders?.length > 0 ? (
                                 selectedUser.orders.map(order => (
-                                    <div key={order.id} className="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center">
+                                    <div key={order.id} className="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center hover:bg-slate-900 transition">
                                         <div>
                                             <div className="font-mono text-white text-sm font-bold">{order.code || `#${order.id}`}</div>
-                                            <div className="text-xs text-gray-500">{formatDate(order.createdAt)} • {order._count.items} món</div>
+                                            <div className="text-xs text-gray-500">{formatDate(order.createdAt)} • {order._count?.items || 0} món</div>
                                         </div>
                                         <div className="text-right">
                                             <div className="text-vtv-green font-bold text-sm">{formatCurrency(order.totalAmount)}</div>
-                                            <div className={`text-[10px] uppercase font-bold mt-1 ${order.status === 'COMPLETED' ? 'text-green-500' : 'text-yellow-500'}`}>{order.status}</div>
+                                            
+                                            {/* 👇 LOGIC MÀU MÈ NẰM Ở ĐÂY 👇 */}
+                                            <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded inline-block mt-1 ${getStatusColor(order.status)}`}>
+                                                {order.status}
+                                            </span>
+                                            {/* --------------------------- */}
                                         </div>
                                     </div>
                                 ))
