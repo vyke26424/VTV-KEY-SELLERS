@@ -16,10 +16,10 @@ const AboutPage = () => {
         <div className="bg-slate-900/80 border border-slate-700 p-8 rounded-2xl mb-12 shadow-xl backdrop-blur-sm">
           <h2 className="text-2xl font-bold text-white mb-4">Câu chuyện của chúng tôi</h2>
           <p className="mb-4 leading-relaxed">
-            Được thành lập vào năm 2025 bởi <strong>Vĩ Tứ Vũ</strong>, VTVKey ra đời với sứ mệnh đơn giản hóa việc tiếp cận bản quyền phần mềm cho người Việt.
+            Được thành lập vào năm 2025 bởi <strong>Vĩ Tứ Vũ</strong>, VTVKey ra đời nhằm xóa bỏ rào cản trong việc tiếp cận bản quyền phần mềm tại Việt Nam. Chúng tôi tin rằng việc sở hữu bản quyền Windows, Office hay các tài khoản giải trí như Netflix, ChatGPT không nên là một gánh nặng chi phí.
           </p>
           <p className="leading-relaxed">
-            VTVKey cam kết mang đến những sản phẩm số (Windows, Office, Netflix, ChatGPT...) với mức giá hợp lý nhất, kèm theo chế độ bảo hành trọn đời.
+            Tại VTVKey, mỗi sản phẩm trao tay khách hàng đều là lời cam kết trọn đời dựa trên triết lý Verified - Trust - Value: Chất lượng được xác thực, Niềm tin được khẳng định và Giá trị được lan tỏa.
           </p>
         </div>
 

@@ -184,8 +184,9 @@ const ProductFormPage = () => {
       formData.keywords.forEach(k => data.append('keywords[]', k));
       
       // AI Meta là object, ta stringify nó và hy vọng backend parse được hoặc sửa backend.
-      // TẠM THỜI: Để đơn giản, ta chỉ gửi file ảnh riêng, còn data phức tạp gửi JSON? Không được vì 1 request chỉ có 1 Content-Type.
-      // GIẢI PHÁP: Gửi file ảnh lên Cloudinary.
+      if (formData.aiMeta) {
+        data.append('aiMetadata', JSON.stringify(formData.aiMeta));
+      }
       
       if (selectedFile) {
           data.append('thumbnail', selectedFile);
