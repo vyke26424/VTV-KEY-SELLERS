@@ -76,7 +76,7 @@ export class CreateProduct {
     @IsObject()
     @IsOptional()
     @Transform(parseJson)
-    meta?: Record<string, any>;
+    aiMetadata?: Record<string, any>;
 
     @IsOptional()
     @IsNumber()

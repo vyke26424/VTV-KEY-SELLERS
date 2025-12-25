@@ -52,7 +52,7 @@ export class AdminProductService {
                     keyword: {
                         connectOrCreate: tagOrCreate //Mảng
                     },
-                    aiMetadata: data.meta ?? Prisma.JsonNull, //Object
+                    aiMetadata: data.aiMetadata ?? Prisma.JsonNull, //Object
                     categoryId: data.categoryId,
                     variants: data.variants && data.variants.length > 0 ? {
                         create: data.variants.map((v) => ({
@@ -207,7 +207,7 @@ export class AdminProductService {
                 slug: newSlug,
                 description: data.description,
                 thumbnail: data.thumbnail,
-                aiMetadata: data.meta ?? undefined,
+                aiMetadata: data.aiMetadata ?? undefined,
                 categoryId: data.categoryId,
                 keyword: keywordUpdate,
                 
