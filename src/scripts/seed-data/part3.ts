@@ -57,7 +57,7 @@ export const productsPart3 = [
   {
     name: 'Kaspersky Total Security', slug: 'kaspersky-ts', categorySlug: 'security',
     description: 'Phần mềm diệt virus tốt nhất. Bảo vệ thanh toán, chống ransomware.',
-    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Kaspersky_logo.svg/1200px-Kaspersky_logo.svg.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766674117/Adguard-Premium_ommqzv.jpg',
     isHot: true, avgRating: 4.9, keywordNames: ["kaspersky", "dietvirus", "security"],
     aiMetadata: {
       keywords: ["diệt virus", "bảo mật", "chống hacker"],
@@ -69,7 +69,7 @@ export const productsPart3 = [
   {
     name: 'AdGuard License', slug: 'adguard', categorySlug: 'security',
     description: 'Chặn quảng cáo toàn hệ thống (Web, App). Chống theo dõi quyền riêng tư.',
-    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/AdGuard_Logo.png/1200px-AdGuard_Logo.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766674118/kaspety_p5iu1x.jpg',
     isHot: true, avgRating: 4.9, keywordNames: ["security"],
     aiMetadata: {
       keywords: ["chặn quảng cáo", "lọc web", "quyền riêng tư"],

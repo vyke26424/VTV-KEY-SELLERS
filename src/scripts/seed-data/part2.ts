@@ -17,7 +17,7 @@ export const productsPart2 = [
   {
     name: 'Valorant Points (VP)', slug: 'valorant-points', categorySlug: 'game',
     description: 'Nạp VP giá rẻ, uy tín qua Riot ID. An toàn tuyệt đối 100%.',
-    thumbnail: 'https://seeklogo.com/images/V/valorant-logo-FAB2CA0E55-seeklogo.com.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673863/valorant_s1faqi.png',
     isHot: true, avgRating: 4.9, keywordNames: ["valorant", "game", "napthe"],
     aiMetadata: {
       keywords: ["nạp game", "skin súng", "riot games"],
@@ -29,7 +29,7 @@ export const productsPart2 = [
   {
     name: 'Steam Wallet 10$', slug: 'steam-wallet-10', categorySlug: 'game',
     description: 'Mã thẻ nạp tiền Steam 10 USD. Tự động quy đổi sang VNĐ. Code Global.',
-    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673864/steamwallet_ck25er.jpg',
     isHot: true, avgRating: 5.0, keywordNames: ["steam", "game", "napthe"],
     aiMetadata: {
       keywords: ["nạp steam", "mua game bản quyền", "thẻ steam"],
@@ -55,7 +55,7 @@ export const productsPart2 = [
   {
     name: 'Office 365 Family', slug: 'office-365', categorySlug: 'software',
     description: 'Office bản quyền + 1TB OneDrive. Nâng cấp trên chính Email của bạn.',
-    thumbnail: 'https://seeklogo.com/images/M/microsoft-office-365-logo-62374514EC-seeklogo.com.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673865/familyoffice_yefir8.png',
     isHot: true, avgRating: 4.9, keywordNames: ["office", "microsoft", "google-drive"],
     aiMetadata: {
       keywords: ["word", "excel", "powerpoint", "lưu trữ đám mây"],

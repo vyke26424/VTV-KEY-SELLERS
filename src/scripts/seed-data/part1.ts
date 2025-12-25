@@ -5,7 +5,7 @@ export const productsPart1 = [
   {
     name: 'ChatGPT Plus (GPT-4o)', slug: 'chatgpt-plus', categorySlug: 'ai',
     description: 'Nâng cấp tài khoản chính chủ lên ChatGPT Plus. Mở khóa sức mạnh của GPT-4o mới nhất, vẽ tranh DALL-E 3.',
-    thumbnail: 'https://shop.activeitfirm.com/wp-content/uploads/2025/01/Chat-GPT-Plus-1-600x600.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673043/vtv-key-products/qbrup4dilo4zppo9dnuz.png',
     isHot: true, avgRating: 4.9, keywordNames: ["chatgpt", "gpt-4o", "openai", "ai"],
     aiMetadata: {
       keywords: ["openai", "trợ lý ảo", "viết code", "gpt-4"],
@@ -17,7 +17,7 @@ export const productsPart1 = [
   {
     name: 'Midjourney Pro', slug: 'midjourney-pro', categorySlug: 'ai',
     description: 'Công cụ tạo ảnh AI nghệ thuật đẹp nhất thế giới hiện nay. Quyền thương mại và chế độ Stealth mode.',
-    thumbnail: 'https://registry.npmmirror.com/@lobehub/icons-static-png/1.75.0/files/dark/midjourney.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673121/google-gemini-icon_o6inzu.png',
     isHot: true, avgRating: 4.8, keywordNames: ["midjourney", "ai", "design"],
     aiMetadata: {
       keywords: ["vẽ tranh ai", "tạo ảnh", "nghệ thuật số"],
@@ -29,7 +29,7 @@ export const productsPart1 = [
   {
     name: 'Google Gemini Advanced', slug: 'gemini-advanced', categorySlug: 'ai',
     description: 'Mô hình AI mạnh nhất của Google (Ultra 1.0). Tích hợp sâu vào Google Workspace. Tặng 2TB Google One.',
-    thumbnail: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-gemini-icon.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673121/google-gemini-icon_o6inzu.png',
     isHot: true, avgRating: 4.7, keywordNames: ["gemini", "google", "ai"],
     aiMetadata: {
       keywords: ["google ai", "gemini ultra", "google one"],
@@ -45,7 +45,7 @@ export const productsPart1 = [
   {
     name: 'YouTube Premium', slug: 'youtube-premium', categorySlug: 'entertainment',
     description: 'Xem YouTube không quảng cáo, chạy nền, tải video offline. Kèm YouTube Music.',
-    thumbnail: 'https://file.hstatic.net/200000061442/article/youtube_15d1e937db924cecb271594febec2780_1024x1024.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673505/youtube_premium_kzunwo.png',
     isHot: true, avgRating: 4.9, keywordNames: ["youtube", "nhạc", "premium"],
     aiMetadata: {
       keywords: ["youtube không quảng cáo", "youtube music", "nâng cấp mail chính chủ", "ytb premium"],
@@ -69,7 +69,7 @@ export const productsPart1 = [
   {
     name: 'Spotify Premium', slug: 'spotify-premium', categorySlug: 'entertainment',
     description: 'Nâng cấp Spotify chính chủ. Nghe nhạc 320kbps, chuyển bài không giới hạn.',
-    thumbnail: 'https://m.media-amazon.com/images/I/31B2Nyzd8XL.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673506/spotify_qe10by.png',
     isHot: true, avgRating: 4.8, keywordNames: ["spotify", "nhạc"],
     aiMetadata: {
       keywords: ["nghe nhạc", "spotify", "âm thanh chất lượng cao"],
