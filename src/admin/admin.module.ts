@@ -23,6 +23,8 @@ import { AdminDashboardService } from './services/admin-dashboard/admin-dashboar
 import { AdminSearchController } from './controller/admin-search/admin-search.controller';
 import { AdminSearchService } from './services/admin-search/admin-search.service';
 import { CloudinaryService } from './services/cloudinary/cloudinary.service';
+import { AdminReviewsService } from './services/admin-reviews/admin-reviews.service';
+import { AdminReviewsController } from './controller/admin-reviews/admin-reviews.controller';
 
 @Module({
     imports: [HttpModule],
@@ -36,7 +38,8 @@ import { CloudinaryService } from './services/cloudinary/cloudinary.service';
         AdminSettingsController,
         ChatController,
         AdminDashboardController,
-        AdminSearchController
+        AdminSearchController,
+        AdminReviewsController
     ],
     providers: [
         CloudinaryService,
@@ -51,6 +54,7 @@ import { CloudinaryService } from './services/cloudinary/cloudinary.service';
         ChatService,
         AdminDashboardService,
         AdminSearchService,
+        AdminReviewsService,
     ]
 })
 export class AdminModule {}

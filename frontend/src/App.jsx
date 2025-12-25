@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
   Outlet,
-} from 'react-router-dom'; // Thêm Outlet
+} from 'react-router-dom';
 
 // Import Components
 import Header from './components/Header';
@@ -13,7 +13,7 @@ import ScrollToTop from './components/ScrollToTop';
 import ChatWidget from './components/ChatBot/ChatWidget';
 import SessionManager from './components/SessionManager';
 
-// Import Pages (Giữ nguyên import cũ của bạn...)
+// Import Pages 
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import CategoryPage from './pages/CategoryPage';
@@ -31,7 +31,7 @@ import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
 import ProfilePage from './pages/ProfilePage';
 
-// Import Admin (Giữ nguyên...)
+// Import Admin 
 import AdminLayout from './admin/layouts/AdminLayout';
 import DashboardPage from './admin/pages/DashboardPage';
 import ProductListPage from './admin/pages/products/ProductListPage';
@@ -44,6 +44,7 @@ import StaffListPage from './admin/pages/users/StaffListPage';
 import StockListPage from './admin/pages/stock/StockListPage';
 import SettingsPage from './admin/pages/settings/SettingsPage';
 import ProtectedRoute from './admin/components/ProtectedRoute';
+import ReviewListPage from './admin/pages/reviews/ReviewListPage';
 
 // --- TẠO COMPONENT PUBLIC LAYOUT ---
 // Layout này chỉ dành cho khách: Có Header, Footer, ChatWidget
@@ -112,6 +113,7 @@ function App() {
               <Route path="staff" element={<StaffListPage />} />
               <Route path="stock" element={<StockListPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="reviews" element={<ReviewListPage />} />
             </Route>
           </Route>
         </Routes>

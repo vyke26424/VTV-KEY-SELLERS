@@ -107,7 +107,7 @@ chat_orchestrator = ChatOrchestrator()
 async def main() : 
     async with SessionLocal() as db : 
         or_service = ChatOrchestrator()
-        user_question = 'chính sách bảo hành ? '
+        user_question = 'shop có phần mềm chỉnh sửa ảnh không'
         history = []
         result  = await or_service.handle_request(user_question, history, db)
         print(result)
@@ -115,5 +115,3 @@ async def main() :
 if __name__ =="__main__" : 
     import asyncio 
     asyncio.run(main())
-
-

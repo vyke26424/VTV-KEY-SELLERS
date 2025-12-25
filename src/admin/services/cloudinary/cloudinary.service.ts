@@ -12,7 +12,7 @@ export class CloudinaryService {
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
     if (!cloudName || !apiKey || !apiSecret) {
-      this.logger.error('⚠️ Thiếu .env Cloudinary. Vui lòng kiểm tra lại!');
+      this.logger.error('Thiếu .env Cloudinary. Vui lòng kiểm tra lại!');
       throw new Error('Cloudinary configuration is incomplete.');
     }
 

@@ -10,7 +10,8 @@ import {
   Menu,
   X,
   Package,
-  LogOut, // Import icon Logout
+  LogOut,
+  MessageSquare,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useAuthStore from '../../store/useAuthStore';
@@ -19,6 +20,7 @@ import axiosClient from '../../store/axiosClient';
 const SIDEBAR_ITEMS = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
   { name: 'Sản phẩm', icon: ShoppingBag, path: '/admin/products' },
+  { name: 'Đánh giá', icon: MessageSquare, path: '/admin/reviews' },
   { name: 'Danh mục', icon: FolderTree, path: '/admin/categories' },
   { name: 'Đơn hàng', icon: ShoppingCart, path: '/admin/orders' },
   { name: 'Kho hàng', icon: Package, path: '/admin/stock' }, 

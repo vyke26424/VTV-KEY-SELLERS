@@ -11,6 +11,8 @@ import { SearchService } from './services/search/search.service';
 import { SearchController } from './controller/search/search.controller';
 import { InteractionsService } from './services/interactions/interactions.service';
 import { InteractionsController } from './controller/interactions/interactions.controller';
+import { ReviewsService } from './services/reviews/reviews.service';
+import { ReviewsController } from './controller/reviews/reviews.controller';
 
 @Module({
   controllers: [
@@ -19,6 +21,7 @@ import { InteractionsController } from './controller/interactions/interactions.c
     ProductsController,
     SearchController,
     InteractionsController,
+    ReviewsController,
   ],
   providers: [
     UserService,
@@ -28,6 +31,7 @@ import { InteractionsController } from './controller/interactions/interactions.c
     PrismaService,
     SearchService,
     InteractionsService,
+    ReviewsService,
   ],
   exports: [UserService, ProductsService, SearchService],
 })
