@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axiosClient from './axiosClient'; // <--- 1. Bổ sung import này để gọi API
+import axiosClient from './axiosClient';
 
 const useAuthStore = create(
   persist(
