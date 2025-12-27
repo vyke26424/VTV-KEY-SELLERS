@@ -1,81 +1,213 @@
 // prisma/seed-data/part1.ts
 
 export const productsPart1 = [
-  // ================= CATEGORY: AI =================
+  // ================= CATEGORY: GAME =================
   {
-    name: 'ChatGPT Plus (GPT-4o)', slug: 'chatgpt-plus', categorySlug: 'ai',
-    description: 'Nâng cấp tài khoản chính chủ lên ChatGPT Plus. Mở khóa sức mạnh của GPT-4o mới nhất, vẽ tranh DALL-E 3.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673043/vtv-key-products/qbrup4dilo4zppo9dnuz.png',
-    isHot: true, avgRating: 4.9, keywordNames: ["chatgpt", "gpt-4o", "openai", "ai"],
+    name: 'Black Myth: Wukong', 
+    slug: 'black-myth-wukong', 
+    categorySlug: 'game',
+    description: 'Siêu phẩm hành động nhập vai AAA lấy cảm hứng từ Tây Du Ký. Key Steam Global.',
+    thumbnail: 'https://tintuc-divineshop.cdn.vccloud.vn/wp-content/uploads/2024/08/blackmyth-1723969364570.jpg',
+    isHot: true, 
+    avgRating: 5.0, 
+    keywordNames: ["wukong", "game", "steam"],
     aiMetadata: {
-      keywords: ["openai", "trợ lý ảo", "viết code", "gpt-4"],
-      features: ["Mô hình GPT-4o mới nhất", "Vẽ tranh DALL-E 3", "Phân tích dữ liệu"],
-      suitable_for: ["Lập trình viên", "Content Creator", "Sinh viên", "Marketing"]
+      keywords: ["game hành động", "nhập vai", "tây du ký", "souls-like"],
+      features: ["Đồ họa Unreal Engine 5", "Cốt truyện lôi cuốn", "Key Steam Global"],
+      suitable_for: ["Gamer Hardcore", "Fan kiếm hiệp"]
     },
-    variants: [{ name: '1 Tháng (Riêng)', price: 490000, orginalPrice: 580000 }, { name: '1 Tháng (Share)', price: 140000, orginalPrice: 200000 }]
+    variants: [{ name: 'Standard Edition', price: 1150000, orginalPrice: 1299000 }]
   },
   {
-    name: 'Midjourney Pro', slug: 'midjourney-pro', categorySlug: 'ai',
-    description: 'Công cụ tạo ảnh AI nghệ thuật đẹp nhất thế giới hiện nay. Quyền thương mại và chế độ Stealth mode.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673121/google-gemini-icon_o6inzu.png',
-    isHot: true, avgRating: 4.8, keywordNames: ["midjourney", "ai", "design"],
+    name: 'GTA V Premium', 
+    slug: 'gta-5-premium', 
+    categorySlug: 'game',
+    description: 'Huyền thoại thế giới mở. Bao gồm GTA Online + Starter Pack.',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/vi/a/a5/Grand_Theft_Auto_V.png',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["gta", "game", "steam"],
     aiMetadata: {
-      keywords: ["vẽ tranh ai", "tạo ảnh", "nghệ thuật số"],
-      features: ["Tạo ảnh chất lượng cao", "Stealth mode", "Quyền thương mại"],
-      suitable_for: ["Designer", "Họa sĩ", "Kiến trúc sư"]
+      keywords: ["gta v", "rockstar games", "game thế giới mở"],
+      features: ["GTA Online included", "Criminal Enterprise Starter Pack", "Premium Edition content"],
+      suitable_for: ["Gamer thích tự do", "Fan hành động"]
     },
-    variants: [{ name: 'Standard 1 Tháng', price: 650000, orginalPrice: 800000 }]
+    variants: [{ name: 'Premium Edition', price: 230000, orginalPrice: 450000 }]
   },
   {
-    name: 'Google Gemini Advanced', slug: 'gemini-advanced', categorySlug: 'ai',
-    description: 'Mô hình AI mạnh nhất của Google (Ultra 1.0). Tích hợp sâu vào Google Workspace. Tặng 2TB Google One.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673121/google-gemini-icon_o6inzu.png',
-    isHot: true, avgRating: 4.7, keywordNames: ["gemini", "google", "ai"],
+    name: 'Minecraft Java & Bedrock', 
+    slug: 'minecraft-pc', 
+    categorySlug: 'game',
+    description: 'Game sinh tồn sáng tạo hay nhất. Key bản quyền Microsoft chính hãng.',
+    thumbnail: 'https://news.vio.vn/wp-content/uploads/2025/03/minecraft-pe-la-gi-1-1.jpg',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["minecraft", "game"],
     aiMetadata: {
-      keywords: ["google ai", "gemini ultra", "google one"],
-      features: ["AI Google Ultra 1.0", "Tích hợp Docs/Sheets", "Tặng 2TB lưu trữ"],
-      suitable_for: ["Người dùng Google Workspace", "Dân văn phòng"]
+      keywords: ["xây dựng", "sinh tồn", "sandbox"],
+      features: ["Bao gồm cả bản Java và Bedrock", "Chơi đa nền tảng", "Cập nhật vĩnh viễn"],
+      suitable_for: ["Trẻ em", "Người thích sáng tạo"]
     },
-    variants: [{ name: 'Nâng cấp 1 Tháng', price: 90000, orginalPrice: 480000 }]
-  },
-  
-  // ... (Bạn có thể thêm tiếp các sản phẩm AI khác từ list cũ vào đây, nhớ thêm aiMetadata tương tự)
-
-  // ================= CATEGORY: ENTERTAINMENT =================
-  {
-    name: 'YouTube Premium', slug: 'youtube-premium', categorySlug: 'entertainment',
-    description: 'Xem YouTube không quảng cáo, chạy nền, tải video offline. Kèm YouTube Music.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673505/youtube_premium_kzunwo.png',
-    isHot: true, avgRating: 4.9, keywordNames: ["youtube", "nhạc", "premium"],
-    aiMetadata: {
-      keywords: ["youtube không quảng cáo", "youtube music", "nâng cấp mail chính chủ", "ytb premium"],
-      features: ["Nghe nhạc tắt màn hình", "Không quảng cáo", "Youtube Music Premium"], 
-      suitable_for: ["Sinh viên", "Người hay nghe nhạc", "Gia đình"]
-    },
-    variants: [{ name: '6 Tháng', price: 149000, orginalPrice: 350000 }]
+    variants: [{ name: 'Key Global', price: 490000, orginalPrice: 750000 }]
   },
   {
-    name: 'Netflix Premium 4K', slug: 'netflix-premium', categorySlug: 'entertainment',
-    description: 'Tài khoản Netflix Premium xem phim 4K Ultra HD. Xem không giới hạn, không quảng cáo.',
-    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg',
-    isHot: true, avgRating: 4.9, keywordNames: ["netflix", "phim", "4k"],
+    name: 'Valorant Points (VP)', 
+    slug: 'valorant-points', 
+    categorySlug: 'game',
+    description: 'Nạp VP giá rẻ, uy tín qua Riot ID. An toàn tuyệt đối 100%.',
+    thumbnail: 'https://seeklogo.com/images/V/valorant-logo-FAB2CA0E55-seeklogo.com.png',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["valorant", "game", "napthe"],
     aiMetadata: {
-      keywords: ["xem phim 4k", "netflix", "phim mỹ"],
-      features: ["Chất lượng 4K Ultra HD", "Vietsub/Lồng tiếng", "Không quảng cáo"],
-      suitable_for: ["Mọt phim", "Gia đình", "Cặp đôi"]
+      keywords: ["nạp game", "skin súng", "riot games"],
+      features: ["Nạp qua Riot ID", "Nhận VP ngay lập tức", "An toàn không ban acc"],
+      suitable_for: ["Game thủ Valorant"]
     },
-    variants: [{ name: '1 Tháng (Slot)', price: 85000, orginalPrice: 260000 }]
+    variants: [{ name: '2000 VP', price: 400000, orginalPrice: 450000 }]
   },
   {
-    name: 'Spotify Premium', slug: 'spotify-premium', categorySlug: 'entertainment',
-    description: 'Nâng cấp Spotify chính chủ. Nghe nhạc 320kbps, chuyển bài không giới hạn.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673506/spotify_qe10by.png',
-    isHot: true, avgRating: 4.8, keywordNames: ["spotify", "nhạc"],
+    name: 'Steam Wallet 10$', 
+    slug: 'steam-wallet-10', 
+    categorySlug: 'game',
+    description: 'Mã thẻ nạp tiền Steam 10 USD. Tự động quy đổi sang VNĐ. Code Global.',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png',
+    isHot: true, 
+    avgRating: 5.0, 
+    keywordNames: ["steam", "game", "napthe"],
     aiMetadata: {
-      keywords: ["nghe nhạc", "spotify", "âm thanh chất lượng cao"],
-      features: ["Nghe nhạc không quảng cáo", "Chuyển bài không giới hạn", "Tải nhạc offline"],
-      suitable_for: ["Người yêu nhạc", "Gen Z"]
+      keywords: ["nạp steam", "mua game bản quyền", "thẻ steam"],
+      features: ["Code Global", "Tự động quy đổi VNĐ", "Nạp an toàn"],
+      suitable_for: ["Game thủ PC"]
     },
-    variants: [{ name: '1 Năm', price: 290000, orginalPrice: 590000 }]
+    variants: [{ name: '10 USD', price: 270000, orginalPrice: 300000 }]
+  },
+  {
+    name: 'Roblox Robux 800', 
+    slug: 'roblox-robux-800', 
+    categorySlug: 'game',
+    description: 'Thẻ nạp 800 Robux chính hãng. Nạp code nhận ngay, không cần đưa nick.',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/1200px-Roblox_player_icon_black.svg.png',
+    isHot: true, 
+    avgRating: 4.8, 
+    keywordNames: ["roblox", "game", "napthe"],
+    aiMetadata: {
+      keywords: ["nạp robux", "skin roblox", "game pass"],
+      features: ["Code nạp trực tiếp", "Không cần login nick", "Hàng chính hãng"],
+      suitable_for: ["Người chơi Roblox"]
+    },
+    variants: [{ name: '800 Robux', price: 210000, orginalPrice: 250000 }]
+  },
+  {
+    name: 'Elden Ring', 
+    slug: 'elden-ring', 
+    categorySlug: 'game',
+    description: 'Game of The Year 2022. Thể loại Soul-like thế giới mở cực cuốn.',
+    thumbnail: 'https://assets-prd.ignimgs.com/2021/06/12/elden-ring-button-03-1623460560664.jpg',
+    isHot: false, 
+    avgRating: 4.9, 
+    keywordNames: ["game", "steam"],
+    aiMetadata: {
+      keywords: ["game AAA", "souls-like", "thế giới mở", "hành động"],
+      features: ["Cốt truyện sâu sắc", "Thế giới rộng lớn", "Độ khó cao"],
+      suitable_for: ["Gamer Hardcore", "Fan FromSoftware"]
+    },
+    variants: [{ name: 'Standard Edition', price: 850000, orginalPrice: 1090000 }]
+  },
+  {
+    name: 'FC 24 (FIFA 24)', 
+    slug: 'fc-24', 
+    categorySlug: 'game',
+    description: 'Game bóng đá đỉnh cao từ EA Sports. Chế độ Ultimate Team hấp dẫn.',
+    thumbnail: 'https://media.contentapi.ea.com/content/dam/ea/fc/fc-24/common/fc24-logo-white-stacked.svg',
+    isHot: true, 
+    avgRating: 4.7, 
+    keywordNames: ["fc24", "fifa", "game"],
+    aiMetadata: {
+      keywords: ["đá bóng", "fifa", "ea sports", "ultimate team"],
+      features: ["HyperMotionV technology", "Bóng đá nữ trong UT", "PlayStyles"],
+      suitable_for: ["Fan bóng đá", "Gamer thích cạnh tranh"]
+    },
+    variants: [{ name: 'Standard Key', price: 650000, orginalPrice: 1500000 }]
+  },
+  {
+    name: 'Cyberpunk 2077', 
+    slug: 'cyberpunk-2077', 
+    categorySlug: 'game',
+    description: 'Game nhập vai thế giới mở tương lai. Bao gồm bản cập nhật 2.0 mới nhất.',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Cyberpunk_2077_logo.svg',
+    isHot: false, 
+    avgRating: 4.6, 
+    keywordNames: ["cyberpunk", "game", "steam"],
+    aiMetadata: {
+      keywords: ["tương lai", "nhập vai", "night city", "sci-fi"],
+      features: ["Bản cập nhật 2.0 lớn", "Đồ họa cực đỉnh", "Cốt truyện rẽ nhánh"],
+      suitable_for: ["Người yêu thích sci-fi", "Gamer thích nhập vai"]
+    },
+    variants: [{ name: 'Ultimate Edition', price: 890000, orginalPrice: 1800000 }]
+  },
+  {
+    name: 'Xbox Game Pass Ultimate', 
+    slug: 'xbox-game-pass', 
+    categorySlug: 'game',
+    description: 'Chơi hơn 100 game đỉnh cao trên PC và Xbox. Bao gồm cả EA Play.',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Xbox_Game_Pass_logo.svg/2560px-Xbox_Game_Pass_logo.svg.png',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["xbox", "game"],
+    aiMetadata: {
+      keywords: ["thuê game", "game pass", "microsoft game"],
+      features: ["Hơn 100 đầu game", "Bao gồm EA Play", "Chơi trên cả PC/Xbox"],
+      suitable_for: ["Game thủ muốn chơi nhiều game giá rẻ"]
+    },
+    variants: [{ name: 'Code 3 Tháng', price: 450000, orginalPrice: 890000 }]
+  },
+  {
+    name: 'PUBG Plus', 
+    slug: 'pubg-plus', 
+    categorySlug: 'game',
+    description: 'Nâng cấp tài khoản PUBG Battlegrounds lên Plus. Mở khóa Ranked Mode và tạo Custom Match.',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/PUBG_logo.svg/2560px-PUBG_logo.svg.png',
+    isHot: false, 
+    avgRating: 4.7, 
+    keywordNames: ["pubg", "game", "steam"],
+    aiMetadata: {
+      keywords: ["bắn súng", "battle royale", "pubg plus"],
+      features: ["Mở khóa đấu Rank", "Tạo phòng tùy chọn", "Item đặc biệt"],
+      suitable_for: ["Người chơi PUBG lâu năm"]
+    },
+    variants: [{ name: 'Key Vĩnh Viễn', price: 280000, orginalPrice: 350000 }]
+  },
+  {
+    name: 'Grand Theft Auto VI (GTA 6)', 
+    slug: 'gta-vi-pre-order', 
+    categorySlug: 'game',
+    description: 'Siêu phẩm được mong chờ nhất thập kỷ từ Rockstar Games, đưa người chơi quay trở lại Vice City rực rỡ sắc màu nhưng đầy rẫy tội phạm.',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676661/%C3%81p_ph%C3%ADch_Grand_Theft_Auto_VI_uwjwkp.png',
+    isHot: true, 
+    avgRating: 5.0, 
+    keywordNames: ["game", "gta", "steam"],
+    aiMetadata: {
+      keywords: ["gta 6", "rockstar games", "game thế giới mở", "siêu phẩm 2025"],
+      features: ["Bản đồ Vice City mở rộng", "Đồ họa Next-gen", "Cốt truyện song mã độc đáo", "Hệ thống AI cư dân thông minh"],
+      suitable_for: ["Tất cả game thủ", "Fan dòng game hành động", "Người sưu tầm game bản quyền"]
+    },
+    variants: [{ name: 'Pre-order Global', price: 1850000, orginalPrice: 2000000 }]
+  },
+  {
+    name: 'Half-Life 3', 
+    slug: 'half-life-3-steam', 
+    categorySlug: 'game',
+    description: 'Sự trở lại của huyền thoại Gordon Freeman trong phần tiếp theo của series bắn súng góc nhìn thứ nhất (FPS) vĩ đại nhất mọi thời đại.',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676675/halflife_3_itwknk.jpg',
+    isHot: true, 
+    avgRating: 5.0, 
+    keywordNames: ["game", "steam"],
+    aiMetadata: {
+      keywords: ["half life 3", "valve", "source 2", "fps huyền thoại"],
+      features: ["Cơ chế vật lý đột phá", "Cốt truyện tiếp nối đỉnh cao", "Đồ họa Source 2 tối tân", "Trải nghiệm nhập vai sâu sắc"],
+      suitable_for: ["Fan lâu năm của Valve", "Người yêu thích game bắn súng cốt truyện"]
+    },
+    variants: [{ name: 'Standard Key Steam', price: 1250000, orginalPrice: 1500000 }]
   }
 ];

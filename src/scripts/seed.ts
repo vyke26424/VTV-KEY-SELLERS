@@ -2,18 +2,22 @@
 
 import { PrismaClient, StockStatus } from '@prisma/client';
 import * as dotenv from 'dotenv';
-import { EncryptionService } from '../../src/admin/utils/encryption/encryption.service'; // Chú ý đường dẫn import
-// Import data
+import { EncryptionService } from '../../src/admin/utils/encryption/encryption.service';
+// Import dữ liệu từ 7 part
 import { productsPart1 } from './seed-data/part1';
 import { productsPart2 } from './seed-data/part2';
 import { productsPart3 } from './seed-data/part3';
+import { productsPart4 } from './seed-data/part4';
+import { productsPart5 } from './seed-data/part5';
+import { productsPart6 } from './seed-data/part6';
+import { productsPart7 } from './seed-data/part7';
 
-// 1. Load environment variables
+// 1. Load biến môi trường
 dotenv.config();
 
 const prisma = new PrismaClient();
 
-// 2. Mock ConfigService
+// 2. Mock ConfigService cho EncryptionService
 const mockConfigService: any = {
   get: (key: string) => process.env[key],
   getOrThrow: (key: string) => {
@@ -23,17 +27,20 @@ const mockConfigService: any = {
   },
 };
 
-// 3. Initialize Encryption Service
+// 3. Khởi tạo Encryption Service
 const encryptionService = new EncryptionService(mockConfigService);
 
+/**
+ * Hàm hỗ trợ nạp sản phẩm theo mảng dữ liệu
+ */
 async function seedProducts(products: any[], categories: Record<string, number>, createdKeywords: Record<string, any>) {
   for (const p of products) {
     if (!categories[p.categorySlug]) {
-      console.warn(`⚠️ Category not found for product: ${p.name} (${p.categorySlug})`);
+      console.warn(`⚠️ Không tìm thấy Category cho sản phẩm: ${p.name} (${p.categorySlug})`);
       continue;
     }
 
-    // Helper connect keyword
+    // Kết nối từ khóa
     const getKeywordConnect = (names: string[]) => ({
       connect: (names || [])
         .map(name => createdKeywords[name])
@@ -51,7 +58,7 @@ async function seedProducts(products: any[], categories: Record<string, number>,
         categoryId: categories[p.categorySlug],
         avgRating: p.avgRating,
         keyword: getKeywordConnect(p.keywordNames),
-        aiMetadata: p.aiMetadata || {}, // Cập nhật AI Metadata
+        aiMetadata: p.aiMetadata || {},
       },
       create: {
         name: p.name,
@@ -66,9 +73,9 @@ async function seedProducts(products: any[], categories: Record<string, number>,
       },
     });
 
-    console.log(`📦 Product: ${product.name}`);
+    console.log(`📦 Đang xử lý sản phẩm: ${product.name}`);
 
-    // Create Variants & Stock
+    // Tạo Biến thể (Variants) & Kho (Stock)
     for (const v of p.variants) {
       let variant = await prisma.productVariant.findFirst({
         where: { productId: product.id, name: v.name }
@@ -90,7 +97,7 @@ async function seedProducts(products: any[], categories: Record<string, number>,
         });
       }
 
-      // Check stock exists to avoid spamming database
+      // Kiểm tra tồn kho để tránh nạp trùng lặp quá nhiều
       const existingStock = await prisma.stockItem.count({ where: { variantId: variant.id }});
       if (existingStock < 5) {
          const stockData: any[] = [];
@@ -110,9 +117,9 @@ async function seedProducts(products: any[], categories: Record<string, number>,
 }
 
 async function main() {
-  console.log('🌱 Start seeding VTV Key Sellers Data (Modular)...');
+  console.log('🌱 Bắt đầu quá trình Seeding VTV Key (Modular)...');
 
-  // --- 1. CATEGORIES ---
+  // --- 1. TẠO DANH MỤC (CATEGORIES) ---
   const categoriesData = [
     { name: 'Trí tuệ nhân tạo (AI)', slug: 'ai' },
     { name: 'Giải Trí & Phim Ảnh', slug: 'entertainment' },
@@ -131,24 +138,17 @@ async function main() {
       create: cat,
     });
     categories[cat.slug] = newCat.id;
-    console.log(`📂 Category: ${newCat.name}`);
   }
 
-  // --- 2. KEYWORDS ---
+  // --- 2. TẠO TỪ KHÓA (KEYWORDS) ---
   const allKeywordNames = [
-    // AI
+    // Danh sách từ khóa tổng hợp từ 7 danh mục
     "chatgpt", "gpt-4o", "openai", "midjourney", "claude", "gemini", "google", "copilot", "quillbot", "ai", "bot", "jasper", "perplexity", "trợ lý ảo", "viết code", "gpt-4", "vẽ tranh ai", "tạo ảnh", "nghệ thuật số", "google ai", "gemini ultra", "google one",
-    // Entertainment
     "netflix", "youtube", "spotify", "k+", "vieon", "fpt", "hbo", "disney", "phim", "nhạc", "4k", "amazon", "apple", "tidal", "crunchyroll", "premium", "youtube không quảng cáo", "youtube music", "nâng cấp mail chính chủ", "ytb premium", "xem phim 4k", "phim mỹ", "nghe nhạc", "âm thanh chất lượng cao",
-    // Game
     "steam", "valorant", "lienminh", "gta", "minecraft", "roblox", "wukong", "fc24", "fifa", "game", "napthe", "xbox", "playstation", "cyberpunk", "pubg", "game hành động", "nhập vai", "tây du ký", "souls-like", "nạp game", "skin súng", "riot games", "nạp steam", "mua game bản quyền", "thẻ steam",
-    // Software
     "windows", "office", "microsoft", "idm", "winrar", "driver", "key", "banquyen", "google-drive", "jetbrains", "vmware", "winzip", "key win 11", "bản quyền windows", "hệ điều hành", "word", "excel", "powerpoint", "lưu trữ đám mây", "tải nhanh", "bắt link video", "download manager",
-    // Education & VPN
     "duolingo", "coursera", "udemy", "grammarly", "zoom", "elsa", "vpn", "nordvpn", "expressvpn", "ip", "skillshare", "linkedin", "scribd", "study", "học tiếng anh", "ngoại ngữ", "app học tập", "fake ip", "bảo mật internet", "riêng tư",
-    // Design
     "canva", "adobe", "photoshop", "capcut", "freepik", "envato", "lightroom", "edit", "figma", "motion", "pikbest", "thiết kế online", "xóa phông", "làm slide", "chỉnh sửa ảnh", "dựng phim", "đồ họa",
-    // Security
     "kaspersky", "bitdefender", "malwarebytes", "virus", "dietvirus", "bao-mat", "norton", "bkav", "eset", "mcafee", "diệt virus", "bảo mật", "chống hacker", "chặn quảng cáo", "lọc web", "quyền riêng tư"
   ];
   
@@ -162,17 +162,29 @@ async function main() {
     createdKeywords[name] = keyword;
   }
 
-  // --- 3. RUN BATCHES ---
-  console.log('--- Batch 1: AI & Entertainment ---');
+  // --- 3. CHẠY CÁC BATCH DỮ LIỆU ---
+  console.log('--- Batch 1: Game & Special Games ---');
   await seedProducts(productsPart1, categories, createdKeywords);
 
-  console.log('--- Batch 2: Game & Software ---');
+  console.log('--- Batch 2: AI Products ---');
   await seedProducts(productsPart2, categories, createdKeywords);
 
-  console.log('--- Batch 3: Education, Design & Security ---');
+  console.log('--- Batch 3: Entertainment & Movies ---');
   await seedProducts(productsPart3, categories, createdKeywords);
 
-  // --- 4. SYSTEM CONFIG ---
+  console.log('--- Batch 4: Education & VPN ---');
+  await seedProducts(productsPart4, categories, createdKeywords);
+
+  console.log('--- Batch 5: Design & Graphic ---');
+  await seedProducts(productsPart5, categories, createdKeywords);
+
+  console.log('--- Batch 6: Software & System ---');
+  await seedProducts(productsPart6, categories, createdKeywords);
+
+  console.log('--- Batch 7: Security & Antivirus ---');
+  await seedProducts(productsPart7, categories, createdKeywords);
+
+  // --- 4. CẤU HÌNH HỆ THỐNG ---
   await prisma.systemConfig.upsert({
     where: { id: 1 },
     update: {},
@@ -183,7 +195,7 @@ async function main() {
     }
   });
 
-  console.log('✅ Seeding finished successfully.');
+  console.log('✅ Hoàn tất quá trình Seeding dữ liệu thành công.');
 }
 
 main()

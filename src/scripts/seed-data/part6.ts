@@ -1,85 +1,133 @@
 // prisma/seed-data/part6.ts
 
 export const productsPart6 = [
-  // ================= CATEGORY: EDUCATION & WORK =================
+  // ================= CATEGORY: SOFTWARE (PHẦN MỀM & WINDOWS) =================
   {
-    name: 'LinkedIn Learning', slug: 'linkedin-learning-premium', categorySlug: 'education',
-    description: 'Nâng tầm sự nghiệp với kho tàng kiến thức khổng lồ từ LinkedIn Learning. Với hơn 16.000 khóa học được dẫn dắt bởi các chuyên gia đầu ngành trong các lĩnh vực Kinh doanh, Công nghệ và Sáng tạo, bạn có thể tự do lựa chọn lộ trình phát triển kỹ năng mềm hoặc kỹ năng chuyên môn. Sau khi hoàn thành mỗi khóa học, bạn sẽ nhận được chứng chỉ trực tiếp trên profile LinkedIn cá nhân, giúp gây ấn tượng mạnh mẽ với các nhà tuyển dụng hàng đầu.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676223/Tai-khoan-LinkedIn-Learning-The-Boring-Store_shvzvx.webp',
-    isHot: false, avgRating: 4.6, keywordNames: ["linkedin", "study"],
+    name: 'Windows 11 Pro', 
+    slug: 'windows-11-pro', 
+    categorySlug: 'software',
+    [cite_start]description: 'Hệ điều hành mới nhất từ Microsoft với giao diện hiện đại và khả năng bảo mật tối ưu[cite: 43]. [cite_start]Key kích hoạt Windows 11 Pro bản quyền vĩnh viễn giúp bạn mở khóa đầy đủ các tính năng nâng cao như BitLocker, Windows Sandbox và khả năng quản lý từ xa chuyên nghiệp[cite: 44]. [cite_start]Hỗ trợ cập nhật các bản vá lỗi và tính năng mới nhất trực tiếp từ Microsoft một cách thoải mái[cite: 44].',
+    thumbnail: 'https://keyoff.net/wp-content/uploads/2021/10/Key-Windows-11-gia-re.jpg',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["windows", "key", "microsoft"],
     aiMetadata: {
-      keywords: ["học kỹ năng chuyên môn", "chứng chỉ linkedin", "phát triển sự nghiệp"],
-      features: ["Hơn 16.000 khóa học chuyên sâu", "Chứng chỉ hoàn thành chính thức", "Học offline trên ứng dụng di động"],
-      suitable_for: ["Người đang tìm việc", "Quản lý dự án", "Nhân viên văn phòng"]
+      keywords: ["key win 11", "bản quyền windows", "hệ điều hành"],
+      features: ["Bản quyền vĩnh viễn", "Update chính hãng", "Kích hoạt online"],
+      suitable_for: ["Người dùng PC", "Laptop mới", "Doanh nghiệp"]
     },
-    variants: [{ name: '1 Năm', price: 550000, orginalPrice: 3000000 }]
+    variants: [{ name: 'Key Vĩnh Viễn', price: 150000, orginalPrice: 3500000 }]
   },
   {
-    name: 'Zoom Pro (Hội họp không giới hạn)', slug: 'zoom-pro-business', categorySlug: 'education',
-    description: 'Giải pháp hội nghị trực tuyến hàng đầu cho doanh nghiệp và giáo dục. Gói Zoom Pro loại bỏ hoàn toàn giới hạn 40 phút của bản miễn phí, cho phép bạn tổ chức các cuộc họp kéo dài liên tục lên đến 30 giờ với sức chứa 100 người tham gia. Đi kèm với đó là các tính năng quản lý cuộc họp nâng cao, ghi âm cuộc họp lên đám mây và báo cáo chi tiết, giúp quy trình làm việc từ xa trở nên chuyên nghiệp và hiệu quả hơn bao giờ hết.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676222/zoompro_atp70k.webp',
-    isHot: false, avgRating: 4.6, keywordNames: ["zoom", "study"],
+    name: 'Office 365 Family', 
+    slug: 'office-365', 
+    categorySlug: 'software',
+    [cite_start]description: 'Giải pháp làm việc văn phòng toàn diện nhất hiện nay bao gồm Word, Excel, PowerPoint và Outlook[cite: 45]. [cite_start]Gói Family cho phép bạn nâng cấp trực tiếp trên Email cá nhân của mình, cung cấp thêm 1TB lưu trữ đám mây OneDrive để sao lưu dữ liệu an toàn[cite: 45]. [cite_start]Đặc biệt, một tài khoản có thể chia sẻ và sử dụng đồng thời trên 5 thiết bị khác nhau, phù hợp cho cả gia đình hoặc nhóm làm việc[cite: 45].',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766673865/familyoffice_yefir8.png',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["office", "microsoft", "google-drive"],
     aiMetadata: {
-      keywords: ["họp trực tuyến", "học online", "zoom bản quyền"],
-      features: ["Họp không giới hạn thời gian", "Ghi hình đám mây", "Quản lý người tham gia chuyên sâu"],
-      suitable_for: ["Giáo viên", "Chủ doanh nghiệp", "Nhóm làm việc từ xa"]
+      keywords: ["word", "excel", "powerpoint", "lưu trữ đám mây"],
+      features: ["Full bộ Office mới nhất", "1TB OneDrive", "Chia sẻ 5 thiết bị"],
+      suitable_for: ["Gia đình", "Sinh viên", "Nhân viên văn phòng"]
     },
-    variants: [{ name: '1 Tháng', price: 150000, orginalPrice: 350000 }]
+    variants: [{ name: '1 Năm (Slot)', price: 250000, orginalPrice: 1400000 }]
   },
-
-  // ================= CATEGORY: DESIGN & CREATIVE =================
   {
-    name: 'Envato Elements', slug: 'envato-elements-premium', categorySlug: 'design',
-    description: 'Kho tài nguyên sáng tạo không giới hạn dành cho Designer và Editor chuyên nghiệp. Chỉ với một tài khoản, bạn có thể tải xuống hàng triệu tệp tin từ giao diện website (WordPress), mẫu video (After Effects, Premiere), âm nhạc không bản quyền, cho đến các phông chữ và đồ họa 3D đẳng cấp. Đây là "mỏ vàng" giúp bạn tối ưu hóa thời gian thực hiện dự án mà vẫn đảm bảo được chất lượng thẩm mỹ cao nhất cho khách hàng.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676218/evanto_eqqg80.png',
-    isHot: true, avgRating: 4.8, keywordNames: ["envato", "design"],
+    name: 'IDM License Key', 
+    slug: 'idm-key', 
+    categorySlug: 'software',
+    [cite_start]description: 'Phần mềm hỗ trợ tải xuống hàng đầu thế giới với công nghệ chia nhỏ tệp tin giúp tăng tốc độ download lên đến 500%[cite: 46]. [cite_start]Key bản quyền IDM giúp bạn tự động bắt link video từ YouTube, các trang phim và quản lý danh sách tải xuống một cách khoa học[cite: 46]. [cite_start]Sản phẩm cam kết chính hãng và bảo hành trọn đời, giúp bạn loại bỏ hoàn toàn các thông báo dùng thử phiền phức[cite: 46].',
+    thumbnail: 'https://3.bp.blogspot.com/-UlQVjpBhT44/Th3BOsfBGQI/AAAAAAAAAFM/Ww2qhQgqKI8/s1600/Internet_Download_Manager.jpg',
+    isHot: true, 
+    avgRating: 4.9, 
+    keywordNames: ["idm", "key"],
     aiMetadata: {
-      keywords: ["tài nguyên thiết kế", "wordpress theme", "video template", "stock footage"],
-      features: ["Tải xuống không giới hạn", "Giấy phép thương mại rõ ràng", "Cập nhật tài nguyên mỗi ngày"],
-      suitable_for: ["Web Developer", "Video Editor", "Agency quảng cáo"]
+      keywords: ["tải nhanh", "bắt link video", "download manager"],
+      features: ["Tăng tốc download 500%", "Bắt link Youtube/Phim", "Key chính hãng trọn đời"],
+      suitable_for: ["Người hay tải phim", "Game thủ"]
     },
-    variants: [{ name: '1 Tháng (Share)', price: 150000, orginalPrice: 800000 }]
+    variants: [{ name: 'Key Trọn Đời', price: 430000, orginalPrice: 600000 }]
   },
-
-  // ================= CATEGORY: SECURITY =================
   {
-    name: 'Norton 360 Deluxe', slug: 'norton-360-deluxe', categorySlug: 'security',
-    description: 'Giải pháp bảo mật đa lớp toàn diện giúp bảo vệ thiết bị của bạn trước các mối đe dọa trực tuyến phức tạp nhất. Norton 360 Deluxe không chỉ diệt virus mà còn tích hợp sẵn Secure VPN để bảo vệ quyền riêng tư khi truy cập Wi-Fi công cộng, tính năng SafeCam ngăn chặn hacker truy cập webcam trái phép và bộ nhớ sao lưu đám mây 50GB để bảo vệ các dữ liệu quan trọng nhất trước rủi ro bị mã hóa bởi Ransomware.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676217/norton_zygrc1.jpg',
-    isHot: false, avgRating: 4.8, keywordNames: ["norton", "security"],
+    name: 'Google One 2TB (Family)', 
+    slug: 'google-one-2tb', 
+    categorySlug: 'software',
+    [cite_start]description: 'Mở rộng không gian lưu trữ cho toàn bộ hệ sinh thái Google bao gồm Drive, Gmail và Photos[cite: 47]. [cite_start]Gói 2TB cung cấp dung lượng cực lớn để bạn sao lưu ảnh chất lượng gốc, video 4K và các tệp tin nặng mà không lo bị đầy bộ nhớ[cite: 47]. [cite_start]Tài khoản được nâng cấp chính chủ, đảm bảo tính an toàn và quyền riêng tư tuyệt đối cho dữ liệu cá nhân của bạn[cite: 47].',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/2295px-Google_Drive_icon_%282020%29.svg.png',
+    isHot: false, 
+    avgRating: 4.8, 
+    keywordNames: ["google-drive", "software"],
     aiMetadata: {
-      keywords: ["diệt virus norton", "bảo mật webcam", "sao lưu dữ liệu", "vpn tích hợp"],
-      features: ["Bảo vệ tối đa 3 thiết bị", "50GB Cloud Backup", "Trình quản lý mật khẩu an toàn"],
-      suitable_for: ["Người dùng có nhiều thiết bị", "Gia đình cần bảo mật cao"]
+      keywords: ["lưu trữ đám mây", "google photos", "nâng cấp dung lượng"],
+      features: ["Dung lượng 2000GB", "Chia sẻ gia đình", "Sao lưu ảnh gốc"],
+      suitable_for: ["Người dùng iPhone/Android", "Nhiếp ảnh gia"]
     },
-    variants: [{ name: '1 Năm / 3 Thiết bị', price: 290000, orginalPrice: 600000 }]
+    variants: [{ name: '2TB / 1 Năm', price: 450000, orginalPrice: 2250000 }]
   },
-
-  // ================= CATEGORY: ENTERTAINMENT =================
   {
-    name: 'Tidal HiFi Plus', slug: 'tidal-hifi-plus-music', categorySlug: 'entertainment',
-    description: 'Dịch vụ nghe nhạc dành riêng cho những người đam mê âm thanh chất lượng cao (Audiophile). Tidal HiFi Plus cung cấp định dạng Master Quality Authenticated (MQA) và Dolby Atmos, mang đến độ chi tiết âm thanh chân thực nhất như đang ngồi trong phòng thu. Không quảng cáo, hỗ trợ nghe offline và khả năng kết nối trực tiếp với các thiết bị âm thanh chuyên dụng giúp bạn tận hưởng âm nhạc một cách trọn vẹn và đẳng cấp nhất.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676233/tai-khoan-tidal-hifi-plus-1_lgfdrl.png',
-    isHot: false, avgRating: 4.6, keywordNames: ["tidal", "nhạc"],
+    name: 'JetBrains All Products Pack', 
+    slug: 'jetbrains-all-apps', 
+    categorySlug: 'software',
+    [cite_start]description: 'Bộ công cụ quyền năng nhất dành cho các nhà phát triển phần mềm chuyên nghiệp[cite: 49]. [cite_start]Gói All Products bao gồm hơn 15 công cụ lập trình hàng đầu như IntelliJ IDEA cho Java, PyCharm cho Python, WebStorm cho JavaScript và nhiều IDE khác[cite: 49]. [cite_start]Đây là sự lựa chọn tối ưu để tăng năng suất code nhờ khả năng gợi ý thông minh và kiểm tra lỗi thời gian thực[cite: 49].',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766675187/jet_cdaphk.jpg',
+    isHot: false, 
+    avgRating: 4.9, 
+    keywordNames: ["jetbrains", "software"],
     aiMetadata: {
-      keywords: ["nhạc lossless", "âm thanh hi-fi", "nhạc chất lượng cao", "audiophile"],
-      features: ["Chất lượng MQA & Dolby Atmos", "Nghe nhạc không quảng cáo", "Hỗ trợ kết nối thiết bị chuyên dụng"],
-      suitable_for: ["Người chơi âm thanh", "Người yêu thích nhạc chất lượng cao"]
+      keywords: ["công cụ lập trình", "intellij", "pycharm", "webstorm"],
+      features: ["Full bộ 15+ IDE", "Gợi ý code thông minh", "Update phiên bản mới nhất"],
+      suitable_for: ["Lập trình viên chuyên nghiệp", "Công ty công nghệ"]
     },
-    variants: [{ name: '3 Tháng', price: 120000, orginalPrice: 500000 }]
+    variants: [{ name: '1 Năm (Cá nhân)', price: 950000, orginalPrice: 6000000 }]
   },
-
-  // ================= CATEGORY: SYSTEM SOFTWARE =================
   {
-    name: 'VMware Workstation Pro 17', slug: 'vmware-workstation-pro', categorySlug: 'software',
-    description: 'Phần mềm tạo máy ảo mạnh mẽ nhất dành cho các kỹ sư hệ thống và lập trình viên. VMware Workstation Pro cho phép bạn chạy đồng thời nhiều hệ điều hành như Windows, Linux và các hệ thống máy chủ trên cùng một chiếc máy tính vật lý duy nhất. Đây là công cụ lý tưởng để thử nghiệm phần mềm trong các môi trường khác nhau, xây dựng mô hình mạng giả lập hoặc phát triển các ứng dụng đa nền tảng một cách an toàn và chuyên nghiệp.',
+    name: 'VMware Workstation Pro 17', 
+    slug: 'vmware-workstation-pro', 
+    categorySlug: 'software',
+    [cite_start]description: 'Phần mềm tạo máy ảo mạnh mẽ nhất dành cho các kỹ sư hệ thống và lập trình viên[cite: 50]. [cite_start]VMware Workstation Pro cho phép bạn chạy đồng thời nhiều hệ điều hành như Windows, Linux và các hệ thống máy chủ trên cùng một chiếc máy tính vật lý duy nhất[cite: 50]. [cite_start]Đây là công cụ lý tưởng để thử nghiệm phần mềm trong các môi trường khác nhau hoặc xây dựng mô hình mạng giả lập một cách an toàn[cite: 50].',
     thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676228/vmware_j5dcjo.png',
-    isHot: false, avgRating: 4.8, keywordNames: ["vmware", "software"],
+    isHot: false, 
+    avgRating: 4.8, 
+    keywordNames: ["vmware", "software"],
     aiMetadata: {
       keywords: ["máy ảo vps", "chạy linux trên windows", "test phần mềm"],
-      features: ["Chạy nhiều hệ điều hành cùng lúc", "Hỗ trợ ảo hóa mạnh mẽ", "Kết nối mạng máy ảo chuyên sâu"],
+      features: ["Chạy nhiều hệ điều hành cùng lúc", "Hỗ trợ ảo hóa mạnh mẽ", "Kết nối mạng máy ảo"],
       suitable_for: ["IT Admin", "DevOps", "Người nghiên cứu bảo mật"]
     },
     variants: [{ name: 'Key Vĩnh Viễn', price: 250000, orginalPrice: 4000000 }]
+  },
+  {
+    name: 'WinRAR License', 
+    slug: 'winrar-license-key', 
+    categorySlug: 'software',
+    [cite_start]description: 'Phần mềm nén và giải nén tệp tin phổ biến nhất thế giới với khả năng hỗ trợ hầu hết các định dạng nén như RAR, ZIP, CAB, 7Z[cite: 48]. [cite_start]Việc sở hữu key bản quyền giúp bạn loại bỏ hoàn toàn các thông báo yêu cầu mua hàng khó chịu mỗi khi mở ứng dụng[cite: 48]. [cite_start]Ngoài ra, WinRAR bản quyền còn cung cấp tính năng mã hóa tệp tin mạnh mẽ để bảo vệ dữ liệu của bạn khi chia sẻ qua internet[cite: 48].',
+    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/7/70/WinRAR_5.0_icon.png',
+    isHot: false, 
+    avgRating: 4.7, 
+    keywordNames: ["winrar", "software"],
+    aiMetadata: {
+      keywords: ["nén file", "giải nén rar", "winrar bản quyền"],
+      features: ["Xóa thông báo dùng thử", "Nén file cực nhanh", "Mã hóa tệp tin"],
+      suitable_for: ["Mọi người dùng máy tính"]
+    },
+    variants: [{ name: 'Key Vĩnh Viễn', price: 100000, orginalPrice: 500000 }]
+  },
+  {
+    name: 'CleanMyMac X (Bản Quyền)', 
+    slug: 'clean-my-mac-x-key', 
+    categorySlug: 'software',
+    description: 'Công cụ dọn dẹp và tối ưu hóa hệ thống hàng đầu dành riêng cho người dùng macOS. CleanMyMac X giúp bạn loại bỏ hàng chục gigabyte rác hệ thống, tệp tin tạm và các ứng dụng không cần thiết chỉ với một lần nhấn chuột. Ngoài ra, nó còn tích hợp bộ quét mã độc, quản lý tệp tin lớn và tính năng bảo trì giúp chiếc máy Mac của bạn luôn hoạt động nhanh như lúc mới mua.',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766676671/cleanmymac_yrneeh.jpg',
+    isHot: false, 
+    avgRating: 4.8, 
+    keywordNames: ["windows", "key"],
+    aiMetadata: {
+      keywords: ["tối ưu macos", "dọn rác máy tính", "tăng tốc macbook"],
+      features: ["Dọn rác hệ thống thông minh", "Gỡ ứng dụng triệt để", "Quét Malware thời gian thực"],
+      suitable_for: ["Người dùng Macbook/iMac", "Thiết kế đồ họa"]
+    },
+    variants: [{ name: 'Gói 1 Năm / 1 Mac', price: 450000, orginalPrice: 1200000 }]
   }
 ];
