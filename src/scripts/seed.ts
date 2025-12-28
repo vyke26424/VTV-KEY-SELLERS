@@ -142,13 +142,26 @@ async function main() {
 
   // --- 2. TẠO TỪ KHÓA (KEYWORDS) ---
   const allKeywordNames = [
-    // Danh sách từ khóa tổng hợp từ 7 danh mục
+    // --- Nhóm AI & Công nghệ mới ---
     "chatgpt", "gpt-4o", "openai", "midjourney", "claude", "gemini", "google", "copilot", "quillbot", "ai", "bot", "jasper", "perplexity", "trợ lý ảo", "viết code", "gpt-4", "vẽ tranh ai", "tạo ảnh", "nghệ thuật số", "google ai", "gemini ultra", "google one",
+    "nâng cấp chatgpt", "midjourney pro", "anthropic", "viết văn", "claude ai", "xử lý văn bản", "claude 3 opus", "gemini advanced", "claude pro", "lập trình ai", "viết lách", "claude 3.5", "dev tools", "github ai", "quillbot premium", "tìm kiếm ai", "tra cứu thông tin", "phân tích dữ liệu", "perplexity pro", "giọng nói", "lồng tiếng ai", "tts", "speech synthesis", "elevenlabs",
+
+    // --- Giải Trí & Phim Ảnh ---
     "netflix", "youtube", "spotify", "k+", "vieon", "fpt", "hbo", "disney", "phim", "nhạc", "4k", "amazon", "apple", "tidal", "crunchyroll", "premium", "youtube không quảng cáo", "youtube music", "nâng cấp mail chính chủ", "ytb premium", "xem phim 4k", "phim mỹ", "nghe nhạc", "âm thanh chất lượng cao",
+    
+    // --- Game Bản Quyền ---
     "steam", "valorant", "lienminh", "gta", "minecraft", "roblox", "wukong", "fc24", "fifa", "game", "napthe", "xbox", "playstation", "cyberpunk", "pubg", "game hành động", "nhập vai", "tây du ký", "souls-like", "nạp game", "skin súng", "riot games", "nạp steam", "mua game bản quyền", "thẻ steam",
+    
+    // --- Phần mềm & Hệ thống ---
     "windows", "office", "microsoft", "idm", "winrar", "driver", "key", "banquyen", "google-drive", "jetbrains", "vmware", "winzip", "key win 11", "bản quyền windows", "hệ điều hành", "word", "excel", "powerpoint", "lưu trữ đám mây", "tải nhanh", "bắt link video", "download manager",
+    
+    // --- Học tập & VPN ---
     "duolingo", "coursera", "udemy", "grammarly", "zoom", "elsa", "vpn", "nordvpn", "expressvpn", "ip", "skillshare", "linkedin", "scribd", "study", "học tiếng anh", "ngoại ngữ", "app học tập", "fake ip", "bảo mật internet", "riêng tư",
-    "canva", "adobe", "photoshop", "capcut", "freepik", "envato", "lightroom", "edit", "figma", "motion", "pikbest", "thiết kế online", "xóa phông", "làm slide", "chỉnh sửa ảnh", "dựng phim", "đồ họa",
+    
+    // --- Design & Đồ họa ---
+    "canva", "adobe", "photoshop", "capcut", "freepik", "envato", "lightroom", "edit", "figma", "motion", "pikbest", "thiết kế online", "xóa phông", "làm slide", "chỉnh sửa ảnh", "dựng phim", "đồ họa", "design",
+    
+    // --- Diệt Virus & Bảo Mật ---
     "kaspersky", "bitdefender", "malwarebytes", "virus", "dietvirus", "bao-mat", "norton", "bkav", "eset", "mcafee", "diệt virus", "bảo mật", "chống hacker", "chặn quảng cáo", "lọc web", "quyền riêng tư"
   ];
   
