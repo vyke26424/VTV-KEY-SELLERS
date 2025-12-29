@@ -7,7 +7,7 @@ export const productsPart4 = [
     slug: 'duolingo-super', 
     categorySlug: 'education',
     description: 'Nâng cấp trải nghiệm học ngoại ngữ của bạn lên một tầm cao mới với Duolingo Super. Gói dịch vụ cao cấp này giúp loại bỏ hoàn toàn các quảng cáo gây xao nhãng, cung cấp tính năng "trái tim vô hạn" để bạn có thể học tập liên tục mà không lo bị gián đoạn khi làm sai. Đặc biệt, bạn sẽ được truy cập vào các bài luyện tập cá nhân hóa được thiết kế riêng để giúp bạn khắc phục nhanh chóng các lỗi sai thường gặp, giúp việc ghi nhớ từ vựng và ngữ pháp trở nên hiệu quả hơn bao giờ hết.',
-    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1766675163/img-elsapro-lifetime-4096741723_mk9fee.jpg',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1767036537/duolingo_jkdlsa.png',
     isHot: true, 
     avgRating: 4.9, 
     keywordNames: ["duolingo", "study"],

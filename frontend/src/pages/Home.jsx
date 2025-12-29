@@ -18,19 +18,17 @@ import { Link } from 'react-router-dom';
 // --- IMPORT COMPONENT ---
 import ProductCard from '../components/ProductCard';
 import Banner from '../components/Banner';
+import HotTrend from '../components/HotTrend'; // Added HotTrend Import
 import axiosClient from '../store/axiosClient';
 import useAuthStore from '../store/useAuthStore';
 
-// --- CẤU HÌNH DANH MỤC (Đã cập nhật đầy đủ và thêm Icon mới) ---
+// --- CẤU HÌNH DANH MỤC ---
 const CATEGORIES = [
-  // 1. Hot Trend
   {
     id: 'hot',
     title: 'SẢN PHẨM HOT TREND',
     icon: <Zap size={20} className="text-yellow-400" />,
   },
-
-  // 2. Các danh mục từ Database
   {
     id: 'ai',
     title: 'TRÍ TUỆ NHÂN TẠO (AI)',
@@ -60,12 +58,12 @@ const CATEGORIES = [
     id: 'design',
     title: 'DESIGN & ĐỒ HỌA',
     icon: <Palette size={20} className="text-pink-400" />,
-  }, // Mới
+  },
   {
     id: 'security',
     title: 'DIỆT VIRUS & BẢO MẬT',
     icon: <ShieldCheck size={20} className="text-cyan-400" />,
-  }, // Mới
+  },
 ];
 
 const Home = () => {
@@ -127,6 +125,9 @@ const Home = () => {
           </div>
         ) : (
           <>
+            {/* --- NEW SECTION: HOT TREND SLIDER --- */}
+            <HotTrend products={products} />
+
             {/* --- SECTION ĐẶC BIỆT: CÓ THỂ BẠN SẼ THÍCH --- */}
             {recommendedProducts.length > 0 && (
               <section className="bg-gradient-to-br from-purple-900/40 to-slate-900 border border-purple-500/30 p-6 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-lg shadow-purple-900/10 relative overflow-hidden">
@@ -157,12 +158,10 @@ const Home = () => {
             {CATEGORIES.map((cat) => {
               const filteredProducts = products.filter((p) => {
                 if (cat.id === 'hot') return p.isHot === true;
-                // So sánh slug của danh mục sản phẩm với id cấu hình
                 const categorySlug = p.category?.slug || '';
                 return categorySlug === cat.id;
               });
 
-              // Nếu danh mục không có sản phẩm nào thì ẩn đi
               if (filteredProducts.length === 0) return null;
 
               return (
@@ -185,7 +184,7 @@ const Home = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {/* Chỉ lấy tối đa 8 sản phẩm (2 hàng) để giao diện gọn gàng */}
+                    {/* Chỉ lấy tối đa 7 sản phẩm để nhường chỗ cho card Xem thêm */}
                     {filteredProducts.slice(0, 7).map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
@@ -228,4 +227,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
