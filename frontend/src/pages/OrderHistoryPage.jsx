@@ -36,7 +36,8 @@ const STATUS_CONFIG = {
     color: 'bg-green-500/10 text-green-500 border-green-500/20',
     icon: Key,
   },
-  SUCCESS: { // Backend có thể trả về SUCCESS
+  SUCCESS: {
+    // Backend có thể trả về SUCCESS
     label: 'Hoàn thành',
     color: 'bg-green-500/10 text-green-500 border-green-500/20',
     icon: Key,
@@ -46,7 +47,8 @@ const STATUS_CONFIG = {
     color: 'bg-red-500/10 text-red-500 border-red-500/20',
     icon: Ban,
   },
-  CANCELLED: { // Backend có thể trả về 2 chữ L
+  CANCELLED: {
+    // Backend có thể trả về 2 chữ L
     label: 'Đã hủy',
     color: 'bg-red-500/10 text-red-500 border-red-500/20',
     icon: Ban,
@@ -106,8 +108,12 @@ const OrderHistoryPage = () => {
             const StatusIcon = statusInfo.icon;
 
             // Helper checks
-            const isCompleted = statusKey === 'COMPLETED' || statusKey === 'SUCCESS';
-            const isCanceled = statusKey === 'CANCELED' || statusKey === 'CANCELLED' || statusKey === 'REFUNDED';
+            const isCompleted =
+              statusKey === 'COMPLETED' || statusKey === 'SUCCESS';
+            const isCanceled =
+              statusKey === 'CANCELED' ||
+              statusKey === 'CANCELLED' ||
+              statusKey === 'REFUNDED';
             const isPending = !isCompleted && !isCanceled;
 
             return (
@@ -217,12 +223,15 @@ const OrderHistoryPage = () => {
 
             <div className="p-6 overflow-y-auto custom-scrollbar space-y-6 flex-1">
               {selectedOrder.items.map((item, index) => {
-                 // Check status lại lần nữa cho chắc
-                 const stKey = selectedOrder.status?.toUpperCase();
-                 const isDone = stKey === 'COMPLETED' || stKey === 'SUCCESS';
-                 const isFail = stKey === 'CANCELED' || stKey === 'CANCELLED' || stKey === 'REFUNDED';
+                // Check status lại lần nữa cho chắc
+                const stKey = selectedOrder.status?.toUpperCase();
+                const isDone = stKey === 'COMPLETED' || stKey === 'SUCCESS';
+                const isFail =
+                  stKey === 'CANCELED' ||
+                  stKey === 'CANCELLED' ||
+                  stKey === 'REFUNDED';
 
-                 return (
+                return (
                   <div
                     key={index}
                     className="bg-slate-950 rounded-xl p-4 border border-slate-800"
@@ -302,7 +311,8 @@ const OrderHistoryPage = () => {
                             <>
                               <Clock size={20} />
                               <span className="font-medium">
-                                Hệ thống đang xử lý... (Vui lòng chờ Admin duyệt)
+                                Hệ thống đang xử lý... (Vui lòng chờ Admin
+                                duyệt)
                               </span>
                             </>
                           )}

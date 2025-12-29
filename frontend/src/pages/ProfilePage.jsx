@@ -67,13 +67,13 @@ const ProfilePage = () => {
           const pending = res.filter(
             (o) => o.status?.toUpperCase() === 'PENDING',
           ).length;
-          
+
           const completed = res.filter(
             (o) =>
               o.status?.toUpperCase() === 'COMPLETED' ||
               o.status?.toUpperCase() === 'SUCCESS',
           ).length;
-          
+
           const cancelled = res.filter((o) =>
             ['CANCELED', 'CANCELLED', 'REFUNDED'].includes(
               o.status?.toUpperCase(),
@@ -242,7 +242,6 @@ const ProfilePage = () => {
 
         {/* --- CỘT PHẢI: NỘI DUNG CHÍNH --- */}
         <div className="lg:col-span-2 space-y-8">
-          
           {/* 1. Form Thông tin */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-lg">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-slate-800 pb-4">
@@ -314,41 +313,45 @@ const ProfilePage = () => {
 
             <div className="space-y-4">
               {orders.slice(0, 3).map((order) => {
-                 const stKey = order.status?.toUpperCase();
-                 const isCompleted = stKey === 'COMPLETED' || stKey === 'SUCCESS';
-                 const isPending = stKey === 'PENDING';
-                 
-                 return (
-                <div
-                  key={order.id}
-                  className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center hover:bg-slate-800/50 transition"
-                >
-                  <div>
-                    <p className="text-white font-bold text-sm">{order.code}</p>
-                    <p className="text-xs text-gray-500">
-                      {formatDate(order.createdAt)} • {order.items.length} sản
-                      phẩm
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-vtv-green font-bold text-sm">
-                      {formatCurrency(order.totalAmount)}
-                    </p>
-                    <span
-                      className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold 
+                const stKey = order.status?.toUpperCase();
+                const isCompleted =
+                  stKey === 'COMPLETED' || stKey === 'SUCCESS';
+                const isPending = stKey === 'PENDING';
+
+                return (
+                  <div
+                    key={order.id}
+                    className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center hover:bg-slate-800/50 transition"
+                  >
+                    <div>
+                      <p className="text-white font-bold text-sm">
+                        {order.code}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(order.createdAt)} • {order.items.length} sản
+                        phẩm
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-vtv-green font-bold text-sm">
+                        {formatCurrency(order.totalAmount)}
+                      </p>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold 
                         ${
                           isCompleted
                             ? 'text-green-500 bg-green-500/10'
                             : isPending
-                            ? 'text-yellow-500 bg-yellow-500/10'
-                            : 'text-red-500 bg-red-500/10'
+                              ? 'text-yellow-500 bg-yellow-500/10'
+                              : 'text-red-500 bg-red-500/10'
                         }`}
-                    >
-                      {order.status}
-                    </span>
+                      >
+                        {order.status}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )})}
+                );
+              })}
               {orders.length === 0 && (
                 <p className="text-center text-gray-500 py-4 italic">
                   Chưa có đơn hàng nào.

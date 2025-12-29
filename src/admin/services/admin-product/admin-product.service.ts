@@ -73,13 +73,14 @@ export class AdminProductService {
         const { page = 1, limit = 10, search, categoryId, viewDeleted = false } = query || {};
         const skip = (page - 1) * limit;
 
+        // Admin: Lấy tất cả sản phẩm
         const whereCondition: Prisma.ProductWhereInput = {
             isDeleted: viewDeleted ? true : false,
             categoryId: categoryId ? Number(categoryId) : undefined
         }
 
         if (search) {
-            // ... logic search giữ nguyên ...
+            // ... logic search ...
             whereCondition.OR = [
                 { name: { contains: search } },
                 { slug: { contains: search } },
@@ -97,7 +98,7 @@ export class AdminProductService {
                 where: whereCondition,
                 take: limit,
                 skip: skip,
-                orderBy: { createdAt: 'desc' }, // Nên sắp xếp mới nhất lên đầu
+                orderBy: { updatedAt: 'desc' }, // Sắp xếp theo cập nhật mới nhất để dễ thấy sản phẩm vừa sửa
                 include: {
                     category: {
                         select: { name: true, slug: true }
@@ -148,11 +149,11 @@ export class AdminProductService {
 
     async findOne(id: number) {
         const product = await this.prismaSerivce.product.findUnique({
-            where: { id, isDeleted: false, isActive: true },
+            where: { id, isDeleted: false },
             include: {
                 variants: true,
                 keyword: true,
-                //reviews : {take : 5, orderBy : {createdAt : 'desc'}  } lấy luôn cmt nhưng mà chờ chắc còn xa : ) 
+                //reviews : {take : 5, orderBy : {createdAt : 'desc'}  } //lấy luôn cmt nhưng mà chờ chắc còn xa : ) 
             }
         });
         if (!product) {
@@ -166,9 +167,9 @@ export class AdminProductService {
     async update(id: number, data: UpdateProduct) {
         // 1. Check tồn tại (Chỉ cần chưa xóa mềm là được)
         const product = await this.prismaSerivce.product.findUnique({
-            where: { id, isDeleted: false } 
+            where: { id, isDeleted: false }
         });
-        
+
         if (!product) {
             throw new NotFoundException('Không tìm thấy sản phẩm');
         }
@@ -201,7 +202,7 @@ export class AdminProductService {
         // 4. Update vào DB (ĐÃ BỔ SUNG isHot & isActive)
         return await this.prismaSerivce.product.update({
             // 👇 QUAN TRỌNG: Bỏ điều kiện isActive: true để Admin sửa được cả bài đang ẩn
-            where: { id }, 
+            where: { id },
             data: {
                 name: data.name,
                 slug: newSlug,
@@ -210,10 +211,10 @@ export class AdminProductService {
                 aiMetadata: data.aiMetadata ?? undefined,
                 categoryId: data.categoryId,
                 keyword: keywordUpdate,
-                
+
                 // 👇 QUAN TRỌNG: Thêm 2 dòng này thì mới lưu được trạng thái
-                isHot: data.isHot,       
-                isActive: data.isActive  
+                isHot: data.isHot,
+                isActive: data.isActive
             },
             include: {
                 keyword: true

@@ -37,13 +37,19 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 {/* Link tới trang Hướng dẫn */}
-                <Link to="/policy/guide" className="hover:text-vtv-green transition">
+                <Link
+                  to="/policy/guide"
+                  className="hover:text-vtv-green transition"
+                >
                   Hướng dẫn mua hàng
                 </Link>
               </li>
               <li>
                 {/* Link tới trang Bảo hành */}
-                <Link to="/policy/warranty" className="hover:text-vtv-green transition">
+                <Link
+                  to="/policy/warranty"
+                  className="hover:text-vtv-green transition"
+                >
                   Chính sách bảo hành
                 </Link>
               </li>

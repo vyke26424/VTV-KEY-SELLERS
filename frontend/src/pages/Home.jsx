@@ -4,7 +4,6 @@ import {
   Zap,
   Gamepad2,
   Bot,
-  MonitorPlay,
   ArrowRight,
   Sparkles,
   ShieldCheck,
