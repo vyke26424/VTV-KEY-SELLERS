@@ -195,7 +195,16 @@ const ProductListPage = () => {
                     <td className="p-4 text-center">
                       <div className="flex items-center justify-center gap-2">
                         {product.isHot && <span className="text-[10px] bg-red-500/20 text-red-500 px-2 py-0.5 rounded border border-red-500/50 font-bold">HOT</span>}
-                        {!product.isDeleted ? <CheckCircle size={18} className="text-green-500" /> : <XCircle size={18} className="text-gray-500" />}
+                        
+                        {product.isActive ? (
+                            <span title="Đang hoạt động">
+                                <CheckCircle size={18} className="text-green-500" />
+                            </span>
+                        ) : (
+                            <span title="Đã ẩn">
+                                <XCircle size={18} className="text-gray-500" />
+                            </span>
+                        )}
                       </div>
                     </td>
                     <td className="p-4 text-right">

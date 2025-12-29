@@ -65,7 +65,11 @@ const LoginPage = () => {
 
       if (isLogin) {
         loginSuccess(data.user, data.accessToken);
-        navigate('/');
+        if (data.user.role === 'ADMIN') {
+            navigate('/admin'); // Admin thì vào Dashboard
+        } else {
+            navigate('/');      // Khách thì ra Trang chủ
+        }
       } else {
         alert('Đăng ký thành công! Vui lòng đăng nhập.');
         setIsLogin(true);
@@ -81,8 +85,7 @@ const LoginPage = () => {
 
         if (status === 429) {
           message = 'Thao tác quá nhanh! Bình tĩnh chút nào bạn ơi 🙏';
-        }
-        else if (status === 401) {
+        } else if (status === 401) {
           message = 'Email hoặc mật khẩu không chính xác!';
         } else if (status === 409) {
           message = 'Email này đã được sử dụng!';
