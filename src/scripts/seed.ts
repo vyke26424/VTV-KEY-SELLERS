@@ -143,7 +143,7 @@ async function main() {
   // --- 2. TẠO TỪ KHÓA (KEYWORDS) ---
   const allKeywordNames = [
     // --- Nhóm AI & Công nghệ mới ---
-    "chatgpt", "gpt-4o", "openai", "midjourney", "claude", "gemini", "google", "copilot", "quillbot", "ai", "bot", "jasper", "perplexity", "trợ lý ảo", "viết code", "gpt-4", "vẽ tranh ai", "tạo ảnh", "nghệ thuật số", "google ai", "gemini ultra", "google one",
+    "chatgpt", "gpt-4o", "openai", "midjourney", "claude", "gemini", "google", "copilot", "quillbot", "ai", "bot", "jasper", "perplexity", "trợ lý ảo", "viết code", "gpt-4", "vẽ tranh ai", "tạo ảnh", "nghệ thuật số", "google ai", "gemini ultra", "google one", "adguard", "security",
     "nâng cấp chatgpt", "midjourney pro", "anthropic", "viết văn", "claude ai", "xử lý văn bản", "claude 3 opus", "gemini advanced", "claude pro", "lập trình ai", "viết lách", "claude 3.5", "dev tools", "github ai", "quillbot premium", "tìm kiếm ai", "tra cứu thông tin", "phân tích dữ liệu", "perplexity pro", "giọng nói", "lồng tiếng ai", "tts", "speech synthesis", "elevenlabs",
 
     // --- Giải Trí & Phim Ảnh ---

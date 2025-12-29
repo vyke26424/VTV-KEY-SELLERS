@@ -9,33 +9,36 @@ const SLIDES = [
     title: 'Spotify Premium',
     subtitle: 'NGHE NHẠC KHÔNG GIỚI HẠN',
     desc: 'Nâng cấp chính chủ, bảo hành trọn đời. Tận hưởng âm nhạc chất lượng cao không quảng cáo.',
-    price: 'Chỉ từ 19k/tháng',
+    price: 'Chỉ từ 35k/tháng',
     color: 'from-green-900 via-green-800 to-slate-900', // Màu nền Gradient
     highlightColor: 'text-green-400', // Màu chữ điểm nhấn
     btnColor: 'bg-green-500 hover:bg-green-400 text-black',
-    icon: '🎵', // Có thể thay bằng link ảnh
+    icon: '🎵', 
+    url: 'http://localhost:5173/product/spotify-premium', // Cập nhật link
   },
   {
     id: 2,
     title: 'Netflix Ultra HD',
     subtitle: 'RẠP PHIM TẠI GIA',
     desc: 'Xem phim 4K HDR sắc nét. Tài khoản dùng riêng, không chung đụng, hỗ trợ mọi thiết bị.',
-    price: 'Giảm 75% hôm nay',
+    price: 'Giảm 67% hôm nay',
     color: 'from-red-900 via-red-800 to-slate-900',
     highlightColor: 'text-red-500',
     btnColor: 'bg-red-600 hover:bg-red-500 text-white',
     icon: '🎬',
+    url: 'http://localhost:5173/product/netflix-premium', // Cập nhật link
   },
   {
     id: 3,
     title: 'ChatGPT Plus & AI',
     subtitle: 'TRỢ LÝ ẢO THÔNG MINH',
     desc: 'Mở khóa sức mạnh GPT-4, Gemini Advanced. Tăng tốc công việc của bạn gấp 10 lần.',
-    price: 'Gói Pro chỉ 450k',
+    price: 'Gói PLUS chỉ 490k/tháng',
     color: 'from-blue-900 via-purple-900 to-slate-900',
     highlightColor: 'text-blue-400',
     btnColor: 'bg-blue-500 hover:bg-blue-400 text-white',
     icon: '🤖',
+    url: 'http://localhost:5173/product/chatgpt-plus', // Cập nhật link
   },
 ];
 
@@ -115,11 +118,14 @@ const Banner = () => {
                   transition={{ delay: 0.5 }}
                   className="flex items-center gap-4 pt-2"
                 >
-                  <button
-                    className={`${SLIDES[current].btnColor} px-8 py-3 rounded-full font-bold shadow-lg transform hover:scale-105 transition-all flex items-center gap-2`}
+                  {/* CHỈNH SỬA TẠI ĐÂY: Chuyển button thành thẻ a để nhận link */}
+                  <a
+                    href={SLIDES[current].url}
+                    className={`${SLIDES[current].btnColor} px-8 py-3 rounded-full font-bold shadow-lg transform hover:scale-105 transition-all flex items-center gap-2 no-underline`}
                   >
                     <Play size={18} fill="currentColor" /> MUA NGAY
-                  </button>
+                  </a>
+                  
                   <span className="text-white font-semibold text-lg">
                     {SLIDES[current].price}
                   </span>
@@ -133,10 +139,8 @@ const Banner = () => {
                 transition={{ delay: 0.4, type: 'spring' }}
                 className="hidden md:flex justify-center items-center"
               >
-                {/* Ở đây bạn có thể thay bằng thẻ <img /> thật */}
                 <div className="w-80 h-80 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-9xl shadow-2xl relative">
                   {SLIDES[current].icon}
-                  {/* Icon bay bay trang trí */}
                   <motion.div
                     animate={{ y: [0, -20, 0] }}
                     transition={{ repeat: Infinity, duration: 3 }}
@@ -150,7 +154,7 @@ const Banner = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* NÚT ĐIỀU HƯỚNG (Mũi tên trái phải) */}
+        {/* NÚT ĐIỀU HƯỚNG */}
         <button
           onClick={prevSlide}
           className="absolute z-20 left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100"
@@ -164,7 +168,7 @@ const Banner = () => {
           <ChevronRight size={24} />
         </button>
 
-        {/* DOTS (Chấm tròn bên dưới) */}
+        {/* DOTS */}
         <div className="absolute z-20 bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
           {SLIDES.map((_, index) => (
             <button

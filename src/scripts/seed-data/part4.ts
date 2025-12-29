@@ -85,7 +85,7 @@ export const productsPart4 = [
     slug: 'grammarly-premium', 
     categorySlug: 'education',
     description: 'Hoàn thiện kỹ năng viết lách tiếng Anh chuyên nghiệp với Grammarly Premium, trợ lý ngôn ngữ thông minh vượt xa các trình kiểm tra lỗi chính tả thông thường. Công cụ không chỉ giúp bạn sửa lỗi ngữ pháp phức tạp mà còn đưa ra các gợi ý thay đổi từ vựng tinh tế, điều chỉnh tông giọng bài viết phù hợp với ngữ cảnh (trang trọng, thân thiện) và tích hợp trình kiểm tra đạo văn chuyên sâu. Đây là giải pháp lý tưởng để viết email, bài luận hoặc các tài liệu kinh doanh một cách tự tin và chính xác.',
-    thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Grammarly_logo.svg/1200px-Grammarly_logo.svg.png',
+    thumbnail: 'https://res.cloudinary.com/diap7lvcv/image/upload/v1767000307/GRAMMARLY_nbsitp.png',
     isHot: false, 
     avgRating: 4.8, 
     keywordNames: ["grammarly", "study"],
