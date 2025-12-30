@@ -14,21 +14,36 @@ const ProductCard = ({ product }) => {
   const addToCart = useCartStore((state) => state.addToCart);
   const user = useAuthStore((state) => state.user); // Lấy thông tin User
 
+  const getDiscountPercent = (variant) => {
+    if (variant && parseFloat(variant.orginalPrice) > parseFloat(variant.price)) {
+      return Math.round(
+        ((parseFloat(variant.orginalPrice) - parseFloat(variant.price)) /
+          parseFloat(variant.orginalPrice)) *
+          100,
+      );
+    }
+    return 0;
+  };
+
   const minVariant =
     product.variants?.length > 0
-      ? product.variants.reduce((prev, curr) =>
-          parseFloat(prev.price) < parseFloat(curr.price) ? prev : curr,
-        )
+      ? product.variants.reduce((bestVariant, currentVariant) => {
+          const bestDiscount = getDiscountPercent(bestVariant);
+          const currentDiscount = getDiscountPercent(currentVariant);
+
+          if (currentDiscount > bestDiscount) {
+            return currentVariant;
+          }
+          if (currentDiscount === bestDiscount) {
+            return parseFloat(currentVariant.price) < parseFloat(bestVariant.price)
+              ? currentVariant
+              : bestVariant;
+          }
+          return bestVariant;
+        }, product.variants[0])
       : { price: 0, orginalPrice: 0 };
 
-  const discountPercent =
-    minVariant.orginalPrice > minVariant.price
-      ? Math.round(
-          ((minVariant.orginalPrice - minVariant.price) /
-            minVariant.orginalPrice) *
-            100,
-        )
-      : 0;
+  const discountPercent = getDiscountPercent(minVariant);
 
   const handleAddToCart = (e) => {
     e.preventDefault(); // Ngăn chặn Link điều hướng vào trang chi tiết

@@ -14,11 +14,11 @@ sys.path.append(str(project_root))
 try:
     from src.config import settings
 except ImportError:
-    print("⚠️ Không tìm thấy config. Chạy từ root AI_SYSTEM.")
+    print("Không tìm thấy config. Chạy từ root AI_SYSTEM.")
     sys.exit(1)
 
 def run_collaborative_filtering():
-    print("--- 🧠 BẮT ĐẦU CHẠY COLLABORATIVE FILTERING ---")
+    print("--- BẮT ĐẦU CHẠY COLLABORATIVE FILTERING ---")
     
     # 1. KẾT NỐI DB
     db_url = settings.DATABASE_URL.replace("mysql+aiomysql", "mysql+pymysql")
@@ -26,7 +26,7 @@ def run_collaborative_filtering():
         engine = create_engine(db_url)
         print(f"🔌 Connected to DB: {settings.PROJECT_NAME}")
     except Exception as e:
-        print(f"❌ DB Connection Error: {e}")
+        print(f"DB Connection Error: {e}")
         return
 
     # 2. LẤY DỮ LIỆU TƯƠNG TÁC
@@ -39,10 +39,10 @@ def run_collaborative_filtering():
     df = pd.read_sql(query, engine)
 
     if df.empty:
-        print("⚠️ Chưa có đủ dữ liệu để chạy AI.")
+        print("Chưa có đủ dữ liệu để chạy AI.")
         return
 
-    print(f"📊 Dữ liệu thô: {len(df)} dòng tương tác.")
+    print(f"Dữ liệu thô: {len(df)} dòng tương tác.")
 
     # ---------------------------------------------------------
     # 3. THUẬT TOÁN COLLABORATIVE FILTERING (User-Based)
@@ -52,11 +52,11 @@ def run_collaborative_filtering():
     # Giá trị là điểm rating (Nếu chưa tương tác thì là 0)
     user_item_matrix = df.pivot_table(index='userId', columns='productId', values='rating').fillna(0)
     
-    print(f"🧩 Kích thước ma trận: {user_item_matrix.shape} (Users x Products)")
+    print(f"Kích thước ma trận: {user_item_matrix.shape} (Users x Products)")
 
     # Nếu chỉ có 1 user thì không tìm được người giống, fallback về gợi ý Top Trending
     if user_item_matrix.shape[0] < 2:
-        print("⚠️ Cần ít nhất 2 User để so sánh sở thích. Đang chạy fallback...")
+        print("Cần ít nhất 2 User để so sánh sở thích. Đang chạy fallback...")
         return
 
     # Bước 3.2: Tính độ tương đồng giữa các User (Cosine Similarity)
@@ -118,7 +118,7 @@ def run_collaborative_filtering():
     # 4. LƯU VÀO DATABASE
     # ---------------------------------------------------------
     if not recommendations_list:
-        print("⚠️ Không tìm thấy gợi ý nào mới (Do dữ liệu quá ít hoặc user đã mua hết rồi).")
+        print("Không tìm thấy gợi ý nào mới (Do dữ liệu quá ít hoặc user đã mua hết rồi).")
         return
 
     result_df = pd.DataFrame(recommendations_list)
@@ -129,12 +129,12 @@ def run_collaborative_filtering():
             con.execute(text("TRUNCATE TABLE UserRecommendation;"))
             con.commit()
         
-        print(f"💾 Đang lưu {len(result_df)} gợi ý thông minh...")
+        print(f"Đang lưu {len(result_df)} gợi ý thông minh...")
         result_df.to_sql('UserRecommendation', engine, if_exists='append', index=False)
-        print("✅ HOÀN THÀNH: Đã kết nối những tâm hồn đồng điệu!")
+        print("HOÀN THÀNH: Đã kết nối những tâm hồn đồng điệu!")
         
     except Exception as e:
-        print(f"❌ Lỗi lưu DB: {e}")
+        print(f"Lỗi lưu DB: {e}")
 
 if __name__ == "__main__":
     run_collaborative_filtering()
