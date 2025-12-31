@@ -107,7 +107,10 @@ chat_orchestrator = ChatOrchestrator()
 async def main() : 
     async with SessionLocal() as db : 
         or_service = ChatOrchestrator()
+
         user_question = 'shop có phần mềm chỉnh sửa ảnh không'
+
+        user_question = 'shop có bán youtube premium không'
         history = []
         result  = await or_service.handle_request(user_question, history, db)
         print(result)
