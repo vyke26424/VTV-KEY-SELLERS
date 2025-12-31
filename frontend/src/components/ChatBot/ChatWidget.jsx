@@ -11,14 +11,14 @@ import {
 import { Link } from 'react-router-dom';
 import axiosClient from '../../store/axiosClient';
 import useAuthStore from '../../store/useAuthStore';
+import useCartStore from '../../store/useCartStore';
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
-
-  // --- STATE MỚI: Để tùy chỉnh dòng chữ loading ---
+  // Text hiển thị khi AI đang trả lời
   const [loadingText, setLoadingText] = useState('AI đang tìm kiếm...');
 
   const { isAuthenticated } = useAuthStore();
@@ -186,33 +186,59 @@ const ChatWidget = () => {
   };
 
   // Sub-component Product Card
-  const ChatProductCard = ({ product }) => (
-    <div className="min-w-[160px] w-[160px] bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex flex-col shadow-lg mr-3 snap-start">
-      <div className="h-24 w-full bg-slate-900 relative">
-        <img
-          src={product.thumbnail || 'https://via.placeholder.com/150'}
-          alt={product.name}
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="p-2 flex flex-col flex-1">
-        <h4 className="text-white text-xs font-bold line-clamp-2 mb-1">
-          {product.name}
-        </h4>
-        <div className="mt-auto">
-          <p className="text-vtv-green text-xs font-bold">
-            {product.variants?.[0]?.price?.toLocaleString()}đ
-          </p>
-          <Link
-            to={`/product/${product.slug || product.id}`}
-            className="mt-2 block w-full text-center bg-white/10 hover:bg-white/20 text-white text-[10px] py-1 rounded transition"
-          >
-            Xem ngay
-          </Link>
+  const ChatProductCard = ({ product }) => {
+    const addToCart = useCartStore((state) => state.addToCart);
+
+    const handleAddToCart = () => {
+      if (product.variants && product.variants.length > 0) {
+        addToCart(product);
+        alert(`Đã thêm "${product.name}" vào giỏ hàng!`);
+      } else {
+        alert('Sản phẩm này hiện chưa có sẵn để thêm vào giỏ.');
+      }
+    };
+
+    return (
+      <div className="min-w-[160px] w-[160px] bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex flex-col shadow-lg mr-3 snap-start">
+        <div className="h-24 w-full bg-slate-900 relative">
+          <img
+            src={product.thumbnail || 'https://via.placeholder.com/150'}
+            alt={product.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="p-2 flex flex-col flex-1">
+          <h4 className="text-white text-xs font-bold line-clamp-2 mb-1">
+            {product.name}
+          </h4>
+          <div className="mt-auto">
+            <p className="text-vtv-green text-xs font-bold">
+              {product.variants?.[0]?.price?.toLocaleString()
+                ? `${product.variants[0].price.toLocaleString()}đ`
+                : 'Hết hàng'}
+            </p>
+            <div className="mt-2 flex items-center gap-1.5 w-full">
+              <Link
+                to={`/product/${product.slug || product.id}`}
+                className="flex-1 text-center bg-white/10 hover:bg-white/20 text-white text-[10px] font-semibold py-1.5 rounded transition"
+              >
+                Xem
+              </Link>
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.variants || product.variants.length === 0}
+                className="flex-1 flex items-center justify-center gap-1 bg-vtv-green hover:bg-green-400 text-black text-[10px] font-semibold py-1.5 rounded transition disabled:bg-slate-600 disabled:cursor-not-allowed"
+                title="Thêm vào giỏ hàng"
+              >
+                <ShoppingBag size={12} />
+                <span>Thêm</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-end font-sans">
@@ -221,7 +247,6 @@ const ChatWidget = () => {
           Khung chat (phần tử thứ hai) sẽ nằm bên phải.
       */}
       <div className="flex flex-row-reverse items-end gap-4 relative">
-        
         {/* Nút X to / Mở Chat */}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
@@ -259,7 +284,9 @@ const ChatWidget = () => {
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-vtv-green rounded-full border-2 border-vtv-dark animate-pulse"></div>
               </div>
               <div>
-                <h3 className="font-bold text-white text-base">Trợ Lý AI - FAIRY</h3>
+                <h3 className="font-bold text-white text-base">
+                  Trợ Lý AI - FAIRY
+                </h3>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-vtv-green animate-pulse"></span>
                   <p className="text-xs text-gray-300 font-medium">
@@ -380,7 +407,9 @@ const ChatWidget = () => {
           </form>
 
           <div className="bg-vtv-card py-1 text-center border-t border-slate-800">
-            <p className="text-[10px] text-gray-500">Powered by VTV AI System</p>
+            <p className="text-[10px] text-gray-500">
+              Powered by VTV AI System
+            </p>
           </div>
         </div>
       </div>

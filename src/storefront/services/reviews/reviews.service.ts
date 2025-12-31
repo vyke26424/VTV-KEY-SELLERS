@@ -11,9 +11,7 @@ export class ReviewsService {
   async checkEligibility(userId: string, productId: number) {
     try {
       const pId = Number(productId); 
-      console.log(`🔍 Đang check quyền: User [${userId}] - Product [${pId}]`);
-
-      // 👇 Dùng chuỗi cứng 'COMPLETED' thay vì Enum để tránh lỗi import
+      // Tìm xem user đã từng mua và nhận hàng thành công sản phẩm này chưa
       const hasPurchased = await this.prisma.order.findFirst({
         where: {
           userId: userId,
@@ -28,11 +26,9 @@ export class ReviewsService {
         }
       });
 
-      console.log("👉 Kết quả check DB:", hasPurchased ? "✅ Đã mua" : "❌ Chưa mua");
       return !!hasPurchased;
-
+      // Nếu có thì trả về true, không thì false
     } catch (error) {
-      // 👇 QUAN TRỌNG: In lỗi chi tiết ra Terminal để biết đường sửa
       console.error("LỖI TẠI checkEligibility:", error);
       // Trả về false thay vì để sập server
       return false; 
