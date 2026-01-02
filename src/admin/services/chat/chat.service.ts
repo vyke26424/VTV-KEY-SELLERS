@@ -36,7 +36,7 @@ export class ChatService {
     async sendMessage( sessionId : number, userContent : string) {
         const previousMessage = await this.prisma.chatMessage.findMany({
             where : {sessionId},
-            take : 5,
+            take : 10,
             orderBy : {createdAt : 'desc'},
             select : {role : true, content : true}
         });
@@ -83,6 +83,9 @@ export class ChatService {
                         thumbnail : true,
                         variants : {
                             take : 1,
+                            orderBy : {
+                                price : 'asc'
+                            },
                             select : {
                                 price : true
                             }

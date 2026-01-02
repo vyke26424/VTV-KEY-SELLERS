@@ -118,20 +118,25 @@ class RAGService :
             retsult = await db.execute(stmt)
             products = retsult.scalars().all()
             for product in products : 
-                price_str= "Liên hệ để biết giá"
+                variants_str= "Liên hệ để biết giá"
                 if(product.variants and len(product.variants) > 0) :
-                    first_price = product.variants[0].price
-                    price_str = f"{first_price:,.0f}VNĐ"
+                    lines = []
+                    for v in product.variants : 
+                        format_price = f"{v.price : ,.0f}"
+                        lines.append(f"-{v.name} : {format_price}")
+                    variants_str = "\n".join(lines)
+                        
                 p_keyword = product.keywords or ""
                 p_description = product.description or ""
                 p_meta = product.aiMetadata or ""
                 rawtext = (
-                    f"Product Name : {product.name}\n"
-                    f"Slug : {product.slug}\n"
-                    f"Price : Giá từ {price_str}\n"
-                    f"Description : {p_description}\n"
-                    f"Keywords : {p_keyword}\n"
-                    f"AI Metadata : {p_meta}"
+                    f"Sản phẩm : {product.name}\n"
+                    f"Mã sản phẩm (Slug) : {product.slug}\n"
+                    f"Mô tả chi tiết : {p_description}\n"
+                    f"Từ khóa tìm kiếm: {p_keyword}\n"
+                    f"Bảng giá và các gói đăng ký \n"
+                    f"f{variants_str}\n"
+                    f"Thông tin kỹ thuật (AI Metadata) : {p_meta}"
                 )
                 chunks = self.text_splitters.split_text(rawtext)
                 for i, chunk in enumerate(chunks) : 
@@ -177,7 +182,7 @@ class RAGService :
     async def rewrite_query(self, user_question : str, history : list) : 
         if not history : return user_question 
         history_context = "\n".join([
-            f"{msg['role']} : {msg['content']}" for msg in history[-3:]]
+            f"{msg['role']} : {msg['content']}" for msg in history[-5:]]
         )
 
         prompt = f"""

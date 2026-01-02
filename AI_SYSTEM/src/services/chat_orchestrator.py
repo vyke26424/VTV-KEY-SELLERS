@@ -44,7 +44,12 @@ class ChatOrchestrator :
         
 
     async def handle_request(self, user_question : str, history : list, db : AsyncSession) : 
-        intent_result = await self.intent_service.detectIntent(user_question)
+        final_question = user_question
+
+        if history and self.rag_service._needs_rewrite(user_question) :
+            final_question = await self.rag_service.rewrite_query(user_question, history)
+            logger.info(f'Câu hỏi gốc : {user_question}- Câu hỏi được viết lại : {final_question}')
+        intent_result = await self.intent_service.detectIntent(final_question)
 
         intent = intent_result.get("intent") or "SUPPORT_RAG"
         entities = intent_result.get("entities", {})
@@ -60,12 +65,45 @@ class ChatOrchestrator :
         }
 
         if intent == self.search_prod : 
-            product_ids = await self.product_service.search_product(db, product_name) 
-            if product_ids : 
+            products = await self.product_service.search_product(db, product_name) 
+            if products  : 
+                product_info_context = ""
+                product_ids = []
+
+                for p in products : 
+                    product_ids.append(p.id)
+                    variants_str = "Liên hệ để biết giá"
+                    if p.variants : 
+                        v_list = []
+                        for v in p.variants :
+                            v_list.append(f"{v.name} Giá : {v.price:,.0f}vnđ")
+                            variants_str = ", ".join(v_list)
+                        product_info_context = f"- Sản phẩm: {p.name}\n  Các gói: {variants_str}\n  Mô tả: {p.description or 'Không có mô tả'}\n\n"
+
+                prompt_answer = f"""
+                    Bạn là nhân viên tư vấn VTV_KEY.
+                    Khách hàng hỏi: "{final_question}"
+                    
+                    Dữ liệu hệ thống tìm thấy:
+                    {product_info_context}
+                    
+                    YÊU CẦU:
+                    - Trả lời câu hỏi của khách dựa trên dữ liệu trên.
+                    - Nếu khách hỏi giá, hãy báo giá cụ thể các gói.
+                    - Giọng điệu thân thiện, mời chào mua hàng.
+                    
+                    """
+                ai_response = await self.model.generate_content_async(prompt_answer)
                 response['intent'] = self.search_prod
-                response['answer'] = 'Bên mình có một số sản phẩm tương tự như tìm kiếm của bạn nè'
+                response['answer'] = ai_response.text.strip()
                 response['product_ids'] = product_ids
-        
+            else : 
+                logger.info('Tìm kiếm từ database thất bại, chuyển qua rag')
+                result = await self.rag_service.ask_bot(user_question, history, intent='RECOMMENDATION')
+                response['intent'] = self.recommendation
+                response['answer'] = result['answer']
+                response['product_ids'] = result['product_ids']
+
         elif intent == self.best_sellers : 
             product_ids = await self.product_service.get_best_sellers(db)
             response['intent'] = self.best_sellers

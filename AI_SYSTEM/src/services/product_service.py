@@ -1,23 +1,27 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from src.database.models import Product
+from sqlalchemy.orm import selectinload
 
 class ProductService: 
     async def search_product(self, db: AsyncSession, keywords: str):
         if not keywords: 
             return []
         try: 
-            stmt = (select(Product.id) 
+            stmt = (select(Product)
+                    .options(selectinload(Product.variants))
                     .where(or_(
                         Product.name.ilike(f"%{keywords}%"),
-                        Product.slug.ilike(f"%{keywords}%")
+                        Product.slug.ilike(f"%{keywords}%"),
+                        Product.keywords.any(name=keywords)
+
                     ))
                     .where(Product.isDeleted == False)
                     .where(Product.isActive == True)
-                    .limit(5))
+                    .limit(3))
             result = await db.execute(stmt)
-            product_ids = result.scalars().all()
-            return list(product_ids)
+            product = result.scalars().all()
+            return list(product)
 
         except Exception as e:
             print(f"Lỗi truy vấn python : {e} ")

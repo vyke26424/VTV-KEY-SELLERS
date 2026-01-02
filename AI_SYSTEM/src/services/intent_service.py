@@ -32,33 +32,61 @@ class IntentService :
     async def detectIntent(self, user_text : str) -> dict :
         try : 
             prompt = f"""
-            Bạn là AI phân loại ý định cho shop bán key tài khoản (Netflix_premium, Youtube advance, ...).
-            Hãy cố gắng trả về đúng tên sản phẩm nếu đó là tên của một sản phẩm, còn không thì không cần trả về tên.
-            Nếu tên sản phẩm là các từ mà người dùng hay nhầm lẫn như dutube, diu túp, ytb, nét phờ líc,... thì hãy chuẩn hóa
-            lại thành tên chuẩn như youtube, netflix,...
-            Trả về JSON thuần theo định dạng sau.
-
-            NHIỆM VỤ QUAN TRỌNG:
-            1. Phân tích xem người dùng muốn gì.
-            2. Trích xuất tên sản phẩm (product) CHÍNH XÁC từ câu nói. 
-            3. KHÔNG ĐƯỢC SUY DIỄN. Nếu user nhắc "Google" mà không nói "Youtube", thì KHÔNG được trả về "Youtube".
-            4. Nếu user hỏi về bản thân bạn (AI), hoặc hỏi "Bạn là ai", "AI của Google à" -> Gán là GREETING.
+            Bạn là chuyên gia phân loại ý định (NLU) cho hệ thống bán tài khoản số VTV_KEY.
             
-            DANH SÁCH INTENT:
-            1. SEARCH_PRODUCT: Tìm mua, hỏi giá (VD : "Acc netflix giá sao").
-            LƯU Ý : Nếu user hỏi chung chung "có gì bán không", "danh sách sản phẩm" -> gán là RECOMMENDATION để RAG xử lý
-            2. SUPPORT_RAG: Hỏi cách dùng, báo lỗi, QUY TRÌNH MUA HÀNG, phương thức thanh toán, chính sách bảo hành (VD: "Làm sao để mua", "Thanh toán kiểu gì", "Mua như nào").
-            3. ORDER_TRACKING: Hỏi đơn hàng (VD : "Đơn ORD123 chưa có key").
-            5. GET_BEST_SELLER: Hỏi về sản phẩm bán chạy, hot, xu hướng, nhiều người mua, top thịnh hành. (VD: "Món nào bán chạy nhất", "Có gì hot không", "Mọi người hay mua gì").
-            4. RECOMMENDATION: Nhờ tư vấn chọn sản phẩm cụ thể. (VD : "Nên dùng gói nào", "Sản phẩm nào tốt nhất", "Có gì bán không").
-            5. GREETING: Chào hỏi.
+            NHIỆM VỤ CỦA BẠN:
+            Phân tích câu nói của người dùng và trả về JSON duy nhất.
 
-            VÍ DỤ MẪU:
-            - "Acc netflix giá sao" -> {{"intent": "SEARCH_PRODUCT", "entities": {{"product": "netflix", "duration": null, "order_id": null}}}}
-            - "Đơn #ORD123 xong chưa" -> {{"intent": "ORDER_TRACKING", "entities": {{"product": null, "duration": null, "order_id": "#ORD123"}}}}
+            QUY TRÌNH SUY LUẬN (Làm ngầm, không in ra):
+            1. Xác định đối tượng được nhắc đến: Là "Bot/AI" (danh tính) hay là "Sản phẩm" (hàng hóa).
+            2. Nếu là hàng hóa: Người dùng đã gọi ĐÚNG TÊN (Netflix, ChatGPT) hay chỉ gọi DANH MỤC (App xem phim, AI)?
+            3. Chọn Intent phù hợp nhất từ danh sách dưới đây.
+
+            DANH SÁCH INTENT :
             
-            YÊU CẦU: Chỉ trả về JSON.
-            User Input: "{user_text}"
+            1. SEARCH_PRODUCT:
+               - Khi người dùng muốn MUA, HỎI GIÁ, HỎI THÔNG TIN của một SẢN PHẨM CỤ THỂ.
+               - Dấu hiệu: Có tên sản phẩm rõ ràng (Netflix, Youtube, Spotify, ChatGPT, Key Win...).
+               - VD: "Giá Netflix", "Mua acc ChatGPT", "Youtube Premium bao tiền".
+
+            2. RECOMMENDATION:
+               - Khi người dùng nhờ TƯ VẤN, chưa chốt mua món nào.
+               - Hoặc hỏi về DANH MỤC CHUNG (Game, App học tập, AI, Phim).
+               - VD: "Có bán phần mềm AI không", "Tư vấn gói xem phim 4k", "Shop có gì hay".
+
+            3. GET_BEST_SELLER:
+               - Hỏi về xu hướng, bán chạy.
+               - VD: "Món nào hot nhất", "Mọi người hay mua gì".
+
+            4. SUPPORT_RAG:
+               - Hỏi quy trình: Cách thanh toán, bảo hành, hoàn tiền, lỗi đăng nhập.
+               - VD: "Thanh toán qua momo được không", "Làm sao để nhập key".
+
+            5. ORDER_TRACKING:
+               - Hỏi trạng thái đơn hàng (thường kèm mã đơn).
+               - VD: "Đơn #123 xong chưa".
+
+            6. GREETING:
+               - Chào hỏi xã giao.
+               - Hỏi về DANH TÍNH CỦA BOT.
+               - VD: "Hi shop", "Bạn là ai", "Bạn có phải ChatGPT không", "Ai tạo ra bạn".
+
+            LUẬT ĐẶC BIỆT (Tránh Hallucination):
+            - Nếu user hỏi "Bạn là ChatGPT à?" -> GREETING (Hỏi danh tính).
+            - Nếu user hỏi "Bán acc ChatGPT không?" -> SEARCH_PRODUCT (Hỏi mua hàng).
+            - Nếu user nhắc "Google" (VD: Acc Google Drive) -> Trả về product: "google drive". KHÔNG được tự sửa thành "youtube".
+            - Chuẩn hóa tên sản phẩm: "nét flix" -> "netflix", "ytb" -> "youtube", "chat gpt" -> "chatgpt".
+
+            INPUT NGƯỜI DÙNG: "{user_text}"
+
+            OUTPUT JSON FORMAT (Bắt buộc):
+            {{
+                "intent": "TÊN_INTENT_VIẾT_HOA",
+                "entities": {{
+                    "product": "tên_sản_phẩm_chuẩn_hóa_hoặc_null",
+                    "order_id": "mã_đơn_hàng_hoặc_null"
+                }}
+            }}
             """
             respone = self.model.generate_content(prompt)
             raw_text = respone.text.strip()
