@@ -22,6 +22,17 @@ class ProductService:
         except Exception as e:
             print(f"Lỗi truy vấn python : {e} ")
             return [] 
+        
+    async def get_best_sellers(self, db : AsyncSession, limit : int  =5) :
+        stmt = (select(Product.id,)
+                .where(Product.isDeleted == False)
+                .where(Product.isActive == True)
+                .where(Product.isHot == True)
+                .limit(limit))
+        result = await db.execute(stmt)
+        products = result.scalars().all()
+        return list(products) 
+
 
 product_service = ProductService()
 

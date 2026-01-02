@@ -196,7 +196,7 @@ class RAGService :
         except Exception : 
             return user_question
         
-    async def ask_bot(self, user_question : str, history : list = [] ) :
+    async def ask_bot(self, user_question : str, history : list = [], intent : str = None ) :
         final_query = user_question 
         if history and self._needs_rewrite(user_question) : 
             logger.info(f"Phát hiện câu hỏi thiếu ngữ cảnh : {user_question}")
@@ -206,10 +206,18 @@ class RAGService :
             logger.info(f"Câu hỏi đã rõ ràng {user_question}")
         context_text = ""
         related_product_ids = []
+
+        where_filter = {}
+        if intent == "SUPPORT_RAG" : 
+            where_filter = {"type" : "policy"}
+        elif intent == "RECOMMENDATION"  :
+            where_filter = {"type" : "Product"}
+        
         try : 
             results = self.collection.query(
                 query_texts=[final_query],
-                n_results=5
+                n_results=5,
+                where=where_filter
             )
 
             valid_docs  = []

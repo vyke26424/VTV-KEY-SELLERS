@@ -1,7 +1,7 @@
 import google.generativeai as genai
 from src.config import settings
 import json
-import re
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from typing import Dict, Any
 
 class IntentService : 
@@ -14,12 +14,12 @@ class IntentService :
                 "max_output_tokens": 256,
               #  "response_mime_type": "application/json", 
         }
-        self.safety_settings = [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-        ]
+        self.safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE, 
+}
         if(model is None) : 
             
             self.model = genai.GenerativeModel(model_name='gemma-3-27b-it', 
@@ -37,13 +37,20 @@ class IntentService :
             Nếu tên sản phẩm là các từ mà người dùng hay nhầm lẫn như dutube, diu túp, ytb, nét phờ líc,... thì hãy chuẩn hóa
             lại thành tên chuẩn như youtube, netflix,...
             Trả về JSON thuần theo định dạng sau.
+
+            NHIỆM VỤ QUAN TRỌNG:
+            1. Phân tích xem người dùng muốn gì.
+            2. Trích xuất tên sản phẩm (product) CHÍNH XÁC từ câu nói. 
+            3. KHÔNG ĐƯỢC SUY DIỄN. Nếu user nhắc "Google" mà không nói "Youtube", thì KHÔNG được trả về "Youtube".
+            4. Nếu user hỏi về bản thân bạn (AI), hoặc hỏi "Bạn là ai", "AI của Google à" -> Gán là GREETING.
             
             DANH SÁCH INTENT:
             1. SEARCH_PRODUCT: Tìm mua, hỏi giá (VD : "Acc netflix giá sao").
             LƯU Ý : Nếu user hỏi chung chung "có gì bán không", "danh sách sản phẩm" -> gán là RECOMMENDATION để RAG xử lý
-            2. SUPPORT_RAG: Hỏi cách dùng, báo lỗi (VD : "Không đăng nhập được").
+            2. SUPPORT_RAG: Hỏi cách dùng, báo lỗi, QUY TRÌNH MUA HÀNG, phương thức thanh toán, chính sách bảo hành (VD: "Làm sao để mua", "Thanh toán kiểu gì", "Mua như nào").
             3. ORDER_TRACKING: Hỏi đơn hàng (VD : "Đơn ORD123 chưa có key").
-            4. RECOMMENDATION: Nhờ tư vấn (VD : "Nên dùng gói nào").
+            5. GET_BEST_SELLER: Hỏi về sản phẩm bán chạy, hot, xu hướng, nhiều người mua, top thịnh hành. (VD: "Món nào bán chạy nhất", "Có gì hot không", "Mọi người hay mua gì").
+            4. RECOMMENDATION: Nhờ tư vấn chọn sản phẩm cụ thể. (VD : "Nên dùng gói nào", "Sản phẩm nào tốt nhất", "Có gì bán không").
             5. GREETING: Chào hỏi.
 
             VÍ DỤ MẪU:

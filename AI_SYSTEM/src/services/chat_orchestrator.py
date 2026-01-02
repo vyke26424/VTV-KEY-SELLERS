@@ -37,6 +37,7 @@ class ChatOrchestrator :
         self.support = "SUPPORT_RAG"
         self.track_order = 'ORDER_TRACKING'
         self.recommendation = 'RECOMMENDATION'
+        self.best_sellers = "GET_BEST_SELLER"
         self.greeting = 'GREETING'
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel(model_name='gemma-3-27b-it')
@@ -64,17 +65,27 @@ class ChatOrchestrator :
                 response['intent'] = self.search_prod
                 response['answer'] = 'Bên mình có một số sản phẩm tương tự như tìm kiếm của bạn nè'
                 response['product_ids'] = product_ids
+        
+        elif intent == self.best_sellers : 
+            product_ids = await self.product_service.get_best_sellers(db)
+            response['intent'] = self.best_sellers
+            response['answer'] = 'Dưới đây là những sản phẩm đang làm mưa làm gió tại shop của mình nè, bạn tham khảo thử nha '
+            response['product_ids'] = product_ids
         elif intent == self.support or intent == self.recommendation : 
-            result = await self.rag_service.ask_bot(user_question, history,)
+            result = await self.rag_service.ask_bot(user_question, history,intent=intent)
             product_ids = result['product_ids'] 
-            if len(product_ids) > 0 : 
-                response['intent'] = intent
-                response['answer'] = result['answer']
-                response['product_ids'] = result['product_ids']
+            if intent == self.recommendation : 
+                if len(product_ids) > 0 : 
+                    response['intent'] = intent
+                    response['answer'] = result['answer']
+                    response['product_ids'] = result['product_ids']
+                else : 
+                    response['intent'] = self.support 
+                    response['answer'] = result['answer']
             else : 
-                response['intent'] = self.support 
+                response['intent'] = self.support
                 response['answer'] = result['answer']
-            
+                response['product_ids'] = []
         elif intent == self.track_order : 
             response['intent'] = self.track_order
             response['answer'] = 'Hiện tại tính năng này sẽ được tụi mình phát triển sau, mong bạn thông cảm nha, yêu yêu'
@@ -108,9 +119,8 @@ async def main() :
     async with SessionLocal() as db : 
         or_service = ChatOrchestrator()
 
-        user_question = 'shop có phần mềm chỉnh sửa ảnh không'
+        user_question = ' chính sách bảo hành như nào vậy?'
 
-        user_question = 'shop có bán youtube premium không'
         history = []
         result  = await or_service.handle_request(user_question, history, db)
         print(result)

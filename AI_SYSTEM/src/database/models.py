@@ -49,6 +49,7 @@ class Product(Base) :
 
     isActive = Column(Boolean)
     isDeleted = Column(Boolean)
+    isHot = Column(Boolean, default=False)
 
 class ProductVariant(Base) : 
     __tablename__ = "ProductVariant"
