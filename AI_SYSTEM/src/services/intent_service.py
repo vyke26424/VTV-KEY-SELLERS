@@ -50,13 +50,14 @@ class IntentService :
                - VD: "Giá Netflix", "Mua acc ChatGPT", "Youtube Premium bao tiền".
 
             2. RECOMMENDATION:
-               - Khi người dùng nhờ TƯ VẤN, chưa chốt mua món nào.
-               - Hoặc hỏi về DANH MỤC CHUNG (Game, App học tập, AI, Phim).
-               - VD: "Có bán phần mềm AI không", "Tư vấn gói xem phim 4k", "Shop có gì hay".
+               - Hỏi tư vấn chung ("Nên mua gì", "Shop có gì").
+               - Hỏi theo DANH MỤC ("Có phần mềm AI không").
+               - Hỏi SO SÁNH GIÁ / TÍNH CHẤT ("Cái nào đắt nhất", "Cái nào rẻ nhất", "Sản phẩm nào giá cao nhất").
 
             3. GET_BEST_SELLER:
-               - Hỏi về xu hướng, bán chạy.
-               - VD: "Món nào hot nhất", "Mọi người hay mua gì".
+               - Chỉ dùng khi user hỏi về DOANH SỐ, ĐỘ PHỔ BIẾN, HOT TREND.
+               - Keywords: "bán chạy nhất", "nhiều người mua", "hot nhất", "phổ biến".
+               - LƯU Ý: "Đắt nhất" hay "Rẻ nhất" KHÔNG PHẢI là Best Seller.
 
             4. SUPPORT_RAG:
                - Hỏi quy trình: Cách thanh toán, bảo hành, hoàn tiền, lỗi đăng nhập.

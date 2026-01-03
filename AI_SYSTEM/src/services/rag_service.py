@@ -26,11 +26,11 @@ class RAGService :
             self.llm = genai.GenerativeModel(model_name='gemma-3-27b-it')
             self.chroma_client = chromadb.PersistentClient(path='./chroma_db_data')
             self.embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="paraphrase-multilingual-MiniLM-L12-v2"
+            model_name="AITeamVN/Vietnamese_Embedding"
         )   
             self.text_splitters = RecursiveCharacterTextSplitter(
-                chunk_size = 500,
-                chunk_overlap=50,
+                chunk_size = 2000,
+                chunk_overlap=200,
                 separators=["\n\n", "\n", " ", ""]
             )
             self.collection_name = 'vtv_key_sellers'
@@ -182,7 +182,7 @@ class RAGService :
     async def rewrite_query(self, user_question : str, history : list) : 
         if not history : return user_question 
         history_context = "\n".join([
-            f"{msg['role']} : {msg['content']}" for msg in history[-5:]]
+            f"{msg['role']} : {msg['content']}" for msg in history[-3:]]
         )
 
         prompt = f"""
