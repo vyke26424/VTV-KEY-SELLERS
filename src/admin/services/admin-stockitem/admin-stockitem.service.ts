@@ -50,6 +50,22 @@ export class AdminStockitemService {
             status: data.status ?? undefined
         };
 
+        if (data.search) {
+            const searchCondition = {
+                contains: data.search,
+                mode: 'insensitive' as const,
+            };
+            whereCondition.OR = [
+                {
+                    variant: {
+                        product: { name: searchCondition },
+                    },
+                },
+                {
+                    variant: { name: searchCondition },
+                },
+            ];
+        }
         const [stocks, total] = await Promise.all([
             this.prismaService.stockItem.findMany({
                 where: whereCondition,

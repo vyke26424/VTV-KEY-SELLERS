@@ -46,4 +46,8 @@ export class FilterStockDto {
     @IsInt()
     @Min(1)
     limit? : number ;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

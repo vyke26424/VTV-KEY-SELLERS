@@ -129,18 +129,18 @@ const Home = () => {
 
             {/* --- SECTION ĐẶC BIỆT: CÓ THỂ BẠN SẼ THÍCH --- */}
             {recommendedProducts.length > 0 && (
-              <section className="bg-gradient-to-br from-purple-900/40 to-slate-900 border border-purple-500/30 p-6 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-lg shadow-purple-900/10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+              <section className="bg-gradient-to-br from-amber-800/30 to-slate-900 border border-amber-500/40 p-6 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-xl shadow-amber-900/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-                <div className="flex items-center justify-between mb-6 border-b border-purple-500/20 pb-2 relative z-10">
+                <div className="flex items-center justify-between mb-6 border-b border-amber-500/30 pb-2 relative z-10">
                   <h2 className="text-xl font-bold flex items-center gap-3 text-white uppercase">
                     <Sparkles
                       size={24}
-                      className="text-purple-400 animate-pulse"
+                      className="text-amber-400 animate-pulse"
                     />{' '}
                     CÓ THỂ BẠN SẼ THÍCH
                   </h2>
-                  <span className="text-xs font-medium text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30">
+                  <span className="text-xs font-medium text-amber-200 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/40">
                     Dành riêng cho bạn ✨
                   </span>
                 </div>

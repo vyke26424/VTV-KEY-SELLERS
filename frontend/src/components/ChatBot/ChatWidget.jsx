@@ -7,6 +7,8 @@ import {
   Sparkles,
   ShoppingBag,
   RefreshCcw,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axiosClient from '../../store/axiosClient';
@@ -15,6 +17,7 @@ import useCartStore from '../../store/useCartStore';
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
@@ -263,7 +266,7 @@ const ChatWidget = () => {
         {/* Cửa sổ Chat */}
         <div
           className={`
-                w-[380px] h-[500px] 
+                ${isExpanded ? 'w-[800px] h-[85vh]' : 'w-[420px] h-[600px]'}
                 bg-vtv-card border border-slate-700 
                 rounded-2xl shadow-2xl flex flex-col overflow-hidden 
                 transition-all duration-300 ease-out origin-bottom-right
@@ -297,6 +300,13 @@ const ChatWidget = () => {
             </div>
 
             <div className="flex items-center space-x-1">
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                title={isExpanded ? 'Thu nhỏ' : 'Phóng to'}
+                className="text-gray-400 hover:text-vtv-green hover:bg-slate-800 rounded-full p-2 transition-colors"
+              >
+                {isExpanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+              </button>
               <button
                 onClick={() => handleResetSession(true)}
                 title="Tạo cuộc trò chuyện mới"

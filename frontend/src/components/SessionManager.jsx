@@ -13,7 +13,7 @@ const SessionManager = () => {
 
   // CẤU HÌNH THỜI GIAN (Đơn vị: Milliseconds)
   // Token hết hạn sau 30 phút
-  const TIMEOUT_DURATION = 30 * 60 * 1000;
+  const TIMEOUT_DURATION = 30 * 60 * 1000; //Thời gian hết hạn phiên
   // Hiện thông báo trước khi hết hạn bao lâu? (Ví dụ: trước 2 phút)
   const WARNING_BEFORE = 2 * 60 * 1000;
 
