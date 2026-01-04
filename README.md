@@ -1,98 +1,82 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# VTV-KEY-SELLERS - Digital Asset E-commerce with AI Integration 🛒🤖
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> **Đồ án Tốt nghiệp**: Xây dựng Website kinh doanh tài sản số tích hợp Hệ thống AI gợi ý sản phẩm & Chatbot tư vấn thông minh.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Frontend](https://img.shields.io/badge/Frontend-React%20%7C%20Vite%20%7C%20Tailwind-61DAFB)
+![Backend](https://img.shields.io/badge/Backend-NestJS%20%7C%20Prisma%20%7C%20MySQL-E0234E)
+![AI System](https://img.shields.io/badge/AI-Python%20%7C%20Gemini%20%7C%20RAG-FFD43B)
 
-## Description
+## 👥 Thành Viên Thực Hiện
+Dự án được thực hiện bởi nhóm 3 thành viên:
+* **Vũ** (Trưởng nhóm/Đại diện báo cáo)
+* **Vĩ**
+* **Tứ**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 📖 Giới Thiệu Dự Án (Project Overview)
 
+**VTV-KEY-SELLERS** (VTVKey) không chỉ là một website bán hàng thông thường mà là giải pháp công nghệ tập trung giải quyết các vấn đề cốt lõi trong giao dịch tài sản số (Digital Assets) như: Key bản quyền, Tài khoản Premium (Netflix, Spotify, Youtube...), Phần mềm, Game.
+
+Hệ thống tích hợp **Trợ lý ảo Fairy** sử dụng công nghệ RAG (Retrieval-Augmented Generation) giúp tư vấn chính xác theo thời gian thực và Hệ thống gợi ý sản phẩm cá nhân hóa (Recommendation System).
+
+## 🚀 Tính Năng Đột Phá (Key Features)
+
+Dự án tập trung giải quyết 3 bài toán kỹ thuật cốt lõi:
+
+### 1. An Toàn Tài Chính (Financial Security) 🛡️
+* **Cơ chế:** Xác thực hai bước (Admin Approval).
+* **Mô tả:** Mọi giao dịch xuất kho Key đều yêu cầu Admin phê duyệt sau khi đối soát mã giao dịch ngân hàng, loại bỏ triệt để rủi ro gian lận thanh toán (Fake Bill).
+
+### 2. Khóa Giao Dịch (Concurrency Control) 🔒
+* **Cơ chế:** Stock Reservation (Giữ chỗ thông minh).
+* **Mô tả:** Ngay khi User đặt đơn, hệ thống lập tức khóa Key ở trạng thái `Pending/Reserved`. Giải quyết triệt để vấn đề **Race Condition** (nhiều người cùng mua 1 sản phẩm tại cùng 1 thời điểm).
+
+### 3. Trí Tuệ Nhân Tạo Thế Hệ Mới (Next-Gen AI) 🧠
+* **Chatbot RAG (Fairy):**
+    * Tích hợp **Google Gemini LLM** với cơ sở dữ liệu Vector (**ChromaDB**).
+    * Khả năng tra cứu ngữ nghĩa từ tài liệu chính sách của cửa hàng (File `.md`) để trả lời chính xác, tránh hiện tượng "ảo giác" (Hallucination) của AI.
+* **Hệ thống Gợi ý (Recommendation Engine):**
+    * Sử dụng thuật toán **Collaborative Filtering** (Lọc cộng tác).
+    * Phân tích ma trận tương tác người dùng để đề xuất sản phẩm chéo (Cross-sell) phù hợp với hành vi mua sắm (Ví dụ: Mua Youtube -> Gợi ý Netflix).
+
+---
+
+## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
+
+### Frontend (Giao diện người dùng)
+* [cite_start]**ReactJS**: Library xây dựng UI/UX tương tác cao[cite: 9].
+* [cite_start]**Vite**: Build tool thế hệ mới, tối ưu tốc độ phản hồi[cite: 10].
+* [cite_start]**Tailwind CSS**: Framework CSS utility-first giúp xây dựng giao diện nhanh chóng[cite: 11].
+
+### Backend (Hệ thống xử lý)
+* [cite_start]**NestJS**: Framework Node.js kiến trúc module, dễ mở rộng và bảo trì[cite: 12].
+* [cite_start]**MySQL**: Cơ sở dữ liệu quan hệ, đảm bảo tính toàn vẹn giao dịch[cite: 13].
+* [cite_start]**Prisma ORM**: Trừu tượng hóa thao tác cơ sở dữ liệu[cite: 13].
+* [cite_start]**JWT (JSON Web Token)**: Cơ chế xác thực bảo mật (Stateless Authentication)[cite: 16].
+* [cite_start]**Cloudinary**: Lưu trữ và tối ưu hóa hình ảnh sản phẩm[cite: 54].
+* [cite_start]**VietQR**: Tích hợp thanh toán QR Code tự động[cite: 47].
+
+### AI System (Hệ thống thông minh)
+* [cite_start]**Ngôn ngữ:** Python[cite: 17].
+* **Model:** Google Gemini API.
+* [cite_start]**Vector DB:** ChromaDB (Lưu trữ vector kiến thức doanh nghiệp)[cite: 17, 21].
+* [cite_start]**Technique:** RAG (Retrieval-Augmented Generation) & Collaborative Filtering[cite: 19, 24].
+
+### Tools & DevOps
+* **IDE:** Visual Studio Code.
+* **Testing:** Postman.
+* [cite_start]**Version Control:** Git[cite: 25].
+
+---
+
+## 📂 Cấu Trúc Dự Án
 ```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+VTV-KEY-SELLERS/
+├── AI_SYSTEM/          # Mã nguồn Python cho Chatbot & Recommendation
+├── frontend/           # Mã nguồn ReactJS (Client & Admin Dashboard)
+├── prisma/             # Schema Database & Migrations
+├── src/                # Mã nguồn Backend NestJS
+├── test/               # E2E Testing
+└── ...
