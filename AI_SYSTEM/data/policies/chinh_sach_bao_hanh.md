@@ -33,3 +33,20 @@ Nếu lỗi hợp lệ:
 Thu hồi Key lỗi (đánh dấu hỏng/thu hồi trên hệ thống).
 
 Vào kho, lấy một Key mới để gửi bù cho khách.
+
+Trong trường hợp khách hàng cần yêu cầu người thật hỗ trợ gửi họ tới số điện thoại và trang http://localhost:5173/contact
+
+Liên hệ hỗ trợ
+Thông tin liên lạc
+
+Email
+
+support@vtvkey.com
+
+Hotline
+
+0912.345.678
+
+Địa chỉ
+
+Tòa nhà VTV, TP Hồ Chí Minh, Việt Nam
