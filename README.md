@@ -46,28 +46,28 @@ Dự án tập trung giải quyết 3 bài toán kỹ thuật cốt lõi:
 ## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
 
 ### Frontend (Giao diện người dùng)
-* [cite_start]**ReactJS**: Library xây dựng UI/UX tương tác cao[cite: 9].
-* [cite_start]**Vite**: Build tool thế hệ mới, tối ưu tốc độ phản hồi[cite: 10].
-* [cite_start]**Tailwind CSS**: Framework CSS utility-first giúp xây dựng giao diện nhanh chóng[cite: 11].
+* **ReactJS**: Library xây dựng UI/UX tương tác cao.
+* **Vite**: Build tool thế hệ mới, tối ưu tốc độ phản hồi.
+* **Tailwind CSS**: Framework CSS utility-first giúp xây dựng giao diện nhanh chóng.
 
 ### Backend (Hệ thống xử lý)
-* [cite_start]**NestJS**: Framework Node.js kiến trúc module, dễ mở rộng và bảo trì[cite: 12].
-* [cite_start]**MySQL**: Cơ sở dữ liệu quan hệ, đảm bảo tính toàn vẹn giao dịch[cite: 13].
-* [cite_start]**Prisma ORM**: Trừu tượng hóa thao tác cơ sở dữ liệu[cite: 13].
-* [cite_start]**JWT (JSON Web Token)**: Cơ chế xác thực bảo mật (Stateless Authentication)[cite: 16].
-* [cite_start]**Cloudinary**: Lưu trữ và tối ưu hóa hình ảnh sản phẩm[cite: 54].
-* [cite_start]**VietQR**: Tích hợp thanh toán QR Code tự động[cite: 47].
+* **NestJS**: Framework Node.js kiến trúc module, dễ mở rộng và bảo trì.
+* **MySQL**: Cơ sở dữ liệu quan hệ, đảm bảo tính toàn vẹn giao dịch.
+* **Prisma ORM**: Trừu tượng hóa thao tác cơ sở dữ liệu.
+* **JWT (JSON Web Token)**: Cơ chế xác thực bảo mật (Stateless Authentication).
+* **Cloudinary**: Lưu trữ và tối ưu hóa hình ảnh sản phẩm.
+* **VietQR**: Tích hợp thanh toán QR Code tự động.
 
 ### AI System (Hệ thống thông minh)
-* [cite_start]**Ngôn ngữ:** Python[cite: 17].
+* **Ngôn ngữ:** Python.
 * **Model:** Google Gemini API.
-* [cite_start]**Vector DB:** ChromaDB (Lưu trữ vector kiến thức doanh nghiệp)[cite: 17, 21].
-* [cite_start]**Technique:** RAG (Retrieval-Augmented Generation) & Collaborative Filtering[cite: 19, 24].
+* **Vector DB:** ChromaDB (Lưu trữ vector kiến thức doanh nghiệp).
+* **Technique:** RAG (Retrieval-Augmented Generation) & Collaborative Filtering.
 
 ### Tools & DevOps
 * **IDE:** Visual Studio Code.
 * **Testing:** Postman.
-* [cite_start]**Version Control:** Git[cite: 25].
+* **Version Control:** Git.
 
 ---
 
