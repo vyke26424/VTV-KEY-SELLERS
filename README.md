@@ -9,7 +9,7 @@
 
 ## 👥 Thành Viên Thực Hiện
 Dự án được thực hiện bởi nhóm 3 thành viên:
-* **Vũ** (Trưởng nhóm/Đại diện báo cáo)
+* **Vũ** 
 * **Vĩ**
 * **Tứ**
 
