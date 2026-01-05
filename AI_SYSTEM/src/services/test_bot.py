@@ -25,5 +25,7 @@ async def main():
     res2 = await rag.ask_bot(q2, history=history)
     print(f"Bot: {res2['answer']}")
 
+    c = rag.checklen()
+    print(c)
 if __name__ == "__main__":
     asyncio.run(main())

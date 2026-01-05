@@ -34,19 +34,16 @@ Thu hồi Key lỗi (đánh dấu hỏng/thu hồi trên hệ thống).
 
 Vào kho, lấy một Key mới để gửi bù cho khách.
 
-Trong trường hợp khách hàng cần yêu cầu người thật hỗ trợ gửi họ tới số điện thoại và trang http://localhost:5173/contact
+VTVKey hỗ trợ hoàn tiền 100% nếu sản phẩm bị lỗi mà chúng tôi không thể khắc phục hoặc đổi mới trong vòng 24h.
 
-Liên hệ hỗ trợ
-Thông tin liên lạc
 
-Email
+CÂU CHUYỆN CỦA CHÚNG TÔI
+Được thành lập vào năm 2025 bởi Vĩ Tứ Vũ, VTVKey ra đời nhằm xóa bỏ rào cản trong việc tiếp cận bản quyền phần mềm tại Việt Nam. Chúng tôi tin rằng việc sở hữu bản quyền Windows, Office hay các tài khoản giải trí như Netflix, ChatGPT không nên là một gánh nặng chi phí.
 
-support@vtvkey.com
+Tại VTVKey, mỗi sản phẩm trao tay khách hàng đều là lời cam kết trọn đời dựa trên triết lý Verified - Trust - Value: Chất lượng được xác thực, Niềm tin được khẳng định và Giá trị được lan tỏa.
 
-Hotline
+THÔNG TIN LIÊN LẠC : 
+EMAIL : support@vtvkey.com
+HOTLINE : 0912.345.678
+ĐỊA CHỈ : Tòa nhà VTV, TP Hồ Chí Minh, Việt Nam
 
-0912.345.678
-
-Địa chỉ
-
-Tòa nhà VTV, TP Hồ Chí Minh, Việt Nam

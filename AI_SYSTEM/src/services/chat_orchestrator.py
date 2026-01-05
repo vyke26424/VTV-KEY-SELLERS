@@ -41,6 +41,7 @@ class ChatOrchestrator :
         self.greeting = 'GREETING'
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel(model_name='gemma-3-27b-it')
+        #self.model = genai.GenerativeModel(model_name='gemini-2.5-flash')
         
 
     async def handle_request(self, user_question : str, history : list, db : AsyncSession) : 

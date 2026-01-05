@@ -14,6 +14,10 @@ from src.services import chat_orchestrator
 
 from contextlib import asynccontextmanager
 
+
+from src.services.chat_orchestrator import ChatOrchestrator
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("🚀 AI Service is starting up...")
@@ -79,4 +83,6 @@ async def ask(request : ChatRequest, db : AsyncSession = Depends(get_db)) :
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("src.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("src.main:app", host="127.0.0.1", port=8000, reload=True, 
+                reload_excludes=["chroma_db_data/*", "*.pyc", "__pycache__"],
+                reload_delay=2)

@@ -10,6 +10,9 @@ from sqlalchemy import select
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from src.database.models import Product
 from sqlalchemy.orm import selectinload
+from src.services.embedding_cache import embedding_cache
+from chromadb import Documents, EmbeddingFunction, Embeddings
+
 
 logging.basicConfig(
     level=logging.INFO, 
@@ -18,6 +21,13 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+class SharedEmbeddingFunction(EmbeddingFunction):
+    def __call__(self, input: Documents) -> Embeddings:
+        model = embedding_cache.get_model() 
+        embeddings = model.encode(input, normalize_embeddings=True)
+        return embeddings.tolist()
+
 class RAGService : 
     def __init__(self):
         logger.info('Đang tiến hành khởi tạo embedding')
@@ -25,9 +35,7 @@ class RAGService :
             genai.configure(api_key=settings.GEMINI_API_KEY)
             self.llm = genai.GenerativeModel(model_name='gemma-3-27b-it')
             self.chroma_client = chromadb.PersistentClient(path='./chroma_db_data')
-            self.embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="AITeamVN/Vietnamese_Embedding"
-        )   
+            self.embedding_fn = SharedEmbeddingFunction()
             self.text_splitters = RecursiveCharacterTextSplitter(
                 chunk_size = 2000,
                 chunk_overlap=200,
@@ -52,9 +60,16 @@ class RAGService :
 
         self.collection = self.chroma_client.get_or_create_collection(
             name=self.collection_name,
-            embedding_function=self.embedding_fn
+            embedding_function=self.embedding_fn,
+            metadata={"hnsw:space": "cosine"}
         )
         logger.info (f'Đã tạo thành công {self.collection_name} ')
+
+
+    # def checklen(self) :
+    #     vec = self.embedding_fn.embed_query("test 1 câu tiếng Việt");
+    #     logger.info(len(vec))
+    #     return vec 
 
 
     def _process_batches(self, documents, metadatas, ids, batch_size = 100) : 
@@ -171,7 +186,7 @@ class RAGService :
             logger.warning(f"Đồng bộ dữ liệu thất bại {e}")
 
     def _needs_rewrite(self, text : str) -> bool : 
-        pronouns = ["nó", "đó", "này", "kia", "ấy", "cái gì", "bao nhiêu", "ở đâu", "trên", "dưới"]
+        pronouns = ["nó", "đó", "này", "kia", "ấy", "cái gì", "trên", "dưới"]
         for word in pronouns :
             if word in text : 
                 return True
