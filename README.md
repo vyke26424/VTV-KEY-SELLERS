@@ -7,14 +7,8 @@
 ![Backend](https://img.shields.io/badge/Backend-NestJS%20%7C%20Prisma%20%7C%20MySQL-E0234E)
 ![AI System](https://img.shields.io/badge/AI-Python%20%7C%20Gemini%20%7C%20RAG-FFD43B)
 
-## 👥 Thành Viên Thực Hiện
-Dự án được thực hiện bởi nhóm 3 thành viên:
-* **Vĩ**
-* **Tứ**
-* **Vũ** 
 
 
----
 
 ## 📖 Giới Thiệu Dự Án (Project Overview)
 
