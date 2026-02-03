@@ -13,9 +13,13 @@ const formatCurrency = (amount) =>
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // State tìm kiếm
+
+  // State cho bộ lọc và tìm kiếm
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    categoryId: '',
+  });
+  const [categories, setCategories] = useState([]);
 
   // State phân trang
   const [pagination, setPagination] = useState({
@@ -25,17 +29,20 @@ const ProductListPage = () => {
     total: 0,
   });
 
-  // --- 1. CALL API (ĐÃ NÂNG CẤP: Nhận thêm param search) ---
-  const fetchProducts = async (page = 1, search = '') => {
+  // --- 1. CALL API (ĐÃ NÂNG CẤP: Nhận thêm param search và filters) ---
+  const fetchProducts = async (page = 1, search = '', currentFilters) => {
     try {
       setLoading(true);
-      const result = await axiosClient.get('/admin/product', {
-        params: {
-          page: page,
-          limit: 10,
-          search: search, // Gửi từ khóa lên Server
-        },
-      });
+      const params = {
+        page: page,
+        limit: 10,
+        search: search,
+        categoryId: currentFilters.categoryId,
+      };
+      // Xóa các param rỗng để URL gọn gàng
+      Object.keys(params).forEach(key => (params[key] === '' || params[key] == null) && delete params[key]);
+
+      const result = await axiosClient.get('/admin/product', { params });
 
       if (result && Array.isArray(result.product)) {
         setProducts(result.product);
@@ -58,31 +65,53 @@ const ProductListPage = () => {
     }
   };
 
-  // --- 2. LOGIC DEBOUNCE SEARCH (Chờ gõ xong 500ms mới gọi API) ---
+  // --- 2. Tải danh mục cho bộ lọc ---
   useEffect(() => {
-      // Mỗi khi searchTerm thay đổi, đặt 1 cái hẹn 500ms
+    const fetchCategories = async () => {
+      try {
+        const result = await axiosClient.get('/admin/categories?limit=200');
+        if (result && Array.isArray(result.data)) {
+          setCategories(result.data);
+        } else if (Array.isArray(result)) {
+          setCategories(result);
+        }
+      } catch (error) {
+        console.error('Lỗi tải danh mục:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // --- 3. LOGIC DEBOUNCE CHO TÌM KIẾM VÀ BỘ LỌC ---
+  useEffect(() => {
+      // Mỗi khi searchTerm hoặc filters thay đổi, đặt 1 cái hẹn 500ms
       const delayDebounceFn = setTimeout(() => {
-          // Gọi API về trang 1 với từ khóa mới
-          fetchProducts(1, searchTerm);
+          // Gọi API về trang 1 với từ khóa và bộ lọc mới
+          fetchProducts(1, searchTerm, filters);
       }, 500);
 
-      // Nếu người dùng gõ tiếp trong lúc đang chờ, hủy cái hẹn cũ đi
+      // Nếu người dùng thao tác tiếp trong lúc đang chờ, hủy cái hẹn cũ đi
       return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]); // Chạy lại khi searchTerm thay đổi
+  }, [searchTerm, filters]); // Chạy lại khi searchTerm hoặc filters thay đổi
+
+  // --- HÀM XỬ LÝ THAY ĐỔI BỘ LỌC ---
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
 
   // --- HÀM CHUYỂN TRANG ---
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPage) {
-      // Khi chuyển trang, nhớ giữ nguyên từ khóa tìm kiếm hiện tại
-      fetchProducts(newPage, searchTerm);
+      // Khi chuyển trang, nhớ giữ nguyên từ khóa tìm kiếm và bộ lọc hiện tại
+      fetchProducts(newPage, searchTerm, filters);
     }
   };
-
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
       try {
         await axiosClient.delete(`/admin/product/${id}`);
-        fetchProducts(pagination.page, searchTerm); // Load lại giữ nguyên trang & search
+        fetchProducts(pagination.page, searchTerm, filters); // Load lại giữ nguyên trang, search & filter
         alert('Đã xóa thành công!');
       } catch (error) {
         console.error('Xóa thất bại:', error);
@@ -112,23 +141,38 @@ const ProductListPage = () => {
         </Link>
       </div>
 
-      {/* Toolbar Tìm kiếm */}
-      <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-2.5 text-gray-500" size={18} />
-          <input
-            type="text"
-            placeholder="Tìm theo tên, slug..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-700 text-gray-300 text-sm rounded-lg py-2 pl-10 pr-10 focus:outline-none focus:border-vtv-green transition"
-          />
-          {/* Icon loading nhỏ trong ô search */}
-          {loading && searchTerm && (
-              <div className="absolute right-3 top-2.5">
-                  <Loader2 size={16} className="animate-spin text-vtv-green"/>
-              </div>
-          )}
+      {/* Toolbar Tìm kiếm & Bộ lọc */}
+      <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-4">
+        <div className="flex flex-col md:flex-row items-center gap-4">
+            {/* Search Bar */}
+            <div className="relative flex-1 w-full md:max-w-md">
+                <Search className="absolute left-3 top-2.5 text-gray-500" size={18} />
+                <input
+                    type="text"
+                    placeholder="Tìm theo tên, Danh mục,..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 text-gray-300 text-sm rounded-lg py-2 pl-10 pr-10 focus:outline-none focus:border-vtv-green transition"
+                />
+                {loading && searchTerm && (
+                    <div className="absolute right-3 top-2.5">
+                        <Loader2 size={16} className="animate-spin text-vtv-green"/>
+                    </div>
+                )}
+            </div>
+            
+            {/* Filters */}
+            <div className="flex items-center gap-3 w-full md:w-auto">
+                <select 
+                    name="categoryId" 
+                    value={filters.categoryId} 
+                    onChange={handleFilterChange}
+                    className="w-full md:w-40 bg-slate-800 border border-slate-700 text-gray-300 text-sm rounded-lg p-2 focus:outline-none focus:border-vtv-green transition"
+                >
+                    <option value="" className="bg-slate-800">Tất cả danh mục</option>
+                    {categories.map(cat => <option key={cat.id} value={cat.id} className="bg-slate-800">{cat.name}</option>)}
+                </select>
+            </div>
         </div>
       </div>
 
@@ -174,7 +218,13 @@ const ProductListPage = () => {
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-white line-clamp-1">{product.name}</p>
+                          <Link 
+                            to={`/product/${product.slug}`} 
+                            target="_blank" 
+                            className="font-bold text-white line-clamp-1 hover:text-vtv-green transition"
+                          >
+                            {product.name}
+                          </Link>
                           <p className="text-xs text-gray-500 line-clamp-1">{product.slug}</p>
                         </div>
                       </div>

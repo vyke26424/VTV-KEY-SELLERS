@@ -22,7 +22,7 @@ const AboutPage = () => {
             Câu chuyện của chúng tôi
           </h2>
           <p className="mb-4 leading-relaxed">
-            Được thành lập vào năm 2025 bởi <strong>Vĩ Tứ Vũ</strong>, VTVKey ra
+            Được thành lập vào năm 2025, VTVKey ra
             đời nhằm xóa bỏ rào cản trong việc tiếp cận bản quyền phần mềm tại
             Việt Nam. Chúng tôi tin rằng việc sở hữu bản quyền Windows, Office
             hay các tài khoản giải trí như Netflix, ChatGPT không nên là một
