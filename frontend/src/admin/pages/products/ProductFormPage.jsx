@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import axiosClient from '../../../store/axiosClient';
 
-// --- COMPONENT NHẬP TAGS (Giữ nguyên) ---
+// --- COMPONENT NHẬP TAGS ---
 const TagInput = ({ label, value = [], onChange, placeholder }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -61,7 +61,7 @@ const ProductFormPage = () => {
     name: '',
     slug: '',
     description: '',
-    thumbnail: '', // URL ảnh (để hiển thị nếu edit)
+    thumbnail: '',
     categoryId: '',
     isHot: false,
     isActive: true,
