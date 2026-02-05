@@ -195,8 +195,8 @@ const ProductDetail = () => {
         comment: reviewForm.comment,
       });
 
-      setReviews([newReview, ...reviews]); // Thêm vào list ngay
       const reviewWithUser = { ...newReview, user: user };
+      setReviews([reviewWithUser, ...reviews]); 
       setReviewForm({ rating: 5, comment: '' }); // Reset form
       setCanReview(false); // Đánh giá xong thì ẩn form (hoặc giữ lại tùy logic)
       alert('Cảm ơn bạn đã đánh giá!');

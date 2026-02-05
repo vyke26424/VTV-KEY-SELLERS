@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Star, Trash2, Search, MessageSquare, User, Package } from 'lucide-react';
+import { Star, Trash2, Search, MessageSquare, User, Package, ChevronLeft, ChevronRight } from 'lucide-react';
 import axiosClient from '../../../store/axiosClient';
 
 const ReviewListPage = () => {
@@ -34,6 +34,12 @@ const ReviewListPage = () => {
       fetchReviews(pagination.page);
     } catch (error) {
       alert('Lỗi xóa review');
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPage) {
+      fetchReviews(newPage);
     }
   };
 
@@ -104,12 +110,38 @@ const ReviewListPage = () => {
           </tbody>
         </table>
         
-        {/* Pagination đơn giản */}
-        <div className="p-4 border-t border-slate-800 flex justify-center gap-2">
-            <button disabled={pagination.page === 1} onClick={() => fetchReviews(pagination.page - 1)} className="px-3 py-1 bg-slate-800 rounded disabled:opacity-50">Trước</button>
-            <span className="px-3 py-1 text-white">{pagination.page} / {pagination.totalPage}</span>
-            <button disabled={pagination.page === pagination.totalPage} onClick={() => fetchReviews(pagination.page + 1)} className="px-3 py-1 bg-slate-800 rounded disabled:opacity-50">Sau</button>
-        </div>
+        {/* Thanh Phân Trang */}
+        {pagination.totalPage > 1 && (
+            <div className="p-4 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-900">
+            <span className="text-sm text-gray-400">
+                Trang <span className="text-white font-bold">{pagination.page}</span> / {pagination.totalPage}
+            </span>
+            <div className="flex items-center gap-2">
+                <button onClick={() => handlePageChange(pagination.page - 1)} disabled={pagination.page === 1 || loading} className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-300 hover:bg-slate-700 hover:text-white disabled:opacity-50 transition"><ChevronLeft size={20} /></button>
+                
+                <div className="flex gap-1">
+                {Array.from({ length: pagination.totalPage }, (_, i) => i + 1)
+                    .filter(p => p === 1 || p === pagination.totalPage || Math.abs(p - pagination.page) <= 2)
+                    .map((pageNum, index, array) => {
+                        const isGap = index > 0 && pageNum - array[index - 1] > 1;
+                        return (
+                            <React.Fragment key={pageNum}>
+                            {isGap && <span className="px-2 text-gray-600">...</span>}
+                            <button 
+                                onClick={() => handlePageChange(pageNum)} 
+                                className={`w-9 h-9 rounded-lg text-sm font-bold transition ${pagination.page === pageNum ? 'bg-vtv-green text-black shadow-lg shadow-green-500/20' : 'bg-slate-800 text-gray-400 hover:bg-slate-700 hover:text-white border border-slate-700'}`}
+                            >
+                                {pageNum}
+                            </button>
+                            </React.Fragment>
+                        );
+                    })}
+                </div>
+
+                <button onClick={() => handlePageChange(pagination.page + 1)} disabled={pagination.page === pagination.totalPage || loading} className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-300 hover:bg-slate-700 hover:text-white disabled:opacity-50 transition"><ChevronRight size={20} /></button>
+            </div>
+            </div>
+        )}
       </div>
     </div>
   );
