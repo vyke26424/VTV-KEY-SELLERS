@@ -12,7 +12,8 @@ const ReviewListPage = () => {
       setLoading(true);
       const res = await axiosClient.get('/admin/reviews', { params: { page, limit: 10 } });
       if (res.data) {
-        setReviews(res.data);
+        // Lọc bỏ các review đã bị xóa (nếu backend trả về soft-delete)
+        setReviews(res.data.filter(r => !r.isDeleted));
         setPagination({ page: res.meta.page, totalPage: res.meta.totalPage });
       }
     } catch (error) {
@@ -27,10 +28,10 @@ const ReviewListPage = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bạn chắc chắn muốn ẩn đánh giá này?')) return;
+    if (!window.confirm('Bạn chắc chắn muốn xóa vĩnh viễn đánh giá này?')) return;
     try {
       await axiosClient.delete(`/admin/reviews/${id}`);
-      alert('Đã ẩn đánh giá!');
+      alert('Đã xóa đánh giá!');
       fetchReviews(pagination.page);
     } catch (error) {
       alert('Lỗi xóa review');
@@ -57,7 +58,6 @@ const ReviewListPage = () => {
               <th className="p-4">Sản phẩm</th>
               <th className="p-4">Đánh giá</th>
               <th className="p-4">Nội dung</th>
-              <th className="p-4 text-center">Trạng thái</th>
               <th className="p-4 text-right">Hành động</th>
             </tr>
           </thead>
@@ -88,19 +88,10 @@ const ReviewListPage = () => {
                   <td className="p-4 text-sm text-gray-300 max-w-xs truncate" title={rv.comment}>
                     {rv.comment}
                   </td>
-                  <td className="p-4 text-center">
-                    {rv.isDeleted ? (
-                        <span className="bg-red-500/10 text-red-500 text-xs px-2 py-1 rounded border border-red-500/20">Đã ẩn</span>
-                    ) : (
-                        <span className="bg-green-500/10 text-green-500 text-xs px-2 py-1 rounded border border-green-500/20">Hiển thị</span>
-                    )}
-                  </td>
                   <td className="p-4 text-right">
-                    {!rv.isDeleted && (
-                        <button onClick={() => handleDelete(rv.id)} className="p-2 text-red-400 hover:bg-red-500/10 rounded transition" title="Ẩn review này">
-                        <Trash2 size={18} />
-                        </button>
-                    )}
+                    <button onClick={() => handleDelete(rv.id)} className="p-2 text-red-400 hover:bg-red-500/10 rounded transition" title="Xóa review này">
+                      <Trash2 size={18} />
+                    </button>
                   </td>
                 </tr>
               ))

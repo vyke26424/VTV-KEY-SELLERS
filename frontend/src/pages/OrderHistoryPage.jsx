@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Package,
   Calendar,
@@ -159,9 +160,12 @@ const OrderHistoryPage = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="text-white text-sm font-medium">
+                        <Link
+                          to={`/product/${item.variant?.product?.slug}`}
+                          className="text-white text-sm font-medium hover:text-vtv-green transition"
+                        >
                           {item.variant?.product?.name}
-                        </div>
+                        </Link>
                         <div className="text-gray-400 text-xs">
                           {item.variant?.name} x{item.quantity}
                         </div>
@@ -249,9 +253,12 @@ const OrderHistoryPage = () => {
                         )}
                       </div>
                       <div>
-                        <h4 className="text-vtv-green font-bold text-sm line-clamp-1">
+                        <Link
+                          to={`/product/${item.variant?.product?.slug}`}
+                          className="text-vtv-green font-bold text-sm line-clamp-1 hover:underline"
+                        >
                           {item.variant?.product?.name}
-                        </h4>
+                        </Link>
                         <p className="text-gray-400 text-xs">
                           {item.variant?.name}
                         </p>
